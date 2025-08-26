@@ -1,0 +1,99 @@
+name: Generate & Publish OpenAPI SDK
+
+on:
+  push:
+    branches:
+      - main # change if your default branch is different
+
+jobs:
+  openapi:
+    runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: dummysecret
+      DATABASE_URL: sqlite:////tmp/db.sqlite3
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements/base.txt
+
+      - name: Generate OpenAPI schema
+        run: python manage.py spectacular --file schema.yml
+        working-directory: snypy
+
+      - name: Install yq
+        run: sudo apt-get update && sudo apt-get install -y yq
+
+      - name: Extract version from schema
+        id: schema_version
+        run: |
+          VERSION=$(yq '.info.version' snypy/schema.yml)
+          echo "VERSION=$VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Get latest published npm version
+        id: npm_version
+        run: |
+          PKG_NAME="@ntq/sdk"
+          LATEST=$(npm view $PKG_NAME version  echo "0.0.0")
+          echo "LATEST=$LATEST"
+          echo "LATEST=$LATEST" >> $GITHUB_OUTPUT
+
+      - name: Check if schema version is newer
+        id: should_publish
+        run: |
+          SCHEMA_VERSION="${{ steps.schema_version.outputs.VERSION }}"
+          NPM_VERSION="${{ steps.npm_version.outputs.LATEST }}"
+
+          echo "Schema version: $SCHEMA_VERSION"
+          echo "Published version: $NPM_VERSION"
+
+          if [ "$SCHEMA_VERSION" = "$NPM_VERSION" ]; then
+            echo "publish=false" >> $GITHUB_OUTPUT
+          else
+            echo "publish=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Verify Docker installation
+        if: steps.should_publish.outputs.publish == 'true'
+        run: |
+          docker --version
+          docker pull openapitools/openapi-generator-cli
+
+      - name: Generate TypeScript Axios client
+        if: steps.should_publish.outputs.publish == 'true'
+        run: |
+          docker run -u $(id -u):$(id -g) --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
+            -i /local/snypy/schema.yml \
+            -g typescript-axios \
+            -o /local/client \
+            --additional-properties=npmName=@ntq/sdk,npmVersion=${{ steps.schema_version.outputs.VERSION }},useSingleRequestParameter=true,withSeparateModelsAndApi=true,modelPackage=models,apiPackage=apis
+
+      - name: Build TypeScript Client
+        if: steps.should_publish.outputs.publish == 'true'
+        run: |
+          cd client
+          npm install --force
+          npm run build  true
+
+      - name: Publish to NPM
+        if: steps.should_publish.outputs.publish == 'true'
+        run: |
+          cd client
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_NTQ_ACCESS_TOKEN }}

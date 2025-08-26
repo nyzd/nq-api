@@ -80,7 +80,7 @@ jobs:
             -i /local/schema.yml \
             -g typescript-axios \
             -o /local/client \
-            --additional-properties=npmName=@ntq/sdk,npmVersion=${{ steps.schema_version.outputs.VERSION }},enumPropertyNaming=original,withSeparateModelsAndApi=true,modelPackage=models,apiPackage=apis
+            --additional-properties=npmName=@ntq/sdk,npmVersion=${{ steps.schema_version.outputs.VERSION }}
 
       - name: Build TypeScript Client
         if: steps.should_publish.outputs.publish == 'true'

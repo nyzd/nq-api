@@ -81,14 +81,13 @@ jobs:
             -g typescript-axios \
             -o /local/client \
             --additional-properties=npmName=@ntq/sdk,npmVersion=${{ steps.schema_version.outputs.VERSION }},enumPropertyNaming=original,withSeparateModelsAndApi=true,modelPackage=models,apiPackage=apis
-            --skip-validate-spec
 
       - name: Build TypeScript Client
         if: steps.should_publish.outputs.publish == 'true'
         run: |
           cd client
           npm install --force
-          npm run build  true
+          npm run build  true --skip-validate-spec
 
       - name: Publish to NPM
         if: steps.should_publish.outputs.publish == 'true'

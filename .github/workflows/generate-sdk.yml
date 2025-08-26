@@ -27,7 +27,6 @@ jobs:
 
       - name: Generate OpenAPI schema
         run: python manage.py spectacular --file schema.yml
-        working-directory: snypy
 
       - name: Install yq
         run: sudo apt-get update && sudo apt-get install -y yq
@@ -35,7 +34,7 @@ jobs:
       - name: Extract version from schema
         id: schema_version
         run: |
-          VERSION=$(yq '.info.version' snypy/schema.yml)
+          VERSION=$(yq '.info.version' schema.yml)
           echo "VERSION=$VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
@@ -78,7 +77,7 @@ jobs:
         if: steps.should_publish.outputs.publish == 'true'
         run: |
           docker run -u $(id -u):$(id -g) --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
-            -i /local/snypy/schema.yml \
+            -i /local/schema.yml \
             -g typescript-axios \
             -o /local/client \
             --additional-properties=npmName=@ntq/sdk,npmVersion=${{ steps.schema_version.outputs.VERSION }},useSingleRequestParameter=true,withSeparateModelsAndApi=true,modelPackage=models,apiPackage=apis

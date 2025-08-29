@@ -1,34 +1,23 @@
 {
-    "name": "@ntq/sdk",
-    "version": "1.1.70",
-    "private": false,
-    "author": "Natiq",
-    "description": "Natiq Open API SDK",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "keywords": [
-        "natiq",
-        "api",
-        "sdk"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/NatiqQuran/natiq-api.git",
-        "directory": "sdk/typescript"
-    },
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/NatiqQuran/natiq-api/issues"
-    },
-    "homepage": "https://developer.natiq.net",
-    "scripts": {
-        "build": "tsc"
-    },
-    "dependencies": {
-        "axios": "1.7.7"
-    },
-    "devDependencies": {
-        "@types/node": "22.5.4",
-        "typescript": "5.4.5"
-    }
+  "name": "@ntq/sdk",
+  "version": "1.1.73",
+  "description": "Generated TypeScript API client SDK",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "generate": "openapi-ts",
+    "build": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@hey-api/openapi-ts": "^0.82.0"
+  },
+  "dependencies": {
+    "axios": "^1.7.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

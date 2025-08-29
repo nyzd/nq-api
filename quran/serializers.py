@@ -165,21 +165,21 @@ class AyahSerializer(serializers.ModelSerializer):
         ayah_breakers = {}
         
         for breaker in all_breakers:
-            # Update count for this breaker name
-            if breaker.name not in breaker_counts:
-                breaker_counts[breaker.name] = 1
+            # Update count for this breaker type
+            if breaker.type not in breaker_counts:
+                breaker_counts[breaker.type] = 1
             else:
-                breaker_counts[breaker.name] += 1
+                breaker_counts[breaker.type] += 1
                 
             # Store current counts for this ayah
             if breaker.ayah_id not in ayah_breakers:
                 ayah_breakers[breaker.ayah_id] = []
             
-            # Only add if name not already in this ayah's breakers
-            if not any(b['name'] == breaker.name for b in ayah_breakers[breaker.ayah_id]):
+            # Only add if type not already in this ayah's breakers
+            if not any(b['name'] == breaker.type for b in ayah_breakers[breaker.ayah_id]):
                 ayah_breakers[breaker.ayah_id].append({
-                    'name': breaker.name,
-                    'number': breaker_counts[breaker.name]
+                    'name': breaker.type,
+                    'number': breaker_counts[breaker.type]
                 })
         
         # Return breakers for current ayah
@@ -616,17 +616,25 @@ class RecitationListSerializer(serializers.ModelSerializer):
         ]
 
 class TakhtitSerializer(serializers.ModelSerializer):
+    mushaf_uuid = serializers.UUIDField(write_only=True, required=True)
+    account_uuid = serializers.UUIDField(write_only=True, required=True)
+    
     class Meta:
         model = Takhtit
-        # TODO return relations as uuid
         fields = [
             'uuid',
             'creator',
-            'mushaf',
-            'account',
+            'mushaf_uuid',
+            'account_uuid',
             'created_at',
         ]
         read_only_fields = ['uuid', 'creator', 'created_at', 'updated_at']
+    
+    def create(self, validated_data):
+        # Remove the UUID fields before creating the model instance
+        validated_data.pop('mushaf_uuid', None)
+        validated_data.pop('account_uuid', None)
+        return super().create(validated_data)
  
 class AyahBreakersResponseSerializer(serializers.Serializer):
     """Serializer for the ayahs_breakers endpoint response"""

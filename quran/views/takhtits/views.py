@@ -282,7 +282,7 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 		responses={201: OpenApiTypes.OBJECT},
 	)
 	@action(detail=True, methods=["post"], url_path="import", parser_classes=[MultiPartParser, FormParser])
-	def import_breakers(self, request, pk=None):
+	def import_breakers(self, request, uuid=None):
 		import json
 		from quran.models import Ayah, AyahBreaker, AyahBreakerType, Surah, Takhtit
 		takhtit = self.get_object()

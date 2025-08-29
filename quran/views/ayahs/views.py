@@ -14,9 +14,18 @@ from quran.serializers import AyahSerializer, AyahSerializerView, AyahAddSeriali
 		parameters=[OpenApiParameter("surah_uuid", OpenApiTypes.UUID, OpenApiParameter.QUERY)]
 	),
 	retrieve=extend_schema(summary="Retrieve a specific Ayah by UUID"),
-	create=extend_schema(summary="Create a new Ayah record"),
-	update=extend_schema(summary="Update an existing Ayah record"),
-	partial_update=extend_schema(summary="Partially update an Ayah record"),
+	create=extend_schema(
+		summary="Create a new Ayah record",
+		request={'application/json': AyahAddSerializer}
+	),
+	update=extend_schema(
+		summary="Update an existing Ayah record",
+		request={'application/json': AyahSerializer}
+	),
+	partial_update=extend_schema(
+		summary="Partially update an Ayah record",
+		request={'application/json': AyahSerializer}
+	),
 	destroy=extend_schema(summary="Delete an Ayah record")
 )
 class AyahViewSet(viewsets.ModelViewSet):

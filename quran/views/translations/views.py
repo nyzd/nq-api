@@ -49,9 +49,18 @@ import json
 		summary="Retrieve a specific Translation by UUID",
 		tags=["general", "translations"],
 	),
-	create=extend_schema(summary="Create a new Translation record"),
-	update=extend_schema(summary="Update an existing Translation record"),
-	partial_update=extend_schema(summary="Partially update a Translation record"),
+	create=extend_schema(
+		summary="Create a new Translation record",
+		request={'application/json': TranslationSerializer}
+	),
+	update=extend_schema(
+		summary="Update an existing Translation record",
+		request={'application/json': TranslationSerializer}
+	),
+	partial_update=extend_schema(
+		summary="Partially update a Translation record",
+		request={'application/json': TranslationSerializer}
+	),
 	destroy=extend_schema(summary="Delete a Translation record")
 )
 class TranslationViewSet(viewsets.ModelViewSet):

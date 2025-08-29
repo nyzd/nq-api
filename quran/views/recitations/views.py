@@ -33,9 +33,18 @@ from quran.serializers import RecitationSerializer
 		]
 	),
 	retrieve=extend_schema(summary="Retrieve a specific Recitation by UUID"),
-	create=extend_schema(summary="Create a new Recitation record"),
-	update=extend_schema(summary="Update an existing Recitation record"),
-	partial_update=extend_schema(summary="Partially update a Recitation record"),
+	create=extend_schema(
+		summary="Create a new Recitation record",
+		request={'application/json': RecitationSerializer}
+	),
+	update=extend_schema(
+		summary="Update an existing Recitation record",
+		request={'application/json': RecitationSerializer}
+	),
+	partial_update=extend_schema(
+		summary="Partially update a Recitation record",
+		request={'application/json': RecitationSerializer}
+	),
 	destroy=extend_schema(summary="Delete a Recitation record")
 )
 class RecitationViewSet(viewsets.ModelViewSet):

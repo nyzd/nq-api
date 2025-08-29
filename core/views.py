@@ -37,9 +37,18 @@ from rest_framework import serializers
 @extend_schema_view(
     list=extend_schema(summary="List all error logs"),
     retrieve=extend_schema(summary="Retrieve a specific error log by ID"),
-    create=extend_schema(summary="Create a new error log entry"),
-    update=extend_schema(summary="Update an existing error log entry"),
-    partial_update=extend_schema(summary="Partially update an error log entry"),
+    create=extend_schema(
+        summary="Create a new error log entry",
+        request={'application/json': ErrorLogSerializer}
+    ),
+    update=extend_schema(
+        summary="Update an existing error log entry",
+        request={'application/json': ErrorLogSerializer}
+    ),
+    partial_update=extend_schema(
+        summary="Partially update an error log entry",
+        request={'application/json': ErrorLogSerializer}
+    ),
     destroy=extend_schema(summary="Delete an error log entry")
 )
 class ErrorLogViewSet(viewsets.ModelViewSet):
@@ -51,9 +60,18 @@ class ErrorLogViewSet(viewsets.ModelViewSet):
 @extend_schema_view(
     list=extend_schema(summary="List all phrases"),
     retrieve=extend_schema(summary="Retrieve a specific phrase by UUID"),
-    create=extend_schema(summary="Create a new phrase"),
-    update=extend_schema(summary="Update an existing phrase"),
-    partial_update=extend_schema(summary="Partially update a phrase"),
+    create=extend_schema(
+        summary="Create a new phrase",
+        request={'application/json': PhraseSerializer}
+    ),
+    update=extend_schema(
+        summary="Update an existing phrase",
+        request={'application/json': PhraseSerializer}
+    ),
+    partial_update=extend_schema(
+        summary="Partially update a phrase",
+        request={'application/json': PhraseSerializer}
+    ),
     destroy=extend_schema(summary="Delete a phrase")
 )
 class PhraseViewSet(viewsets.ModelViewSet):
@@ -133,9 +151,18 @@ class Storage(S3Boto3Storage):
 @extend_schema_view(
     list=extend_schema(summary="List all notifications"),
     retrieve=extend_schema(summary="Retrieve a specific notification by UUID"),
-    create=extend_schema(summary="Create a new notification"),
-    update=extend_schema(summary="Update an existing notification"),
-    partial_update=extend_schema(summary="Partially update a notification"),
+    create=extend_schema(
+        summary="Create a new notification",
+        request={'application/json': NotificationSerializer}
+    ),
+    update=extend_schema(
+        summary="Update an existing notification",
+        request={'application/json': NotificationSerializer}
+    ),
+    partial_update=extend_schema(
+        summary="Partially update a notification",
+        request={'application/json': NotificationSerializer}
+    ),
     destroy=extend_schema(summary="Delete a notification")
 )
 class NotificationViewSet(viewsets.ModelViewSet):

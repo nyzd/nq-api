@@ -24,9 +24,18 @@ from quran.serializers import SurahSerializer, SurahDetailSerializer
 		tags=["general", "surahs"],
 	),
 	retrieve=extend_schema(summary="Retrieve a specific Surah by UUID", tags=["general", "surahs"]),
-	create=extend_schema(summary="Create a new Surah record"),
-	update=extend_schema(summary="Update an existing Surah record"),
-	partial_update=extend_schema(summary="Partially update a Surah record"),
+	create=extend_schema(
+		summary="Create a new Surah record",
+		request={'application/json': SurahSerializer}
+	),
+	update=extend_schema(
+		summary="Update an existing Surah record",
+		request={'application/json': SurahSerializer}
+	),
+	partial_update=extend_schema(
+		summary="Partially update a Surah record",
+		request={'application/json': SurahSerializer}
+	),
 	destroy=extend_schema(summary="Delete a Surah record")
 )
 class SurahViewSet(viewsets.ModelViewSet):

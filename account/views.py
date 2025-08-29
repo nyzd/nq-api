@@ -80,7 +80,7 @@ class AuthViewSet(viewsets.GenericViewSet):
         return CustomUser.objects.all()  # Required for DRF to show in the API root
 
     @extend_schema(
-        request=UserSerializer,
+        request={'application/json': UserSerializer},
         summary="Register a new user account",
         description="Create a new user account with username, password, email, and optional personal information. Returns user data and authentication token upon successful registration.",
         responses={
@@ -183,7 +183,7 @@ class RegisterView(APIView):
     permission_classes = [AllowAny]
     
     @extend_schema(
-        request=UserSerializer,
+        request={'application/json': UserSerializer},
         summary="Register a new user account",
         description="Create a new user account with username, password, email, and optional personal information. Returns user data and authentication token upon successful registration.",
         responses={
@@ -237,9 +237,18 @@ class RegisterView(APIView):
 @extend_schema_view(
     list=extend_schema(summary="List all users"),
     retrieve=extend_schema(summary="Retrieve a specific user by UUID"),
-    create=extend_schema(summary="Create a new user"),
-    update=extend_schema(summary="Update an existing user"),
-    partial_update=extend_schema(summary="Partially update a user"),
+    create=extend_schema(
+        summary="Create a new user",
+        request={'application/json': UserSerializer}
+    ),
+    update=extend_schema(
+        summary="Update an existing user",
+        request={'application/json': UserSerializer}
+    ),
+    partial_update=extend_schema(
+        summary="Partially update a user",
+        request={'application/json': UserSerializer}
+    ),
     destroy=extend_schema(summary="Delete a user")
 )
 class UserViewSet(viewsets.ModelViewSet):
@@ -252,9 +261,18 @@ class UserViewSet(viewsets.ModelViewSet):
 @extend_schema_view(
     list=extend_schema(summary="List all groups"),
     retrieve=extend_schema(summary="Retrieve a specific group by ID"),
-    create=extend_schema(summary="Create a new group"),
-    update=extend_schema(summary="Update an existing group"),
-    partial_update=extend_schema(summary="Partially update a group"),
+    create=extend_schema(
+        summary="Create a new group",
+        request={'application/json': GroupSerializer}
+    ),
+    update=extend_schema(
+        summary="Update an existing group", 
+        request={'application/json': GroupSerializer}
+    ),
+    partial_update=extend_schema(
+        summary="Partially update a group",
+        request={'application/json': GroupSerializer}
+    ),
     destroy=extend_schema(summary="Delete a group")
 )
 class GroupViewSet(viewsets.ModelViewSet):

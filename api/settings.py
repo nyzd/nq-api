@@ -168,6 +168,10 @@ REST_FRAMEWORK = {
     ],
     # YOUR SETTINGS
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    # Limit default parsers to JSON only - multipart will be added per-action as needed
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ],
 }
 
 SPECTACULAR_SETTINGS = {

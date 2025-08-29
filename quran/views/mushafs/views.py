@@ -16,9 +16,18 @@ import json
 @extend_schema_view(
 	list=extend_schema(summary="List all Mushafs (Quranic manuscripts/editions)", tags=["general", "mushafs"]),
 	retrieve=extend_schema(summary="Retrieve a specific Mushaf by UUID", tags=["general", "mushafs"]),
-	create=extend_schema(summary="Create a new Mushaf record"),
-	update=extend_schema(summary="Update an existing Mushaf record"),
-	partial_update=extend_schema(summary="Partially update a Mushaf record"),
+	create=extend_schema(
+		summary="Create a new Mushaf record",
+		request={'application/json': MushafSerializer}
+	),
+	update=extend_schema(
+		summary="Update an existing Mushaf record", 
+		request={'application/json': MushafSerializer}
+	),
+	partial_update=extend_schema(
+		summary="Partially update a Mushaf record",
+		request={'application/json': MushafSerializer}
+	),
 	destroy=extend_schema(summary="Delete a Mushaf record")
 )
 class MushafViewSet(viewsets.ModelViewSet):

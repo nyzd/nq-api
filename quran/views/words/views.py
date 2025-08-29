@@ -35,8 +35,14 @@ from quran.serializers import WordSerializer
 			)
 		]
 	),
-	update=extend_schema(summary="Update an existing Word record"),
-	partial_update=extend_schema(summary="Partially update a Word record"),
+	update=extend_schema(
+		summary="Update an existing Word record",
+		request={'application/json': WordSerializer}
+	),
+	partial_update=extend_schema(
+		summary="Partially update a Word record",
+		request={'application/json': WordSerializer}
+	),
 	destroy=extend_schema(summary="Delete a Word record")
 )
 class WordViewSet(viewsets.ModelViewSet):

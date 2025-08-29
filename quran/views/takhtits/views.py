@@ -45,8 +45,14 @@ from quran.serializers import (
 			}
 		}
 	),
-	update=extend_schema(summary="Update an existing Takhtit record"),
-	partial_update=extend_schema(summary="Partially update a Takhtit record"),
+	update=extend_schema(
+		summary="Update an existing Takhtit record",
+		request={'application/json': TakhtitSerializer}
+	),
+	partial_update=extend_schema(
+		summary="Partially update a Takhtit record",
+		request={'application/json': TakhtitSerializer}
+	),
 	destroy=extend_schema(summary="Delete a Takhtit record")
 )
 class TakhtitViewSet(viewsets.ModelViewSet):

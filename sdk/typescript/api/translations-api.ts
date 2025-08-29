@@ -716,132 +716,262 @@ export const TranslationsApiFactory = function (configuration?: Configuration, b
         /**
          * Provide the ayah\'s UUID in the URL path and the translation\'s UUID as the primary resource path. Body requires only `text` (and optional `bismillah`). If an AyahTranslation already exists it will be updated, otherwise it will be created.
          * @summary Create or update (upsert) a specific AyahTranslation
-         * @param {string} ayahUuid 
-         * @param {string} uuid 
-         * @param {TranslationsAyahsUpdateRequest} [translationsAyahsUpdateRequest] 
+         * @param {TranslationsApiTranslationsAyahsCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        translationsAyahsCreate(ayahUuid: string, uuid: string, translationsAyahsUpdateRequest?: TranslationsAyahsUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<AyahTranslation> {
-            return localVarFp.translationsAyahsCreate(ayahUuid, uuid, translationsAyahsUpdateRequest, options).then((request) => request(axios, basePath));
+        translationsAyahsCreate(requestParameters: TranslationsApiTranslationsAyahsCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<AyahTranslation> {
+            return localVarFp.translationsAyahsCreate(requestParameters.ayahUuid, requestParameters.uuid, requestParameters.translationsAyahsUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Returns a paginated list of all AyahTranslation objects for the given Translation UUID. Optionally filter by surah_uuid (query param).
          * @summary List all AyahTranslations for this Translation
-         * @param {string} uuid 
-         * @param {number} [limit] Number of results to return per page.
-         * @param {number} [offset] The initial index from which to return the results.
-         * @param {TranslationsAyahsListOrderingEnum} [ordering] Which field to use when ordering the results.
-         * @param {string} [search] A search term.
-         * @param {string} [surahUuid] UUID of the Surah to filter AyahTranslations by.
+         * @param {TranslationsApiTranslationsAyahsListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        translationsAyahsList(uuid: string, limit?: number, offset?: number, ordering?: TranslationsAyahsListOrderingEnum, search?: string, surahUuid?: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<AyahTranslation>> {
-            return localVarFp.translationsAyahsList(uuid, limit, offset, ordering, search, surahUuid, options).then((request) => request(axios, basePath));
+        translationsAyahsList(requestParameters: TranslationsApiTranslationsAyahsListRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<AyahTranslation>> {
+            return localVarFp.translationsAyahsList(requestParameters.uuid, requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, requestParameters.surahUuid, options).then((request) => request(axios, basePath));
         },
         /**
          * Returns a single AyahTranslation object for the given Translation UUID and Ayah UUID. URL: /translations/{translation_uuid}/ayahs/{ayah_uuid}/
          * @summary Retrieve a single AyahTranslation for this Translation
-         * @param {string} ayahUuid 
-         * @param {string} uuid 
+         * @param {TranslationsApiTranslationsAyahsRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        translationsAyahsRetrieve(ayahUuid: string, uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<AyahTranslation> {
-            return localVarFp.translationsAyahsRetrieve(ayahUuid, uuid, options).then((request) => request(axios, basePath));
+        translationsAyahsRetrieve(requestParameters: TranslationsApiTranslationsAyahsRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<AyahTranslation> {
+            return localVarFp.translationsAyahsRetrieve(requestParameters.ayahUuid, requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * Provide the ayah\'s UUID in the URL path and the translation\'s UUID as the primary resource path. Body requires only `text` (and optional `bismillah`). If an AyahTranslation already exists it will be updated, otherwise it will be created.
          * @summary Create or update (upsert) a specific AyahTranslation
-         * @param {string} ayahUuid 
-         * @param {string} uuid 
-         * @param {TranslationsAyahsUpdateRequest} [translationsAyahsUpdateRequest] 
+         * @param {TranslationsApiTranslationsAyahsUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        translationsAyahsUpdate(ayahUuid: string, uuid: string, translationsAyahsUpdateRequest?: TranslationsAyahsUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<AyahTranslation> {
-            return localVarFp.translationsAyahsUpdate(ayahUuid, uuid, translationsAyahsUpdateRequest, options).then((request) => request(axios, basePath));
+        translationsAyahsUpdate(requestParameters: TranslationsApiTranslationsAyahsUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<AyahTranslation> {
+            return localVarFp.translationsAyahsUpdate(requestParameters.ayahUuid, requestParameters.uuid, requestParameters.translationsAyahsUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Create a new Translation record
-         * @param {TranslationList} translationList 
+         * @param {TranslationsApiTranslationsCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        translationsCreate(translationList: TranslationList, options?: RawAxiosRequestConfig): AxiosPromise<TranslationList> {
-            return localVarFp.translationsCreate(translationList, options).then((request) => request(axios, basePath));
+        translationsCreate(requestParameters: TranslationsApiTranslationsCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<TranslationList> {
+            return localVarFp.translationsCreate(requestParameters.translationList, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Delete a Translation record
-         * @param {string} uuid 
+         * @param {TranslationsApiTranslationsDestroyRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        translationsDestroy(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.translationsDestroy(uuid, options).then((request) => request(axios, basePath));
+        translationsDestroy(requestParameters: TranslationsApiTranslationsDestroyRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.translationsDestroy(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Import a Translation from a JSON file upload
-         * @param {File} file JSON file containing the Translation data
+         * @param {TranslationsApiTranslationsImportCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        translationsImportCreate(file: File, options?: RawAxiosRequestConfig): AxiosPromise<TranslationList> {
-            return localVarFp.translationsImportCreate(file, options).then((request) => request(axios, basePath));
+        translationsImportCreate(requestParameters: TranslationsApiTranslationsImportCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<TranslationList> {
+            return localVarFp.translationsImportCreate(requestParameters.file, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary List all Quran Translations
-         * @param {TranslationsListMushafEnum} mushaf Short name of the Mushaf to filter Translations by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
-         * @param {TranslationsListLanguageEnum} [language] Language code to filter Translations by.
-         * @param {number} [limit] Number of results to return per page.
-         * @param {number} [offset] The initial index from which to return the results.
-         * @param {TranslationsListOrderingEnum} [ordering] Which field to use when ordering the results.
-         * @param {string} [search] A search term.
+         * @param {TranslationsApiTranslationsListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        translationsList(mushaf: TranslationsListMushafEnum, language?: TranslationsListLanguageEnum, limit?: number, offset?: number, ordering?: TranslationsListOrderingEnum, search?: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<TranslationList>> {
-            return localVarFp.translationsList(mushaf, language, limit, offset, ordering, search, options).then((request) => request(axios, basePath));
+        translationsList(requestParameters: TranslationsApiTranslationsListRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<TranslationList>> {
+            return localVarFp.translationsList(requestParameters.mushaf, requestParameters.language, requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Partially update a Translation record
-         * @param {string} uuid 
-         * @param {PatchedTranslationList} [patchedTranslationList] 
+         * @param {TranslationsApiTranslationsPartialUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        translationsPartialUpdate(uuid: string, patchedTranslationList?: PatchedTranslationList, options?: RawAxiosRequestConfig): AxiosPromise<TranslationList> {
-            return localVarFp.translationsPartialUpdate(uuid, patchedTranslationList, options).then((request) => request(axios, basePath));
+        translationsPartialUpdate(requestParameters: TranslationsApiTranslationsPartialUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<TranslationList> {
+            return localVarFp.translationsPartialUpdate(requestParameters.uuid, requestParameters.patchedTranslationList, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific Translation by UUID
-         * @param {string} uuid 
+         * @param {TranslationsApiTranslationsRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        translationsRetrieve(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<Translation> {
-            return localVarFp.translationsRetrieve(uuid, options).then((request) => request(axios, basePath));
+        translationsRetrieve(requestParameters: TranslationsApiTranslationsRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<Translation> {
+            return localVarFp.translationsRetrieve(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Update an existing Translation record
-         * @param {string} uuid 
-         * @param {TranslationList} translationList 
+         * @param {TranslationsApiTranslationsUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        translationsUpdate(uuid: string, translationList: TranslationList, options?: RawAxiosRequestConfig): AxiosPromise<TranslationList> {
-            return localVarFp.translationsUpdate(uuid, translationList, options).then((request) => request(axios, basePath));
+        translationsUpdate(requestParameters: TranslationsApiTranslationsUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<TranslationList> {
+            return localVarFp.translationsUpdate(requestParameters.uuid, requestParameters.translationList, options).then((request) => request(axios, basePath));
         },
     };
 };
+
+/**
+ * Request parameters for translationsAyahsCreate operation in TranslationsApi.
+ */
+export interface TranslationsApiTranslationsAyahsCreateRequest {
+    readonly ayahUuid: string
+
+    readonly uuid: string
+
+    readonly translationsAyahsUpdateRequest?: TranslationsAyahsUpdateRequest
+}
+
+/**
+ * Request parameters for translationsAyahsList operation in TranslationsApi.
+ */
+export interface TranslationsApiTranslationsAyahsListRequest {
+    readonly uuid: string
+
+    /**
+     * Number of results to return per page.
+     */
+    readonly limit?: number
+
+    /**
+     * The initial index from which to return the results.
+     */
+    readonly offset?: number
+
+    /**
+     * Which field to use when ordering the results.
+     */
+    readonly ordering?: TranslationsAyahsListOrderingEnum
+
+    /**
+     * A search term.
+     */
+    readonly search?: string
+
+    /**
+     * UUID of the Surah to filter AyahTranslations by.
+     */
+    readonly surahUuid?: string
+}
+
+/**
+ * Request parameters for translationsAyahsRetrieve operation in TranslationsApi.
+ */
+export interface TranslationsApiTranslationsAyahsRetrieveRequest {
+    readonly ayahUuid: string
+
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for translationsAyahsUpdate operation in TranslationsApi.
+ */
+export interface TranslationsApiTranslationsAyahsUpdateRequest {
+    readonly ayahUuid: string
+
+    readonly uuid: string
+
+    readonly translationsAyahsUpdateRequest?: TranslationsAyahsUpdateRequest
+}
+
+/**
+ * Request parameters for translationsCreate operation in TranslationsApi.
+ */
+export interface TranslationsApiTranslationsCreateRequest {
+    readonly translationList: TranslationList
+}
+
+/**
+ * Request parameters for translationsDestroy operation in TranslationsApi.
+ */
+export interface TranslationsApiTranslationsDestroyRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for translationsImportCreate operation in TranslationsApi.
+ */
+export interface TranslationsApiTranslationsImportCreateRequest {
+    /**
+     * JSON file containing the Translation data
+     */
+    readonly file: File
+}
+
+/**
+ * Request parameters for translationsList operation in TranslationsApi.
+ */
+export interface TranslationsApiTranslationsListRequest {
+    /**
+     * Short name of the Mushaf to filter Translations by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
+     */
+    readonly mushaf: TranslationsListMushafEnum
+
+    /**
+     * Language code to filter Translations by.
+     */
+    readonly language?: TranslationsListLanguageEnum
+
+    /**
+     * Number of results to return per page.
+     */
+    readonly limit?: number
+
+    /**
+     * The initial index from which to return the results.
+     */
+    readonly offset?: number
+
+    /**
+     * Which field to use when ordering the results.
+     */
+    readonly ordering?: TranslationsListOrderingEnum
+
+    /**
+     * A search term.
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for translationsPartialUpdate operation in TranslationsApi.
+ */
+export interface TranslationsApiTranslationsPartialUpdateRequest {
+    readonly uuid: string
+
+    readonly patchedTranslationList?: PatchedTranslationList
+}
+
+/**
+ * Request parameters for translationsRetrieve operation in TranslationsApi.
+ */
+export interface TranslationsApiTranslationsRetrieveRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for translationsUpdate operation in TranslationsApi.
+ */
+export interface TranslationsApiTranslationsUpdateRequest {
+    readonly uuid: string
+
+    readonly translationList: TranslationList
+}
 
 /**
  * TranslationsApi - object-oriented interface
@@ -850,139 +980,122 @@ export class TranslationsApi extends BaseAPI {
     /**
      * Provide the ayah\'s UUID in the URL path and the translation\'s UUID as the primary resource path. Body requires only `text` (and optional `bismillah`). If an AyahTranslation already exists it will be updated, otherwise it will be created.
      * @summary Create or update (upsert) a specific AyahTranslation
-     * @param {string} ayahUuid 
-     * @param {string} uuid 
-     * @param {TranslationsAyahsUpdateRequest} [translationsAyahsUpdateRequest] 
+     * @param {TranslationsApiTranslationsAyahsCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public translationsAyahsCreate(ayahUuid: string, uuid: string, translationsAyahsUpdateRequest?: TranslationsAyahsUpdateRequest, options?: RawAxiosRequestConfig) {
-        return TranslationsApiFp(this.configuration).translationsAyahsCreate(ayahUuid, uuid, translationsAyahsUpdateRequest, options).then((request) => request(this.axios, this.basePath));
+    public translationsAyahsCreate(requestParameters: TranslationsApiTranslationsAyahsCreateRequest, options?: RawAxiosRequestConfig) {
+        return TranslationsApiFp(this.configuration).translationsAyahsCreate(requestParameters.ayahUuid, requestParameters.uuid, requestParameters.translationsAyahsUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Returns a paginated list of all AyahTranslation objects for the given Translation UUID. Optionally filter by surah_uuid (query param).
      * @summary List all AyahTranslations for this Translation
-     * @param {string} uuid 
-     * @param {number} [limit] Number of results to return per page.
-     * @param {number} [offset] The initial index from which to return the results.
-     * @param {TranslationsAyahsListOrderingEnum} [ordering] Which field to use when ordering the results.
-     * @param {string} [search] A search term.
-     * @param {string} [surahUuid] UUID of the Surah to filter AyahTranslations by.
+     * @param {TranslationsApiTranslationsAyahsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public translationsAyahsList(uuid: string, limit?: number, offset?: number, ordering?: TranslationsAyahsListOrderingEnum, search?: string, surahUuid?: string, options?: RawAxiosRequestConfig) {
-        return TranslationsApiFp(this.configuration).translationsAyahsList(uuid, limit, offset, ordering, search, surahUuid, options).then((request) => request(this.axios, this.basePath));
+    public translationsAyahsList(requestParameters: TranslationsApiTranslationsAyahsListRequest, options?: RawAxiosRequestConfig) {
+        return TranslationsApiFp(this.configuration).translationsAyahsList(requestParameters.uuid, requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, requestParameters.surahUuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Returns a single AyahTranslation object for the given Translation UUID and Ayah UUID. URL: /translations/{translation_uuid}/ayahs/{ayah_uuid}/
      * @summary Retrieve a single AyahTranslation for this Translation
-     * @param {string} ayahUuid 
-     * @param {string} uuid 
+     * @param {TranslationsApiTranslationsAyahsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public translationsAyahsRetrieve(ayahUuid: string, uuid: string, options?: RawAxiosRequestConfig) {
-        return TranslationsApiFp(this.configuration).translationsAyahsRetrieve(ayahUuid, uuid, options).then((request) => request(this.axios, this.basePath));
+    public translationsAyahsRetrieve(requestParameters: TranslationsApiTranslationsAyahsRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return TranslationsApiFp(this.configuration).translationsAyahsRetrieve(requestParameters.ayahUuid, requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Provide the ayah\'s UUID in the URL path and the translation\'s UUID as the primary resource path. Body requires only `text` (and optional `bismillah`). If an AyahTranslation already exists it will be updated, otherwise it will be created.
      * @summary Create or update (upsert) a specific AyahTranslation
-     * @param {string} ayahUuid 
-     * @param {string} uuid 
-     * @param {TranslationsAyahsUpdateRequest} [translationsAyahsUpdateRequest] 
+     * @param {TranslationsApiTranslationsAyahsUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public translationsAyahsUpdate(ayahUuid: string, uuid: string, translationsAyahsUpdateRequest?: TranslationsAyahsUpdateRequest, options?: RawAxiosRequestConfig) {
-        return TranslationsApiFp(this.configuration).translationsAyahsUpdate(ayahUuid, uuid, translationsAyahsUpdateRequest, options).then((request) => request(this.axios, this.basePath));
+    public translationsAyahsUpdate(requestParameters: TranslationsApiTranslationsAyahsUpdateRequest, options?: RawAxiosRequestConfig) {
+        return TranslationsApiFp(this.configuration).translationsAyahsUpdate(requestParameters.ayahUuid, requestParameters.uuid, requestParameters.translationsAyahsUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Create a new Translation record
-     * @param {TranslationList} translationList 
+     * @param {TranslationsApiTranslationsCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public translationsCreate(translationList: TranslationList, options?: RawAxiosRequestConfig) {
-        return TranslationsApiFp(this.configuration).translationsCreate(translationList, options).then((request) => request(this.axios, this.basePath));
+    public translationsCreate(requestParameters: TranslationsApiTranslationsCreateRequest, options?: RawAxiosRequestConfig) {
+        return TranslationsApiFp(this.configuration).translationsCreate(requestParameters.translationList, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Delete a Translation record
-     * @param {string} uuid 
+     * @param {TranslationsApiTranslationsDestroyRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public translationsDestroy(uuid: string, options?: RawAxiosRequestConfig) {
-        return TranslationsApiFp(this.configuration).translationsDestroy(uuid, options).then((request) => request(this.axios, this.basePath));
+    public translationsDestroy(requestParameters: TranslationsApiTranslationsDestroyRequest, options?: RawAxiosRequestConfig) {
+        return TranslationsApiFp(this.configuration).translationsDestroy(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Import a Translation from a JSON file upload
-     * @param {File} file JSON file containing the Translation data
+     * @param {TranslationsApiTranslationsImportCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public translationsImportCreate(file: File, options?: RawAxiosRequestConfig) {
-        return TranslationsApiFp(this.configuration).translationsImportCreate(file, options).then((request) => request(this.axios, this.basePath));
+    public translationsImportCreate(requestParameters: TranslationsApiTranslationsImportCreateRequest, options?: RawAxiosRequestConfig) {
+        return TranslationsApiFp(this.configuration).translationsImportCreate(requestParameters.file, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary List all Quran Translations
-     * @param {TranslationsListMushafEnum} mushaf Short name of the Mushaf to filter Translations by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
-     * @param {TranslationsListLanguageEnum} [language] Language code to filter Translations by.
-     * @param {number} [limit] Number of results to return per page.
-     * @param {number} [offset] The initial index from which to return the results.
-     * @param {TranslationsListOrderingEnum} [ordering] Which field to use when ordering the results.
-     * @param {string} [search] A search term.
+     * @param {TranslationsApiTranslationsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public translationsList(mushaf: TranslationsListMushafEnum, language?: TranslationsListLanguageEnum, limit?: number, offset?: number, ordering?: TranslationsListOrderingEnum, search?: string, options?: RawAxiosRequestConfig) {
-        return TranslationsApiFp(this.configuration).translationsList(mushaf, language, limit, offset, ordering, search, options).then((request) => request(this.axios, this.basePath));
+    public translationsList(requestParameters: TranslationsApiTranslationsListRequest, options?: RawAxiosRequestConfig) {
+        return TranslationsApiFp(this.configuration).translationsList(requestParameters.mushaf, requestParameters.language, requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Partially update a Translation record
-     * @param {string} uuid 
-     * @param {PatchedTranslationList} [patchedTranslationList] 
+     * @param {TranslationsApiTranslationsPartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public translationsPartialUpdate(uuid: string, patchedTranslationList?: PatchedTranslationList, options?: RawAxiosRequestConfig) {
-        return TranslationsApiFp(this.configuration).translationsPartialUpdate(uuid, patchedTranslationList, options).then((request) => request(this.axios, this.basePath));
+    public translationsPartialUpdate(requestParameters: TranslationsApiTranslationsPartialUpdateRequest, options?: RawAxiosRequestConfig) {
+        return TranslationsApiFp(this.configuration).translationsPartialUpdate(requestParameters.uuid, requestParameters.patchedTranslationList, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific Translation by UUID
-     * @param {string} uuid 
+     * @param {TranslationsApiTranslationsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public translationsRetrieve(uuid: string, options?: RawAxiosRequestConfig) {
-        return TranslationsApiFp(this.configuration).translationsRetrieve(uuid, options).then((request) => request(this.axios, this.basePath));
+    public translationsRetrieve(requestParameters: TranslationsApiTranslationsRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return TranslationsApiFp(this.configuration).translationsRetrieve(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Update an existing Translation record
-     * @param {string} uuid 
-     * @param {TranslationList} translationList 
+     * @param {TranslationsApiTranslationsUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public translationsUpdate(uuid: string, translationList: TranslationList, options?: RawAxiosRequestConfig) {
-        return TranslationsApiFp(this.configuration).translationsUpdate(uuid, translationList, options).then((request) => request(this.axios, this.basePath));
+    public translationsUpdate(requestParameters: TranslationsApiTranslationsUpdateRequest, options?: RawAxiosRequestConfig) {
+        return TranslationsApiFp(this.configuration).translationsUpdate(requestParameters.uuid, requestParameters.translationList, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

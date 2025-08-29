@@ -527,86 +527,82 @@ export const NotificationsApiFactory = function (configuration?: Configuration, 
         /**
          * 
          * @summary Create a new notification
-         * @param {Notification} notification 
+         * @param {NotificationsApiNotificationsCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        notificationsCreate(notification: Notification, options?: RawAxiosRequestConfig): AxiosPromise<Notification> {
-            return localVarFp.notificationsCreate(notification, options).then((request) => request(axios, basePath));
+        notificationsCreate(requestParameters: NotificationsApiNotificationsCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Notification> {
+            return localVarFp.notificationsCreate(requestParameters.notification, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Delete a notification
-         * @param {number} id A unique integer value identifying this notification.
+         * @param {NotificationsApiNotificationsDestroyRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        notificationsDestroy(id: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.notificationsDestroy(id, options).then((request) => request(axios, basePath));
+        notificationsDestroy(requestParameters: NotificationsApiNotificationsDestroyRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.notificationsDestroy(requestParameters.id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary List all notifications
-         * @param {number} [limit] Number of results to return per page.
-         * @param {number} [offset] The initial index from which to return the results.
+         * @param {NotificationsApiNotificationsListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        notificationsList(limit?: number, offset?: number, options?: RawAxiosRequestConfig): AxiosPromise<Array<Notification>> {
-            return localVarFp.notificationsList(limit, offset, options).then((request) => request(axios, basePath));
+        notificationsList(requestParameters: NotificationsApiNotificationsListRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<Array<Notification>> {
+            return localVarFp.notificationsList(requestParameters.limit, requestParameters.offset, options).then((request) => request(axios, basePath));
         },
         /**
          * Returns a paginated list of the current user\'s notifications. Marks notifications in the current page as \'got_notification\' if not already marked.
          * @summary Get the current user\'s notifications (paginated)
-         * @param {number} [limit] Number of results to return per page.
-         * @param {number} [offset] The initial index from which to return the results.
+         * @param {NotificationsApiNotificationsMeListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        notificationsMeList(limit?: number, offset?: number, options?: RawAxiosRequestConfig): AxiosPromise<Array<Notification>> {
-            return localVarFp.notificationsMeList(limit, offset, options).then((request) => request(axios, basePath));
+        notificationsMeList(requestParameters: NotificationsApiNotificationsMeListRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<Array<Notification>> {
+            return localVarFp.notificationsMeList(requestParameters.limit, requestParameters.offset, options).then((request) => request(axios, basePath));
         },
         /**
          * Marks a specific notification as \'opened_notification\' using its uuid (provided as a query parameter).
          * @summary Mark a notification as opened
-         * @param {string} uuid UUID of the notification to mark as opened.
+         * @param {NotificationsApiNotificationsOpenedRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        notificationsOpenedRetrieve(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<{ [key: string]: any; }> {
-            return localVarFp.notificationsOpenedRetrieve(uuid, options).then((request) => request(axios, basePath));
+        notificationsOpenedRetrieve(requestParameters: NotificationsApiNotificationsOpenedRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<{ [key: string]: any; }> {
+            return localVarFp.notificationsOpenedRetrieve(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Partially update a notification
-         * @param {number} id A unique integer value identifying this notification.
-         * @param {PatchedNotification} [patchedNotification] 
+         * @param {NotificationsApiNotificationsPartialUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        notificationsPartialUpdate(id: number, patchedNotification?: PatchedNotification, options?: RawAxiosRequestConfig): AxiosPromise<Notification> {
-            return localVarFp.notificationsPartialUpdate(id, patchedNotification, options).then((request) => request(axios, basePath));
+        notificationsPartialUpdate(requestParameters: NotificationsApiNotificationsPartialUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Notification> {
+            return localVarFp.notificationsPartialUpdate(requestParameters.id, requestParameters.patchedNotification, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific notification by UUID
-         * @param {number} id A unique integer value identifying this notification.
+         * @param {NotificationsApiNotificationsRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        notificationsRetrieve(id: number, options?: RawAxiosRequestConfig): AxiosPromise<Notification> {
-            return localVarFp.notificationsRetrieve(id, options).then((request) => request(axios, basePath));
+        notificationsRetrieve(requestParameters: NotificationsApiNotificationsRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<Notification> {
+            return localVarFp.notificationsRetrieve(requestParameters.id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Update an existing notification
-         * @param {number} id A unique integer value identifying this notification.
-         * @param {Notification} notification 
+         * @param {NotificationsApiNotificationsUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        notificationsUpdate(id: number, notification: Notification, options?: RawAxiosRequestConfig): AxiosPromise<Notification> {
-            return localVarFp.notificationsUpdate(id, notification, options).then((request) => request(axios, basePath));
+        notificationsUpdate(requestParameters: NotificationsApiNotificationsUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Notification> {
+            return localVarFp.notificationsUpdate(requestParameters.id, requestParameters.notification, options).then((request) => request(axios, basePath));
         },
         /**
          * Marks all notifications with status \'got_notification\' as \'viewed_notification\' for the current user.
@@ -621,99 +617,186 @@ export const NotificationsApiFactory = function (configuration?: Configuration, 
 };
 
 /**
+ * Request parameters for notificationsCreate operation in NotificationsApi.
+ */
+export interface NotificationsApiNotificationsCreateRequest {
+    readonly notification: Notification
+}
+
+/**
+ * Request parameters for notificationsDestroy operation in NotificationsApi.
+ */
+export interface NotificationsApiNotificationsDestroyRequest {
+    /**
+     * A unique integer value identifying this notification.
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for notificationsList operation in NotificationsApi.
+ */
+export interface NotificationsApiNotificationsListRequest {
+    /**
+     * Number of results to return per page.
+     */
+    readonly limit?: number
+
+    /**
+     * The initial index from which to return the results.
+     */
+    readonly offset?: number
+}
+
+/**
+ * Request parameters for notificationsMeList operation in NotificationsApi.
+ */
+export interface NotificationsApiNotificationsMeListRequest {
+    /**
+     * Number of results to return per page.
+     */
+    readonly limit?: number
+
+    /**
+     * The initial index from which to return the results.
+     */
+    readonly offset?: number
+}
+
+/**
+ * Request parameters for notificationsOpenedRetrieve operation in NotificationsApi.
+ */
+export interface NotificationsApiNotificationsOpenedRetrieveRequest {
+    /**
+     * UUID of the notification to mark as opened.
+     */
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for notificationsPartialUpdate operation in NotificationsApi.
+ */
+export interface NotificationsApiNotificationsPartialUpdateRequest {
+    /**
+     * A unique integer value identifying this notification.
+     */
+    readonly id: number
+
+    readonly patchedNotification?: PatchedNotification
+}
+
+/**
+ * Request parameters for notificationsRetrieve operation in NotificationsApi.
+ */
+export interface NotificationsApiNotificationsRetrieveRequest {
+    /**
+     * A unique integer value identifying this notification.
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for notificationsUpdate operation in NotificationsApi.
+ */
+export interface NotificationsApiNotificationsUpdateRequest {
+    /**
+     * A unique integer value identifying this notification.
+     */
+    readonly id: number
+
+    readonly notification: Notification
+}
+
+/**
  * NotificationsApi - object-oriented interface
  */
 export class NotificationsApi extends BaseAPI {
     /**
      * 
      * @summary Create a new notification
-     * @param {Notification} notification 
+     * @param {NotificationsApiNotificationsCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public notificationsCreate(notification: Notification, options?: RawAxiosRequestConfig) {
-        return NotificationsApiFp(this.configuration).notificationsCreate(notification, options).then((request) => request(this.axios, this.basePath));
+    public notificationsCreate(requestParameters: NotificationsApiNotificationsCreateRequest, options?: RawAxiosRequestConfig) {
+        return NotificationsApiFp(this.configuration).notificationsCreate(requestParameters.notification, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Delete a notification
-     * @param {number} id A unique integer value identifying this notification.
+     * @param {NotificationsApiNotificationsDestroyRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public notificationsDestroy(id: number, options?: RawAxiosRequestConfig) {
-        return NotificationsApiFp(this.configuration).notificationsDestroy(id, options).then((request) => request(this.axios, this.basePath));
+    public notificationsDestroy(requestParameters: NotificationsApiNotificationsDestroyRequest, options?: RawAxiosRequestConfig) {
+        return NotificationsApiFp(this.configuration).notificationsDestroy(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary List all notifications
-     * @param {number} [limit] Number of results to return per page.
-     * @param {number} [offset] The initial index from which to return the results.
+     * @param {NotificationsApiNotificationsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public notificationsList(limit?: number, offset?: number, options?: RawAxiosRequestConfig) {
-        return NotificationsApiFp(this.configuration).notificationsList(limit, offset, options).then((request) => request(this.axios, this.basePath));
+    public notificationsList(requestParameters: NotificationsApiNotificationsListRequest = {}, options?: RawAxiosRequestConfig) {
+        return NotificationsApiFp(this.configuration).notificationsList(requestParameters.limit, requestParameters.offset, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Returns a paginated list of the current user\'s notifications. Marks notifications in the current page as \'got_notification\' if not already marked.
      * @summary Get the current user\'s notifications (paginated)
-     * @param {number} [limit] Number of results to return per page.
-     * @param {number} [offset] The initial index from which to return the results.
+     * @param {NotificationsApiNotificationsMeListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public notificationsMeList(limit?: number, offset?: number, options?: RawAxiosRequestConfig) {
-        return NotificationsApiFp(this.configuration).notificationsMeList(limit, offset, options).then((request) => request(this.axios, this.basePath));
+    public notificationsMeList(requestParameters: NotificationsApiNotificationsMeListRequest = {}, options?: RawAxiosRequestConfig) {
+        return NotificationsApiFp(this.configuration).notificationsMeList(requestParameters.limit, requestParameters.offset, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Marks a specific notification as \'opened_notification\' using its uuid (provided as a query parameter).
      * @summary Mark a notification as opened
-     * @param {string} uuid UUID of the notification to mark as opened.
+     * @param {NotificationsApiNotificationsOpenedRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public notificationsOpenedRetrieve(uuid: string, options?: RawAxiosRequestConfig) {
-        return NotificationsApiFp(this.configuration).notificationsOpenedRetrieve(uuid, options).then((request) => request(this.axios, this.basePath));
+    public notificationsOpenedRetrieve(requestParameters: NotificationsApiNotificationsOpenedRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return NotificationsApiFp(this.configuration).notificationsOpenedRetrieve(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Partially update a notification
-     * @param {number} id A unique integer value identifying this notification.
-     * @param {PatchedNotification} [patchedNotification] 
+     * @param {NotificationsApiNotificationsPartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public notificationsPartialUpdate(id: number, patchedNotification?: PatchedNotification, options?: RawAxiosRequestConfig) {
-        return NotificationsApiFp(this.configuration).notificationsPartialUpdate(id, patchedNotification, options).then((request) => request(this.axios, this.basePath));
+    public notificationsPartialUpdate(requestParameters: NotificationsApiNotificationsPartialUpdateRequest, options?: RawAxiosRequestConfig) {
+        return NotificationsApiFp(this.configuration).notificationsPartialUpdate(requestParameters.id, requestParameters.patchedNotification, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific notification by UUID
-     * @param {number} id A unique integer value identifying this notification.
+     * @param {NotificationsApiNotificationsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public notificationsRetrieve(id: number, options?: RawAxiosRequestConfig) {
-        return NotificationsApiFp(this.configuration).notificationsRetrieve(id, options).then((request) => request(this.axios, this.basePath));
+    public notificationsRetrieve(requestParameters: NotificationsApiNotificationsRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return NotificationsApiFp(this.configuration).notificationsRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Update an existing notification
-     * @param {number} id A unique integer value identifying this notification.
-     * @param {Notification} notification 
+     * @param {NotificationsApiNotificationsUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public notificationsUpdate(id: number, notification: Notification, options?: RawAxiosRequestConfig) {
-        return NotificationsApiFp(this.configuration).notificationsUpdate(id, notification, options).then((request) => request(this.axios, this.basePath));
+    public notificationsUpdate(requestParameters: NotificationsApiNotificationsUpdateRequest, options?: RawAxiosRequestConfig) {
+        return NotificationsApiFp(this.configuration).notificationsUpdate(requestParameters.id, requestParameters.notification, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

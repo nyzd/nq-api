@@ -253,12 +253,12 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
         /**
          * Authenticate user credentials and return an authentication token for API access
          * @summary Login with username and password to obtain a Knox token
-         * @param {Login} login 
+         * @param {AuthApiAuthLoginCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authLoginCreate(login: Login, options?: RawAxiosRequestConfig): AxiosPromise<LoginResponse> {
-            return localVarFp.authLoginCreate(login, options).then((request) => request(axios, basePath));
+        authLoginCreate(requestParameters: AuthApiAuthLoginCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<LoginResponse> {
+            return localVarFp.authLoginCreate(requestParameters.login, options).then((request) => request(axios, basePath));
         },
         /**
          * Invalidate the current user\'s authentication token. The user will need to login again to access protected endpoints.
@@ -281,15 +281,29 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
         /**
          * Create a new user account with username, password, email, and optional personal information. Returns user data and authentication token upon successful registration.
          * @summary Register a new user account
-         * @param {User} user 
+         * @param {AuthApiAuthRegisterCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authRegisterCreate(user: User, options?: RawAxiosRequestConfig): AxiosPromise<RegisterResponse> {
-            return localVarFp.authRegisterCreate(user, options).then((request) => request(axios, basePath));
+        authRegisterCreate(requestParameters: AuthApiAuthRegisterCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<RegisterResponse> {
+            return localVarFp.authRegisterCreate(requestParameters.user, options).then((request) => request(axios, basePath));
         },
     };
 };
+
+/**
+ * Request parameters for authLoginCreate operation in AuthApi.
+ */
+export interface AuthApiAuthLoginCreateRequest {
+    readonly login: Login
+}
+
+/**
+ * Request parameters for authRegisterCreate operation in AuthApi.
+ */
+export interface AuthApiAuthRegisterCreateRequest {
+    readonly user: User
+}
 
 /**
  * AuthApi - object-oriented interface
@@ -298,12 +312,12 @@ export class AuthApi extends BaseAPI {
     /**
      * Authenticate user credentials and return an authentication token for API access
      * @summary Login with username and password to obtain a Knox token
-     * @param {Login} login 
+     * @param {AuthApiAuthLoginCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public authLoginCreate(login: Login, options?: RawAxiosRequestConfig) {
-        return AuthApiFp(this.configuration).authLoginCreate(login, options).then((request) => request(this.axios, this.basePath));
+    public authLoginCreate(requestParameters: AuthApiAuthLoginCreateRequest, options?: RawAxiosRequestConfig) {
+        return AuthApiFp(this.configuration).authLoginCreate(requestParameters.login, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -329,12 +343,12 @@ export class AuthApi extends BaseAPI {
     /**
      * Create a new user account with username, password, email, and optional personal information. Returns user data and authentication token upon successful registration.
      * @summary Register a new user account
-     * @param {User} user 
+     * @param {AuthApiAuthRegisterCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public authRegisterCreate(user: User, options?: RawAxiosRequestConfig) {
-        return AuthApiFp(this.configuration).authRegisterCreate(user, options).then((request) => request(this.axios, this.basePath));
+    public authRegisterCreate(requestParameters: AuthApiAuthRegisterCreateRequest, options?: RawAxiosRequestConfig) {
+        return AuthApiFp(this.configuration).authRegisterCreate(requestParameters.user, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

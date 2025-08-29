@@ -396,72 +396,139 @@ export const WordsApiFactory = function (configuration?: Configuration, basePath
         /**
          * 
          * @summary Create a new Word record
-         * @param {Word} word 
-         * @param {string} [ayahUuid] UUID of the Ayah to associate the new Word with (if ayah_id is not provided in the body).
+         * @param {WordsApiWordsCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        wordsCreate(word: Word, ayahUuid?: string, options?: RawAxiosRequestConfig): AxiosPromise<Word> {
-            return localVarFp.wordsCreate(word, ayahUuid, options).then((request) => request(axios, basePath));
+        wordsCreate(requestParameters: WordsApiWordsCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Word> {
+            return localVarFp.wordsCreate(requestParameters.word, requestParameters.ayahUuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Delete a Word record
-         * @param {string} uuid 
+         * @param {WordsApiWordsDestroyRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        wordsDestroy(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.wordsDestroy(uuid, options).then((request) => request(axios, basePath));
+        wordsDestroy(requestParameters: WordsApiWordsDestroyRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.wordsDestroy(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary List all Words in Ayahs
-         * @param {string} [ayahUuid] UUID of the Ayah to filter Words by.
-         * @param {number} [limit] Number of results to return per page.
-         * @param {number} [offset] The initial index from which to return the results.
-         * @param {WordsListOrderingEnum} [ordering] Which field to use when ordering the results.
-         * @param {string} [search] A search term.
+         * @param {WordsApiWordsListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        wordsList(ayahUuid?: string, limit?: number, offset?: number, ordering?: WordsListOrderingEnum, search?: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<Word>> {
-            return localVarFp.wordsList(ayahUuid, limit, offset, ordering, search, options).then((request) => request(axios, basePath));
+        wordsList(requestParameters: WordsApiWordsListRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<Array<Word>> {
+            return localVarFp.wordsList(requestParameters.ayahUuid, requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Partially update a Word record
-         * @param {string} uuid 
-         * @param {PatchedWord} [patchedWord] 
+         * @param {WordsApiWordsPartialUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        wordsPartialUpdate(uuid: string, patchedWord?: PatchedWord, options?: RawAxiosRequestConfig): AxiosPromise<Word> {
-            return localVarFp.wordsPartialUpdate(uuid, patchedWord, options).then((request) => request(axios, basePath));
+        wordsPartialUpdate(requestParameters: WordsApiWordsPartialUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Word> {
+            return localVarFp.wordsPartialUpdate(requestParameters.uuid, requestParameters.patchedWord, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific Word by UUID
-         * @param {string} uuid 
+         * @param {WordsApiWordsRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        wordsRetrieve(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<Word> {
-            return localVarFp.wordsRetrieve(uuid, options).then((request) => request(axios, basePath));
+        wordsRetrieve(requestParameters: WordsApiWordsRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<Word> {
+            return localVarFp.wordsRetrieve(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Update an existing Word record
-         * @param {string} uuid 
-         * @param {Word} word 
+         * @param {WordsApiWordsUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        wordsUpdate(uuid: string, word: Word, options?: RawAxiosRequestConfig): AxiosPromise<Word> {
-            return localVarFp.wordsUpdate(uuid, word, options).then((request) => request(axios, basePath));
+        wordsUpdate(requestParameters: WordsApiWordsUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Word> {
+            return localVarFp.wordsUpdate(requestParameters.uuid, requestParameters.word, options).then((request) => request(axios, basePath));
         },
     };
 };
+
+/**
+ * Request parameters for wordsCreate operation in WordsApi.
+ */
+export interface WordsApiWordsCreateRequest {
+    readonly word: Word
+
+    /**
+     * UUID of the Ayah to associate the new Word with (if ayah_id is not provided in the body).
+     */
+    readonly ayahUuid?: string
+}
+
+/**
+ * Request parameters for wordsDestroy operation in WordsApi.
+ */
+export interface WordsApiWordsDestroyRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for wordsList operation in WordsApi.
+ */
+export interface WordsApiWordsListRequest {
+    /**
+     * UUID of the Ayah to filter Words by.
+     */
+    readonly ayahUuid?: string
+
+    /**
+     * Number of results to return per page.
+     */
+    readonly limit?: number
+
+    /**
+     * The initial index from which to return the results.
+     */
+    readonly offset?: number
+
+    /**
+     * Which field to use when ordering the results.
+     */
+    readonly ordering?: WordsListOrderingEnum
+
+    /**
+     * A search term.
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for wordsPartialUpdate operation in WordsApi.
+ */
+export interface WordsApiWordsPartialUpdateRequest {
+    readonly uuid: string
+
+    readonly patchedWord?: PatchedWord
+}
+
+/**
+ * Request parameters for wordsRetrieve operation in WordsApi.
+ */
+export interface WordsApiWordsRetrieveRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for wordsUpdate operation in WordsApi.
+ */
+export interface WordsApiWordsUpdateRequest {
+    readonly uuid: string
+
+    readonly word: Word
+}
 
 /**
  * WordsApi - object-oriented interface
@@ -470,74 +537,67 @@ export class WordsApi extends BaseAPI {
     /**
      * 
      * @summary Create a new Word record
-     * @param {Word} word 
-     * @param {string} [ayahUuid] UUID of the Ayah to associate the new Word with (if ayah_id is not provided in the body).
+     * @param {WordsApiWordsCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public wordsCreate(word: Word, ayahUuid?: string, options?: RawAxiosRequestConfig) {
-        return WordsApiFp(this.configuration).wordsCreate(word, ayahUuid, options).then((request) => request(this.axios, this.basePath));
+    public wordsCreate(requestParameters: WordsApiWordsCreateRequest, options?: RawAxiosRequestConfig) {
+        return WordsApiFp(this.configuration).wordsCreate(requestParameters.word, requestParameters.ayahUuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Delete a Word record
-     * @param {string} uuid 
+     * @param {WordsApiWordsDestroyRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public wordsDestroy(uuid: string, options?: RawAxiosRequestConfig) {
-        return WordsApiFp(this.configuration).wordsDestroy(uuid, options).then((request) => request(this.axios, this.basePath));
+    public wordsDestroy(requestParameters: WordsApiWordsDestroyRequest, options?: RawAxiosRequestConfig) {
+        return WordsApiFp(this.configuration).wordsDestroy(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary List all Words in Ayahs
-     * @param {string} [ayahUuid] UUID of the Ayah to filter Words by.
-     * @param {number} [limit] Number of results to return per page.
-     * @param {number} [offset] The initial index from which to return the results.
-     * @param {WordsListOrderingEnum} [ordering] Which field to use when ordering the results.
-     * @param {string} [search] A search term.
+     * @param {WordsApiWordsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public wordsList(ayahUuid?: string, limit?: number, offset?: number, ordering?: WordsListOrderingEnum, search?: string, options?: RawAxiosRequestConfig) {
-        return WordsApiFp(this.configuration).wordsList(ayahUuid, limit, offset, ordering, search, options).then((request) => request(this.axios, this.basePath));
+    public wordsList(requestParameters: WordsApiWordsListRequest = {}, options?: RawAxiosRequestConfig) {
+        return WordsApiFp(this.configuration).wordsList(requestParameters.ayahUuid, requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Partially update a Word record
-     * @param {string} uuid 
-     * @param {PatchedWord} [patchedWord] 
+     * @param {WordsApiWordsPartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public wordsPartialUpdate(uuid: string, patchedWord?: PatchedWord, options?: RawAxiosRequestConfig) {
-        return WordsApiFp(this.configuration).wordsPartialUpdate(uuid, patchedWord, options).then((request) => request(this.axios, this.basePath));
+    public wordsPartialUpdate(requestParameters: WordsApiWordsPartialUpdateRequest, options?: RawAxiosRequestConfig) {
+        return WordsApiFp(this.configuration).wordsPartialUpdate(requestParameters.uuid, requestParameters.patchedWord, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific Word by UUID
-     * @param {string} uuid 
+     * @param {WordsApiWordsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public wordsRetrieve(uuid: string, options?: RawAxiosRequestConfig) {
-        return WordsApiFp(this.configuration).wordsRetrieve(uuid, options).then((request) => request(this.axios, this.basePath));
+    public wordsRetrieve(requestParameters: WordsApiWordsRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return WordsApiFp(this.configuration).wordsRetrieve(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Update an existing Word record
-     * @param {string} uuid 
-     * @param {Word} word 
+     * @param {WordsApiWordsUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public wordsUpdate(uuid: string, word: Word, options?: RawAxiosRequestConfig) {
-        return WordsApiFp(this.configuration).wordsUpdate(uuid, word, options).then((request) => request(this.axios, this.basePath));
+    public wordsUpdate(requestParameters: WordsApiWordsUpdateRequest, options?: RawAxiosRequestConfig) {
+        return WordsApiFp(this.configuration).wordsUpdate(requestParameters.uuid, requestParameters.word, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

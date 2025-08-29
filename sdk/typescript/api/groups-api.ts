@@ -360,22 +360,22 @@ export const GroupsApiFactory = function (configuration?: Configuration, basePat
         /**
          * 
          * @summary Create a new group
-         * @param {Group} group 
+         * @param {GroupsApiGroupsCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        groupsCreate(group: Group, options?: RawAxiosRequestConfig): AxiosPromise<Group> {
-            return localVarFp.groupsCreate(group, options).then((request) => request(axios, basePath));
+        groupsCreate(requestParameters: GroupsApiGroupsCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Group> {
+            return localVarFp.groupsCreate(requestParameters.group, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Delete a group
-         * @param {number} id A unique integer value identifying this group.
+         * @param {GroupsApiGroupsDestroyRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        groupsDestroy(id: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.groupsDestroy(id, options).then((request) => request(axios, basePath));
+        groupsDestroy(requestParameters: GroupsApiGroupsDestroyRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.groupsDestroy(requestParameters.id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -389,37 +389,86 @@ export const GroupsApiFactory = function (configuration?: Configuration, basePat
         /**
          * 
          * @summary Partially update a group
-         * @param {number} id A unique integer value identifying this group.
-         * @param {PatchedGroup} [patchedGroup] 
+         * @param {GroupsApiGroupsPartialUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        groupsPartialUpdate(id: number, patchedGroup?: PatchedGroup, options?: RawAxiosRequestConfig): AxiosPromise<Group> {
-            return localVarFp.groupsPartialUpdate(id, patchedGroup, options).then((request) => request(axios, basePath));
+        groupsPartialUpdate(requestParameters: GroupsApiGroupsPartialUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Group> {
+            return localVarFp.groupsPartialUpdate(requestParameters.id, requestParameters.patchedGroup, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific group by ID
-         * @param {number} id A unique integer value identifying this group.
+         * @param {GroupsApiGroupsRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        groupsRetrieve(id: number, options?: RawAxiosRequestConfig): AxiosPromise<Group> {
-            return localVarFp.groupsRetrieve(id, options).then((request) => request(axios, basePath));
+        groupsRetrieve(requestParameters: GroupsApiGroupsRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<Group> {
+            return localVarFp.groupsRetrieve(requestParameters.id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Update an existing group
-         * @param {number} id A unique integer value identifying this group.
-         * @param {Group} group 
+         * @param {GroupsApiGroupsUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        groupsUpdate(id: number, group: Group, options?: RawAxiosRequestConfig): AxiosPromise<Group> {
-            return localVarFp.groupsUpdate(id, group, options).then((request) => request(axios, basePath));
+        groupsUpdate(requestParameters: GroupsApiGroupsUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Group> {
+            return localVarFp.groupsUpdate(requestParameters.id, requestParameters.group, options).then((request) => request(axios, basePath));
         },
     };
 };
+
+/**
+ * Request parameters for groupsCreate operation in GroupsApi.
+ */
+export interface GroupsApiGroupsCreateRequest {
+    readonly group: Group
+}
+
+/**
+ * Request parameters for groupsDestroy operation in GroupsApi.
+ */
+export interface GroupsApiGroupsDestroyRequest {
+    /**
+     * A unique integer value identifying this group.
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for groupsPartialUpdate operation in GroupsApi.
+ */
+export interface GroupsApiGroupsPartialUpdateRequest {
+    /**
+     * A unique integer value identifying this group.
+     */
+    readonly id: number
+
+    readonly patchedGroup?: PatchedGroup
+}
+
+/**
+ * Request parameters for groupsRetrieve operation in GroupsApi.
+ */
+export interface GroupsApiGroupsRetrieveRequest {
+    /**
+     * A unique integer value identifying this group.
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for groupsUpdate operation in GroupsApi.
+ */
+export interface GroupsApiGroupsUpdateRequest {
+    /**
+     * A unique integer value identifying this group.
+     */
+    readonly id: number
+
+    readonly group: Group
+}
 
 /**
  * GroupsApi - object-oriented interface
@@ -428,23 +477,23 @@ export class GroupsApi extends BaseAPI {
     /**
      * 
      * @summary Create a new group
-     * @param {Group} group 
+     * @param {GroupsApiGroupsCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public groupsCreate(group: Group, options?: RawAxiosRequestConfig) {
-        return GroupsApiFp(this.configuration).groupsCreate(group, options).then((request) => request(this.axios, this.basePath));
+    public groupsCreate(requestParameters: GroupsApiGroupsCreateRequest, options?: RawAxiosRequestConfig) {
+        return GroupsApiFp(this.configuration).groupsCreate(requestParameters.group, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Delete a group
-     * @param {number} id A unique integer value identifying this group.
+     * @param {GroupsApiGroupsDestroyRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public groupsDestroy(id: number, options?: RawAxiosRequestConfig) {
-        return GroupsApiFp(this.configuration).groupsDestroy(id, options).then((request) => request(this.axios, this.basePath));
+    public groupsDestroy(requestParameters: GroupsApiGroupsDestroyRequest, options?: RawAxiosRequestConfig) {
+        return GroupsApiFp(this.configuration).groupsDestroy(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -460,36 +509,34 @@ export class GroupsApi extends BaseAPI {
     /**
      * 
      * @summary Partially update a group
-     * @param {number} id A unique integer value identifying this group.
-     * @param {PatchedGroup} [patchedGroup] 
+     * @param {GroupsApiGroupsPartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public groupsPartialUpdate(id: number, patchedGroup?: PatchedGroup, options?: RawAxiosRequestConfig) {
-        return GroupsApiFp(this.configuration).groupsPartialUpdate(id, patchedGroup, options).then((request) => request(this.axios, this.basePath));
+    public groupsPartialUpdate(requestParameters: GroupsApiGroupsPartialUpdateRequest, options?: RawAxiosRequestConfig) {
+        return GroupsApiFp(this.configuration).groupsPartialUpdate(requestParameters.id, requestParameters.patchedGroup, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific group by ID
-     * @param {number} id A unique integer value identifying this group.
+     * @param {GroupsApiGroupsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public groupsRetrieve(id: number, options?: RawAxiosRequestConfig) {
-        return GroupsApiFp(this.configuration).groupsRetrieve(id, options).then((request) => request(this.axios, this.basePath));
+    public groupsRetrieve(requestParameters: GroupsApiGroupsRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return GroupsApiFp(this.configuration).groupsRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Update an existing group
-     * @param {number} id A unique integer value identifying this group.
-     * @param {Group} group 
+     * @param {GroupsApiGroupsUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public groupsUpdate(id: number, group: Group, options?: RawAxiosRequestConfig) {
-        return GroupsApiFp(this.configuration).groupsUpdate(id, group, options).then((request) => request(this.axios, this.basePath));
+    public groupsUpdate(requestParameters: GroupsApiGroupsUpdateRequest, options?: RawAxiosRequestConfig) {
+        return GroupsApiFp(this.configuration).groupsUpdate(requestParameters.id, requestParameters.group, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

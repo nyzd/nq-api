@@ -422,22 +422,22 @@ export const PhrasesApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @summary Create a new phrase
-         * @param {Phrase} phrase 
+         * @param {PhrasesApiPhrasesCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        phrasesCreate(phrase: Phrase, options?: RawAxiosRequestConfig): AxiosPromise<Phrase> {
-            return localVarFp.phrasesCreate(phrase, options).then((request) => request(axios, basePath));
+        phrasesCreate(requestParameters: PhrasesApiPhrasesCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Phrase> {
+            return localVarFp.phrasesCreate(requestParameters.phrase, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Delete a phrase
-         * @param {string} uuid 
+         * @param {PhrasesApiPhrasesDestroyRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        phrasesDestroy(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.phrasesDestroy(uuid, options).then((request) => request(axios, basePath));
+        phrasesDestroy(requestParameters: PhrasesApiPhrasesDestroyRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.phrasesDestroy(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -451,48 +451,96 @@ export const PhrasesApiFactory = function (configuration?: Configuration, basePa
         /**
          * Modify phrase translations for a given language. The \'language\' query parameter is required.
          * @summary Modify phrase translations
-         * @param {string} language Language code for the translation (required).
-         * @param {PhraseModify} phraseModify 
+         * @param {PhrasesApiPhrasesModifyCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        phrasesModifyCreate(language: string, phraseModify: PhraseModify, options?: RawAxiosRequestConfig): AxiosPromise<PhraseModify> {
-            return localVarFp.phrasesModifyCreate(language, phraseModify, options).then((request) => request(axios, basePath));
+        phrasesModifyCreate(requestParameters: PhrasesApiPhrasesModifyCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<PhraseModify> {
+            return localVarFp.phrasesModifyCreate(requestParameters.language, requestParameters.phraseModify, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Partially update a phrase
-         * @param {string} uuid 
-         * @param {PatchedPhrase} [patchedPhrase] 
+         * @param {PhrasesApiPhrasesPartialUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        phrasesPartialUpdate(uuid: string, patchedPhrase?: PatchedPhrase, options?: RawAxiosRequestConfig): AxiosPromise<Phrase> {
-            return localVarFp.phrasesPartialUpdate(uuid, patchedPhrase, options).then((request) => request(axios, basePath));
+        phrasesPartialUpdate(requestParameters: PhrasesApiPhrasesPartialUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Phrase> {
+            return localVarFp.phrasesPartialUpdate(requestParameters.uuid, requestParameters.patchedPhrase, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific phrase by UUID
-         * @param {string} uuid 
+         * @param {PhrasesApiPhrasesRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        phrasesRetrieve(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<Phrase> {
-            return localVarFp.phrasesRetrieve(uuid, options).then((request) => request(axios, basePath));
+        phrasesRetrieve(requestParameters: PhrasesApiPhrasesRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<Phrase> {
+            return localVarFp.phrasesRetrieve(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Update an existing phrase
-         * @param {string} uuid 
-         * @param {Phrase} phrase 
+         * @param {PhrasesApiPhrasesUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        phrasesUpdate(uuid: string, phrase: Phrase, options?: RawAxiosRequestConfig): AxiosPromise<Phrase> {
-            return localVarFp.phrasesUpdate(uuid, phrase, options).then((request) => request(axios, basePath));
+        phrasesUpdate(requestParameters: PhrasesApiPhrasesUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Phrase> {
+            return localVarFp.phrasesUpdate(requestParameters.uuid, requestParameters.phrase, options).then((request) => request(axios, basePath));
         },
     };
 };
+
+/**
+ * Request parameters for phrasesCreate operation in PhrasesApi.
+ */
+export interface PhrasesApiPhrasesCreateRequest {
+    readonly phrase: Phrase
+}
+
+/**
+ * Request parameters for phrasesDestroy operation in PhrasesApi.
+ */
+export interface PhrasesApiPhrasesDestroyRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for phrasesModifyCreate operation in PhrasesApi.
+ */
+export interface PhrasesApiPhrasesModifyCreateRequest {
+    /**
+     * Language code for the translation (required).
+     */
+    readonly language: string
+
+    readonly phraseModify: PhraseModify
+}
+
+/**
+ * Request parameters for phrasesPartialUpdate operation in PhrasesApi.
+ */
+export interface PhrasesApiPhrasesPartialUpdateRequest {
+    readonly uuid: string
+
+    readonly patchedPhrase?: PatchedPhrase
+}
+
+/**
+ * Request parameters for phrasesRetrieve operation in PhrasesApi.
+ */
+export interface PhrasesApiPhrasesRetrieveRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for phrasesUpdate operation in PhrasesApi.
+ */
+export interface PhrasesApiPhrasesUpdateRequest {
+    readonly uuid: string
+
+    readonly phrase: Phrase
+}
 
 /**
  * PhrasesApi - object-oriented interface
@@ -501,23 +549,23 @@ export class PhrasesApi extends BaseAPI {
     /**
      * 
      * @summary Create a new phrase
-     * @param {Phrase} phrase 
+     * @param {PhrasesApiPhrasesCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public phrasesCreate(phrase: Phrase, options?: RawAxiosRequestConfig) {
-        return PhrasesApiFp(this.configuration).phrasesCreate(phrase, options).then((request) => request(this.axios, this.basePath));
+    public phrasesCreate(requestParameters: PhrasesApiPhrasesCreateRequest, options?: RawAxiosRequestConfig) {
+        return PhrasesApiFp(this.configuration).phrasesCreate(requestParameters.phrase, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Delete a phrase
-     * @param {string} uuid 
+     * @param {PhrasesApiPhrasesDestroyRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public phrasesDestroy(uuid: string, options?: RawAxiosRequestConfig) {
-        return PhrasesApiFp(this.configuration).phrasesDestroy(uuid, options).then((request) => request(this.axios, this.basePath));
+    public phrasesDestroy(requestParameters: PhrasesApiPhrasesDestroyRequest, options?: RawAxiosRequestConfig) {
+        return PhrasesApiFp(this.configuration).phrasesDestroy(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -533,48 +581,45 @@ export class PhrasesApi extends BaseAPI {
     /**
      * Modify phrase translations for a given language. The \'language\' query parameter is required.
      * @summary Modify phrase translations
-     * @param {string} language Language code for the translation (required).
-     * @param {PhraseModify} phraseModify 
+     * @param {PhrasesApiPhrasesModifyCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public phrasesModifyCreate(language: string, phraseModify: PhraseModify, options?: RawAxiosRequestConfig) {
-        return PhrasesApiFp(this.configuration).phrasesModifyCreate(language, phraseModify, options).then((request) => request(this.axios, this.basePath));
+    public phrasesModifyCreate(requestParameters: PhrasesApiPhrasesModifyCreateRequest, options?: RawAxiosRequestConfig) {
+        return PhrasesApiFp(this.configuration).phrasesModifyCreate(requestParameters.language, requestParameters.phraseModify, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Partially update a phrase
-     * @param {string} uuid 
-     * @param {PatchedPhrase} [patchedPhrase] 
+     * @param {PhrasesApiPhrasesPartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public phrasesPartialUpdate(uuid: string, patchedPhrase?: PatchedPhrase, options?: RawAxiosRequestConfig) {
-        return PhrasesApiFp(this.configuration).phrasesPartialUpdate(uuid, patchedPhrase, options).then((request) => request(this.axios, this.basePath));
+    public phrasesPartialUpdate(requestParameters: PhrasesApiPhrasesPartialUpdateRequest, options?: RawAxiosRequestConfig) {
+        return PhrasesApiFp(this.configuration).phrasesPartialUpdate(requestParameters.uuid, requestParameters.patchedPhrase, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific phrase by UUID
-     * @param {string} uuid 
+     * @param {PhrasesApiPhrasesRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public phrasesRetrieve(uuid: string, options?: RawAxiosRequestConfig) {
-        return PhrasesApiFp(this.configuration).phrasesRetrieve(uuid, options).then((request) => request(this.axios, this.basePath));
+    public phrasesRetrieve(requestParameters: PhrasesApiPhrasesRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return PhrasesApiFp(this.configuration).phrasesRetrieve(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Update an existing phrase
-     * @param {string} uuid 
-     * @param {Phrase} phrase 
+     * @param {PhrasesApiPhrasesUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public phrasesUpdate(uuid: string, phrase: Phrase, options?: RawAxiosRequestConfig) {
-        return PhrasesApiFp(this.configuration).phrasesUpdate(uuid, phrase, options).then((request) => request(this.axios, this.basePath));
+    public phrasesUpdate(requestParameters: PhrasesApiPhrasesUpdateRequest, options?: RawAxiosRequestConfig) {
+        return PhrasesApiFp(this.configuration).phrasesUpdate(requestParameters.uuid, requestParameters.phrase, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -441,80 +441,149 @@ export const MushafsApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @summary Create a new Mushaf record
-         * @param {Mushaf} mushaf 
+         * @param {MushafsApiMushafsCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        mushafsCreate(mushaf: Mushaf, options?: RawAxiosRequestConfig): AxiosPromise<Mushaf> {
-            return localVarFp.mushafsCreate(mushaf, options).then((request) => request(axios, basePath));
+        mushafsCreate(requestParameters: MushafsApiMushafsCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Mushaf> {
+            return localVarFp.mushafsCreate(requestParameters.mushaf, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Delete a Mushaf record
-         * @param {string} uuid 
+         * @param {MushafsApiMushafsDestroyRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        mushafsDestroy(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.mushafsDestroy(uuid, options).then((request) => request(axios, basePath));
+        mushafsDestroy(requestParameters: MushafsApiMushafsDestroyRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.mushafsDestroy(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Import a Mushaf from a JSON file upload
-         * @param {File} file JSON file containing the Mushaf data
+         * @param {MushafsApiMushafsImportCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        mushafsImportCreate(file: File, options?: RawAxiosRequestConfig): AxiosPromise<Mushaf> {
-            return localVarFp.mushafsImportCreate(file, options).then((request) => request(axios, basePath));
+        mushafsImportCreate(requestParameters: MushafsApiMushafsImportCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Mushaf> {
+            return localVarFp.mushafsImportCreate(requestParameters.file, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary List all Mushafs (Quranic manuscripts/editions)
-         * @param {number} [limit] Number of results to return per page.
-         * @param {number} [offset] The initial index from which to return the results.
-         * @param {MushafsListOrderingEnum} [ordering] Which field to use when ordering the results.
-         * @param {string} [search] A search term.
+         * @param {MushafsApiMushafsListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        mushafsList(limit?: number, offset?: number, ordering?: MushafsListOrderingEnum, search?: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<Mushaf>> {
-            return localVarFp.mushafsList(limit, offset, ordering, search, options).then((request) => request(axios, basePath));
+        mushafsList(requestParameters: MushafsApiMushafsListRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<Array<Mushaf>> {
+            return localVarFp.mushafsList(requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Partially update a Mushaf record
-         * @param {string} uuid 
-         * @param {PatchedMushaf} [patchedMushaf] 
+         * @param {MushafsApiMushafsPartialUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        mushafsPartialUpdate(uuid: string, patchedMushaf?: PatchedMushaf, options?: RawAxiosRequestConfig): AxiosPromise<Mushaf> {
-            return localVarFp.mushafsPartialUpdate(uuid, patchedMushaf, options).then((request) => request(axios, basePath));
+        mushafsPartialUpdate(requestParameters: MushafsApiMushafsPartialUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Mushaf> {
+            return localVarFp.mushafsPartialUpdate(requestParameters.uuid, requestParameters.patchedMushaf, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific Mushaf by UUID
-         * @param {string} uuid 
+         * @param {MushafsApiMushafsRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        mushafsRetrieve(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<Mushaf> {
-            return localVarFp.mushafsRetrieve(uuid, options).then((request) => request(axios, basePath));
+        mushafsRetrieve(requestParameters: MushafsApiMushafsRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<Mushaf> {
+            return localVarFp.mushafsRetrieve(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Update an existing Mushaf record
-         * @param {string} uuid 
-         * @param {Mushaf} mushaf 
+         * @param {MushafsApiMushafsUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        mushafsUpdate(uuid: string, mushaf: Mushaf, options?: RawAxiosRequestConfig): AxiosPromise<Mushaf> {
-            return localVarFp.mushafsUpdate(uuid, mushaf, options).then((request) => request(axios, basePath));
+        mushafsUpdate(requestParameters: MushafsApiMushafsUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Mushaf> {
+            return localVarFp.mushafsUpdate(requestParameters.uuid, requestParameters.mushaf, options).then((request) => request(axios, basePath));
         },
     };
 };
+
+/**
+ * Request parameters for mushafsCreate operation in MushafsApi.
+ */
+export interface MushafsApiMushafsCreateRequest {
+    readonly mushaf: Mushaf
+}
+
+/**
+ * Request parameters for mushafsDestroy operation in MushafsApi.
+ */
+export interface MushafsApiMushafsDestroyRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for mushafsImportCreate operation in MushafsApi.
+ */
+export interface MushafsApiMushafsImportCreateRequest {
+    /**
+     * JSON file containing the Mushaf data
+     */
+    readonly file: File
+}
+
+/**
+ * Request parameters for mushafsList operation in MushafsApi.
+ */
+export interface MushafsApiMushafsListRequest {
+    /**
+     * Number of results to return per page.
+     */
+    readonly limit?: number
+
+    /**
+     * The initial index from which to return the results.
+     */
+    readonly offset?: number
+
+    /**
+     * Which field to use when ordering the results.
+     */
+    readonly ordering?: MushafsListOrderingEnum
+
+    /**
+     * A search term.
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for mushafsPartialUpdate operation in MushafsApi.
+ */
+export interface MushafsApiMushafsPartialUpdateRequest {
+    readonly uuid: string
+
+    readonly patchedMushaf?: PatchedMushaf
+}
+
+/**
+ * Request parameters for mushafsRetrieve operation in MushafsApi.
+ */
+export interface MushafsApiMushafsRetrieveRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for mushafsUpdate operation in MushafsApi.
+ */
+export interface MushafsApiMushafsUpdateRequest {
+    readonly uuid: string
+
+    readonly mushaf: Mushaf
+}
 
 /**
  * MushafsApi - object-oriented interface
@@ -523,83 +592,78 @@ export class MushafsApi extends BaseAPI {
     /**
      * 
      * @summary Create a new Mushaf record
-     * @param {Mushaf} mushaf 
+     * @param {MushafsApiMushafsCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public mushafsCreate(mushaf: Mushaf, options?: RawAxiosRequestConfig) {
-        return MushafsApiFp(this.configuration).mushafsCreate(mushaf, options).then((request) => request(this.axios, this.basePath));
+    public mushafsCreate(requestParameters: MushafsApiMushafsCreateRequest, options?: RawAxiosRequestConfig) {
+        return MushafsApiFp(this.configuration).mushafsCreate(requestParameters.mushaf, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Delete a Mushaf record
-     * @param {string} uuid 
+     * @param {MushafsApiMushafsDestroyRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public mushafsDestroy(uuid: string, options?: RawAxiosRequestConfig) {
-        return MushafsApiFp(this.configuration).mushafsDestroy(uuid, options).then((request) => request(this.axios, this.basePath));
+    public mushafsDestroy(requestParameters: MushafsApiMushafsDestroyRequest, options?: RawAxiosRequestConfig) {
+        return MushafsApiFp(this.configuration).mushafsDestroy(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Import a Mushaf from a JSON file upload
-     * @param {File} file JSON file containing the Mushaf data
+     * @param {MushafsApiMushafsImportCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public mushafsImportCreate(file: File, options?: RawAxiosRequestConfig) {
-        return MushafsApiFp(this.configuration).mushafsImportCreate(file, options).then((request) => request(this.axios, this.basePath));
+    public mushafsImportCreate(requestParameters: MushafsApiMushafsImportCreateRequest, options?: RawAxiosRequestConfig) {
+        return MushafsApiFp(this.configuration).mushafsImportCreate(requestParameters.file, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary List all Mushafs (Quranic manuscripts/editions)
-     * @param {number} [limit] Number of results to return per page.
-     * @param {number} [offset] The initial index from which to return the results.
-     * @param {MushafsListOrderingEnum} [ordering] Which field to use when ordering the results.
-     * @param {string} [search] A search term.
+     * @param {MushafsApiMushafsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public mushafsList(limit?: number, offset?: number, ordering?: MushafsListOrderingEnum, search?: string, options?: RawAxiosRequestConfig) {
-        return MushafsApiFp(this.configuration).mushafsList(limit, offset, ordering, search, options).then((request) => request(this.axios, this.basePath));
+    public mushafsList(requestParameters: MushafsApiMushafsListRequest = {}, options?: RawAxiosRequestConfig) {
+        return MushafsApiFp(this.configuration).mushafsList(requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Partially update a Mushaf record
-     * @param {string} uuid 
-     * @param {PatchedMushaf} [patchedMushaf] 
+     * @param {MushafsApiMushafsPartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public mushafsPartialUpdate(uuid: string, patchedMushaf?: PatchedMushaf, options?: RawAxiosRequestConfig) {
-        return MushafsApiFp(this.configuration).mushafsPartialUpdate(uuid, patchedMushaf, options).then((request) => request(this.axios, this.basePath));
+    public mushafsPartialUpdate(requestParameters: MushafsApiMushafsPartialUpdateRequest, options?: RawAxiosRequestConfig) {
+        return MushafsApiFp(this.configuration).mushafsPartialUpdate(requestParameters.uuid, requestParameters.patchedMushaf, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific Mushaf by UUID
-     * @param {string} uuid 
+     * @param {MushafsApiMushafsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public mushafsRetrieve(uuid: string, options?: RawAxiosRequestConfig) {
-        return MushafsApiFp(this.configuration).mushafsRetrieve(uuid, options).then((request) => request(this.axios, this.basePath));
+    public mushafsRetrieve(requestParameters: MushafsApiMushafsRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return MushafsApiFp(this.configuration).mushafsRetrieve(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Update an existing Mushaf record
-     * @param {string} uuid 
-     * @param {Mushaf} mushaf 
+     * @param {MushafsApiMushafsUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public mushafsUpdate(uuid: string, mushaf: Mushaf, options?: RawAxiosRequestConfig) {
-        return MushafsApiFp(this.configuration).mushafsUpdate(uuid, mushaf, options).then((request) => request(this.axios, this.basePath));
+    public mushafsUpdate(requestParameters: MushafsApiMushafsUpdateRequest, options?: RawAxiosRequestConfig) {
+        return MushafsApiFp(this.configuration).mushafsUpdate(requestParameters.uuid, requestParameters.mushaf, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

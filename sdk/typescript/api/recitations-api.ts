@@ -473,85 +473,165 @@ export const RecitationsApiFactory = function (configuration?: Configuration, ba
         /**
          * 
          * @summary Create a new Recitation record
-         * @param {Recitation} recitation 
+         * @param {RecitationsApiRecitationsCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        recitationsCreate(recitation: Recitation, options?: RawAxiosRequestConfig): AxiosPromise<Recitation> {
-            return localVarFp.recitationsCreate(recitation, options).then((request) => request(axios, basePath));
+        recitationsCreate(requestParameters: RecitationsApiRecitationsCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Recitation> {
+            return localVarFp.recitationsCreate(requestParameters.recitation, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Delete a Recitation record
-         * @param {string} uuid 
+         * @param {RecitationsApiRecitationsDestroyRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        recitationsDestroy(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.recitationsDestroy(uuid, options).then((request) => request(axios, basePath));
+        recitationsDestroy(requestParameters: RecitationsApiRecitationsDestroyRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.recitationsDestroy(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary List all Recitations (audio recordings)
-         * @param {RecitationsListMushafEnum} mushaf Short name of the Mushaf to filter Recitations by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
-         * @param {number} [limit] Number of results to return per page.
-         * @param {number} [offset] The initial index from which to return the results.
-         * @param {RecitationsListOrderingEnum} [ordering] Which field to use when ordering the results.
-         * @param {string} [reciterUuid] UUID of the Reciter to filter Recitations by.
-         * @param {string} [search] A search term.
+         * @param {RecitationsApiRecitationsListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        recitationsList(mushaf: RecitationsListMushafEnum, limit?: number, offset?: number, ordering?: RecitationsListOrderingEnum, reciterUuid?: string, search?: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<RecitationList>> {
-            return localVarFp.recitationsList(mushaf, limit, offset, ordering, reciterUuid, search, options).then((request) => request(axios, basePath));
+        recitationsList(requestParameters: RecitationsApiRecitationsListRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<RecitationList>> {
+            return localVarFp.recitationsList(requestParameters.mushaf, requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.reciterUuid, requestParameters.search, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Partially update a Recitation record
-         * @param {string} uuid 
-         * @param {PatchedRecitation} [patchedRecitation] 
+         * @param {RecitationsApiRecitationsPartialUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        recitationsPartialUpdate(uuid: string, patchedRecitation?: PatchedRecitation, options?: RawAxiosRequestConfig): AxiosPromise<Recitation> {
-            return localVarFp.recitationsPartialUpdate(uuid, patchedRecitation, options).then((request) => request(axios, basePath));
+        recitationsPartialUpdate(requestParameters: RecitationsApiRecitationsPartialUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Recitation> {
+            return localVarFp.recitationsPartialUpdate(requestParameters.uuid, requestParameters.patchedRecitation, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific Recitation by UUID
-         * @param {string} uuid 
+         * @param {RecitationsApiRecitationsRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        recitationsRetrieve(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<Recitation> {
-            return localVarFp.recitationsRetrieve(uuid, options).then((request) => request(axios, basePath));
+        recitationsRetrieve(requestParameters: RecitationsApiRecitationsRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<Recitation> {
+            return localVarFp.recitationsRetrieve(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Update an existing Recitation record
-         * @param {string} uuid 
-         * @param {Recitation} recitation 
+         * @param {RecitationsApiRecitationsUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        recitationsUpdate(uuid: string, recitation: Recitation, options?: RawAxiosRequestConfig): AxiosPromise<Recitation> {
-            return localVarFp.recitationsUpdate(uuid, recitation, options).then((request) => request(axios, basePath));
+        recitationsUpdate(requestParameters: RecitationsApiRecitationsUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Recitation> {
+            return localVarFp.recitationsUpdate(requestParameters.uuid, requestParameters.recitation, options).then((request) => request(axios, basePath));
         },
         /**
          * Accepts a multipart/form-data request with parts: file (mp3) and optional word_timestamps JSON list.
          * @summary Upload a surah audio file and optional word-level timestamps for a Recitation
-         * @param {string} surahUuid 
-         * @param {string} uuid 
-         * @param {File} file 
-         * @param {string} [wordTimestamps] JSON list, optional
+         * @param {RecitationsApiRecitationsUploadCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        recitationsUploadCreate(surahUuid: string, uuid: string, file: File, wordTimestamps?: string, options?: RawAxiosRequestConfig): AxiosPromise<{ [key: string]: any; }> {
-            return localVarFp.recitationsUploadCreate(surahUuid, uuid, file, wordTimestamps, options).then((request) => request(axios, basePath));
+        recitationsUploadCreate(requestParameters: RecitationsApiRecitationsUploadCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<{ [key: string]: any; }> {
+            return localVarFp.recitationsUploadCreate(requestParameters.surahUuid, requestParameters.uuid, requestParameters.file, requestParameters.wordTimestamps, options).then((request) => request(axios, basePath));
         },
     };
 };
+
+/**
+ * Request parameters for recitationsCreate operation in RecitationsApi.
+ */
+export interface RecitationsApiRecitationsCreateRequest {
+    readonly recitation: Recitation
+}
+
+/**
+ * Request parameters for recitationsDestroy operation in RecitationsApi.
+ */
+export interface RecitationsApiRecitationsDestroyRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for recitationsList operation in RecitationsApi.
+ */
+export interface RecitationsApiRecitationsListRequest {
+    /**
+     * Short name of the Mushaf to filter Recitations by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
+     */
+    readonly mushaf: RecitationsListMushafEnum
+
+    /**
+     * Number of results to return per page.
+     */
+    readonly limit?: number
+
+    /**
+     * The initial index from which to return the results.
+     */
+    readonly offset?: number
+
+    /**
+     * Which field to use when ordering the results.
+     */
+    readonly ordering?: RecitationsListOrderingEnum
+
+    /**
+     * UUID of the Reciter to filter Recitations by.
+     */
+    readonly reciterUuid?: string
+
+    /**
+     * A search term.
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for recitationsPartialUpdate operation in RecitationsApi.
+ */
+export interface RecitationsApiRecitationsPartialUpdateRequest {
+    readonly uuid: string
+
+    readonly patchedRecitation?: PatchedRecitation
+}
+
+/**
+ * Request parameters for recitationsRetrieve operation in RecitationsApi.
+ */
+export interface RecitationsApiRecitationsRetrieveRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for recitationsUpdate operation in RecitationsApi.
+ */
+export interface RecitationsApiRecitationsUpdateRequest {
+    readonly uuid: string
+
+    readonly recitation: Recitation
+}
+
+/**
+ * Request parameters for recitationsUploadCreate operation in RecitationsApi.
+ */
+export interface RecitationsApiRecitationsUploadCreateRequest {
+    readonly surahUuid: string
+
+    readonly uuid: string
+
+    readonly file: File
+
+    /**
+     * JSON list, optional
+     */
+    readonly wordTimestamps?: string
+}
 
 /**
  * RecitationsApi - object-oriented interface
@@ -560,88 +640,78 @@ export class RecitationsApi extends BaseAPI {
     /**
      * 
      * @summary Create a new Recitation record
-     * @param {Recitation} recitation 
+     * @param {RecitationsApiRecitationsCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public recitationsCreate(recitation: Recitation, options?: RawAxiosRequestConfig) {
-        return RecitationsApiFp(this.configuration).recitationsCreate(recitation, options).then((request) => request(this.axios, this.basePath));
+    public recitationsCreate(requestParameters: RecitationsApiRecitationsCreateRequest, options?: RawAxiosRequestConfig) {
+        return RecitationsApiFp(this.configuration).recitationsCreate(requestParameters.recitation, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Delete a Recitation record
-     * @param {string} uuid 
+     * @param {RecitationsApiRecitationsDestroyRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public recitationsDestroy(uuid: string, options?: RawAxiosRequestConfig) {
-        return RecitationsApiFp(this.configuration).recitationsDestroy(uuid, options).then((request) => request(this.axios, this.basePath));
+    public recitationsDestroy(requestParameters: RecitationsApiRecitationsDestroyRequest, options?: RawAxiosRequestConfig) {
+        return RecitationsApiFp(this.configuration).recitationsDestroy(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary List all Recitations (audio recordings)
-     * @param {RecitationsListMushafEnum} mushaf Short name of the Mushaf to filter Recitations by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
-     * @param {number} [limit] Number of results to return per page.
-     * @param {number} [offset] The initial index from which to return the results.
-     * @param {RecitationsListOrderingEnum} [ordering] Which field to use when ordering the results.
-     * @param {string} [reciterUuid] UUID of the Reciter to filter Recitations by.
-     * @param {string} [search] A search term.
+     * @param {RecitationsApiRecitationsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public recitationsList(mushaf: RecitationsListMushafEnum, limit?: number, offset?: number, ordering?: RecitationsListOrderingEnum, reciterUuid?: string, search?: string, options?: RawAxiosRequestConfig) {
-        return RecitationsApiFp(this.configuration).recitationsList(mushaf, limit, offset, ordering, reciterUuid, search, options).then((request) => request(this.axios, this.basePath));
+    public recitationsList(requestParameters: RecitationsApiRecitationsListRequest, options?: RawAxiosRequestConfig) {
+        return RecitationsApiFp(this.configuration).recitationsList(requestParameters.mushaf, requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.reciterUuid, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Partially update a Recitation record
-     * @param {string} uuid 
-     * @param {PatchedRecitation} [patchedRecitation] 
+     * @param {RecitationsApiRecitationsPartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public recitationsPartialUpdate(uuid: string, patchedRecitation?: PatchedRecitation, options?: RawAxiosRequestConfig) {
-        return RecitationsApiFp(this.configuration).recitationsPartialUpdate(uuid, patchedRecitation, options).then((request) => request(this.axios, this.basePath));
+    public recitationsPartialUpdate(requestParameters: RecitationsApiRecitationsPartialUpdateRequest, options?: RawAxiosRequestConfig) {
+        return RecitationsApiFp(this.configuration).recitationsPartialUpdate(requestParameters.uuid, requestParameters.patchedRecitation, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific Recitation by UUID
-     * @param {string} uuid 
+     * @param {RecitationsApiRecitationsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public recitationsRetrieve(uuid: string, options?: RawAxiosRequestConfig) {
-        return RecitationsApiFp(this.configuration).recitationsRetrieve(uuid, options).then((request) => request(this.axios, this.basePath));
+    public recitationsRetrieve(requestParameters: RecitationsApiRecitationsRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return RecitationsApiFp(this.configuration).recitationsRetrieve(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Update an existing Recitation record
-     * @param {string} uuid 
-     * @param {Recitation} recitation 
+     * @param {RecitationsApiRecitationsUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public recitationsUpdate(uuid: string, recitation: Recitation, options?: RawAxiosRequestConfig) {
-        return RecitationsApiFp(this.configuration).recitationsUpdate(uuid, recitation, options).then((request) => request(this.axios, this.basePath));
+    public recitationsUpdate(requestParameters: RecitationsApiRecitationsUpdateRequest, options?: RawAxiosRequestConfig) {
+        return RecitationsApiFp(this.configuration).recitationsUpdate(requestParameters.uuid, requestParameters.recitation, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Accepts a multipart/form-data request with parts: file (mp3) and optional word_timestamps JSON list.
      * @summary Upload a surah audio file and optional word-level timestamps for a Recitation
-     * @param {string} surahUuid 
-     * @param {string} uuid 
-     * @param {File} file 
-     * @param {string} [wordTimestamps] JSON list, optional
+     * @param {RecitationsApiRecitationsUploadCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public recitationsUploadCreate(surahUuid: string, uuid: string, file: File, wordTimestamps?: string, options?: RawAxiosRequestConfig) {
-        return RecitationsApiFp(this.configuration).recitationsUploadCreate(surahUuid, uuid, file, wordTimestamps, options).then((request) => request(this.axios, this.basePath));
+    public recitationsUploadCreate(requestParameters: RecitationsApiRecitationsUploadCreateRequest, options?: RawAxiosRequestConfig) {
+        return RecitationsApiFp(this.configuration).recitationsUploadCreate(requestParameters.surahUuid, requestParameters.uuid, requestParameters.file, requestParameters.wordTimestamps, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

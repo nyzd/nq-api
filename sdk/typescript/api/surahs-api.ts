@@ -394,71 +394,134 @@ export const SurahsApiFactory = function (configuration?: Configuration, basePat
         /**
          * 
          * @summary Create a new Surah record
-         * @param {Surah} surah 
+         * @param {SurahsApiSurahsCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        surahsCreate(surah: Surah, options?: RawAxiosRequestConfig): AxiosPromise<Surah> {
-            return localVarFp.surahsCreate(surah, options).then((request) => request(axios, basePath));
+        surahsCreate(requestParameters: SurahsApiSurahsCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Surah> {
+            return localVarFp.surahsCreate(requestParameters.surah, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Delete a Surah record
-         * @param {string} uuid 
+         * @param {SurahsApiSurahsDestroyRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        surahsDestroy(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.surahsDestroy(uuid, options).then((request) => request(axios, basePath));
+        surahsDestroy(requestParameters: SurahsApiSurahsDestroyRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.surahsDestroy(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary List all Surahs (Quran chapters)
-         * @param {SurahsListMushafEnum} mushaf Short name of the Mushaf to filter Surahs by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
-         * @param {number} [limit] Number of results to return per page.
-         * @param {number} [offset] The initial index from which to return the results.
-         * @param {SurahsListOrderingEnum} [ordering] Which field to use when ordering the results.
-         * @param {string} [search] A search term.
+         * @param {SurahsApiSurahsListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        surahsList(mushaf: SurahsListMushafEnum, limit?: number, offset?: number, ordering?: SurahsListOrderingEnum, search?: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<Surah>> {
-            return localVarFp.surahsList(mushaf, limit, offset, ordering, search, options).then((request) => request(axios, basePath));
+        surahsList(requestParameters: SurahsApiSurahsListRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<Surah>> {
+            return localVarFp.surahsList(requestParameters.mushaf, requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Partially update a Surah record
-         * @param {string} uuid 
-         * @param {PatchedSurah} [patchedSurah] 
+         * @param {SurahsApiSurahsPartialUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        surahsPartialUpdate(uuid: string, patchedSurah?: PatchedSurah, options?: RawAxiosRequestConfig): AxiosPromise<Surah> {
-            return localVarFp.surahsPartialUpdate(uuid, patchedSurah, options).then((request) => request(axios, basePath));
+        surahsPartialUpdate(requestParameters: SurahsApiSurahsPartialUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Surah> {
+            return localVarFp.surahsPartialUpdate(requestParameters.uuid, requestParameters.patchedSurah, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific Surah by UUID
-         * @param {string} uuid 
+         * @param {SurahsApiSurahsRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        surahsRetrieve(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<SurahDetail> {
-            return localVarFp.surahsRetrieve(uuid, options).then((request) => request(axios, basePath));
+        surahsRetrieve(requestParameters: SurahsApiSurahsRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<SurahDetail> {
+            return localVarFp.surahsRetrieve(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Update an existing Surah record
-         * @param {string} uuid 
-         * @param {Surah} surah 
+         * @param {SurahsApiSurahsUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        surahsUpdate(uuid: string, surah: Surah, options?: RawAxiosRequestConfig): AxiosPromise<Surah> {
-            return localVarFp.surahsUpdate(uuid, surah, options).then((request) => request(axios, basePath));
+        surahsUpdate(requestParameters: SurahsApiSurahsUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Surah> {
+            return localVarFp.surahsUpdate(requestParameters.uuid, requestParameters.surah, options).then((request) => request(axios, basePath));
         },
     };
 };
+
+/**
+ * Request parameters for surahsCreate operation in SurahsApi.
+ */
+export interface SurahsApiSurahsCreateRequest {
+    readonly surah: Surah
+}
+
+/**
+ * Request parameters for surahsDestroy operation in SurahsApi.
+ */
+export interface SurahsApiSurahsDestroyRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for surahsList operation in SurahsApi.
+ */
+export interface SurahsApiSurahsListRequest {
+    /**
+     * Short name of the Mushaf to filter Surahs by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
+     */
+    readonly mushaf: SurahsListMushafEnum
+
+    /**
+     * Number of results to return per page.
+     */
+    readonly limit?: number
+
+    /**
+     * The initial index from which to return the results.
+     */
+    readonly offset?: number
+
+    /**
+     * Which field to use when ordering the results.
+     */
+    readonly ordering?: SurahsListOrderingEnum
+
+    /**
+     * A search term.
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for surahsPartialUpdate operation in SurahsApi.
+ */
+export interface SurahsApiSurahsPartialUpdateRequest {
+    readonly uuid: string
+
+    readonly patchedSurah?: PatchedSurah
+}
+
+/**
+ * Request parameters for surahsRetrieve operation in SurahsApi.
+ */
+export interface SurahsApiSurahsRetrieveRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for surahsUpdate operation in SurahsApi.
+ */
+export interface SurahsApiSurahsUpdateRequest {
+    readonly uuid: string
+
+    readonly surah: Surah
+}
 
 /**
  * SurahsApi - object-oriented interface
@@ -467,73 +530,67 @@ export class SurahsApi extends BaseAPI {
     /**
      * 
      * @summary Create a new Surah record
-     * @param {Surah} surah 
+     * @param {SurahsApiSurahsCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public surahsCreate(surah: Surah, options?: RawAxiosRequestConfig) {
-        return SurahsApiFp(this.configuration).surahsCreate(surah, options).then((request) => request(this.axios, this.basePath));
+    public surahsCreate(requestParameters: SurahsApiSurahsCreateRequest, options?: RawAxiosRequestConfig) {
+        return SurahsApiFp(this.configuration).surahsCreate(requestParameters.surah, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Delete a Surah record
-     * @param {string} uuid 
+     * @param {SurahsApiSurahsDestroyRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public surahsDestroy(uuid: string, options?: RawAxiosRequestConfig) {
-        return SurahsApiFp(this.configuration).surahsDestroy(uuid, options).then((request) => request(this.axios, this.basePath));
+    public surahsDestroy(requestParameters: SurahsApiSurahsDestroyRequest, options?: RawAxiosRequestConfig) {
+        return SurahsApiFp(this.configuration).surahsDestroy(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary List all Surahs (Quran chapters)
-     * @param {SurahsListMushafEnum} mushaf Short name of the Mushaf to filter Surahs by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
-     * @param {number} [limit] Number of results to return per page.
-     * @param {number} [offset] The initial index from which to return the results.
-     * @param {SurahsListOrderingEnum} [ordering] Which field to use when ordering the results.
-     * @param {string} [search] A search term.
+     * @param {SurahsApiSurahsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public surahsList(mushaf: SurahsListMushafEnum, limit?: number, offset?: number, ordering?: SurahsListOrderingEnum, search?: string, options?: RawAxiosRequestConfig) {
-        return SurahsApiFp(this.configuration).surahsList(mushaf, limit, offset, ordering, search, options).then((request) => request(this.axios, this.basePath));
+    public surahsList(requestParameters: SurahsApiSurahsListRequest, options?: RawAxiosRequestConfig) {
+        return SurahsApiFp(this.configuration).surahsList(requestParameters.mushaf, requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Partially update a Surah record
-     * @param {string} uuid 
-     * @param {PatchedSurah} [patchedSurah] 
+     * @param {SurahsApiSurahsPartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public surahsPartialUpdate(uuid: string, patchedSurah?: PatchedSurah, options?: RawAxiosRequestConfig) {
-        return SurahsApiFp(this.configuration).surahsPartialUpdate(uuid, patchedSurah, options).then((request) => request(this.axios, this.basePath));
+    public surahsPartialUpdate(requestParameters: SurahsApiSurahsPartialUpdateRequest, options?: RawAxiosRequestConfig) {
+        return SurahsApiFp(this.configuration).surahsPartialUpdate(requestParameters.uuid, requestParameters.patchedSurah, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific Surah by UUID
-     * @param {string} uuid 
+     * @param {SurahsApiSurahsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public surahsRetrieve(uuid: string, options?: RawAxiosRequestConfig) {
-        return SurahsApiFp(this.configuration).surahsRetrieve(uuid, options).then((request) => request(this.axios, this.basePath));
+    public surahsRetrieve(requestParameters: SurahsApiSurahsRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return SurahsApiFp(this.configuration).surahsRetrieve(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Update an existing Surah record
-     * @param {string} uuid 
-     * @param {Surah} surah 
+     * @param {SurahsApiSurahsUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public surahsUpdate(uuid: string, surah: Surah, options?: RawAxiosRequestConfig) {
-        return SurahsApiFp(this.configuration).surahsUpdate(uuid, surah, options).then((request) => request(this.axios, this.basePath));
+    public surahsUpdate(requestParameters: SurahsApiSurahsUpdateRequest, options?: RawAxiosRequestConfig) {
+        return SurahsApiFp(this.configuration).surahsUpdate(requestParameters.uuid, requestParameters.surah, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

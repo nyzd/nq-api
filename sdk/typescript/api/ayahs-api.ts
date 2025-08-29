@@ -394,71 +394,131 @@ export const AyahsApiFactory = function (configuration?: Configuration, basePath
         /**
          * 
          * @summary Create a new Ayah record
-         * @param {AyahAdd} ayahAdd 
+         * @param {AyahsApiAyahsCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        ayahsCreate(ayahAdd: AyahAdd, options?: RawAxiosRequestConfig): AxiosPromise<AyahAdd> {
-            return localVarFp.ayahsCreate(ayahAdd, options).then((request) => request(axios, basePath));
+        ayahsCreate(requestParameters: AyahsApiAyahsCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<AyahAdd> {
+            return localVarFp.ayahsCreate(requestParameters.ayahAdd, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Delete an Ayah record
-         * @param {string} uuid 
+         * @param {AyahsApiAyahsDestroyRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        ayahsDestroy(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.ayahsDestroy(uuid, options).then((request) => request(axios, basePath));
+        ayahsDestroy(requestParameters: AyahsApiAyahsDestroyRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.ayahsDestroy(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary List all Ayahs (Quran verses)
-         * @param {number} [limit] Number of results to return per page.
-         * @param {number} [offset] The initial index from which to return the results.
-         * @param {AyahsListOrderingEnum} [ordering] Which field to use when ordering the results.
-         * @param {string} [search] A search term.
-         * @param {string} [surahUuid] 
+         * @param {AyahsApiAyahsListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        ayahsList(limit?: number, offset?: number, ordering?: AyahsListOrderingEnum, search?: string, surahUuid?: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<Ayah>> {
-            return localVarFp.ayahsList(limit, offset, ordering, search, surahUuid, options).then((request) => request(axios, basePath));
+        ayahsList(requestParameters: AyahsApiAyahsListRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<Array<Ayah>> {
+            return localVarFp.ayahsList(requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, requestParameters.surahUuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Partially update an Ayah record
-         * @param {string} uuid 
-         * @param {PatchedAyah} [patchedAyah] 
+         * @param {AyahsApiAyahsPartialUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        ayahsPartialUpdate(uuid: string, patchedAyah?: PatchedAyah, options?: RawAxiosRequestConfig): AxiosPromise<Ayah> {
-            return localVarFp.ayahsPartialUpdate(uuid, patchedAyah, options).then((request) => request(axios, basePath));
+        ayahsPartialUpdate(requestParameters: AyahsApiAyahsPartialUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Ayah> {
+            return localVarFp.ayahsPartialUpdate(requestParameters.uuid, requestParameters.patchedAyah, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific Ayah by UUID
-         * @param {string} uuid 
+         * @param {AyahsApiAyahsRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        ayahsRetrieve(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<AyahSerializerView> {
-            return localVarFp.ayahsRetrieve(uuid, options).then((request) => request(axios, basePath));
+        ayahsRetrieve(requestParameters: AyahsApiAyahsRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<AyahSerializerView> {
+            return localVarFp.ayahsRetrieve(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Update an existing Ayah record
-         * @param {string} uuid 
-         * @param {Ayah} ayah 
+         * @param {AyahsApiAyahsUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        ayahsUpdate(uuid: string, ayah: Ayah, options?: RawAxiosRequestConfig): AxiosPromise<Ayah> {
-            return localVarFp.ayahsUpdate(uuid, ayah, options).then((request) => request(axios, basePath));
+        ayahsUpdate(requestParameters: AyahsApiAyahsUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Ayah> {
+            return localVarFp.ayahsUpdate(requestParameters.uuid, requestParameters.ayah, options).then((request) => request(axios, basePath));
         },
     };
 };
+
+/**
+ * Request parameters for ayahsCreate operation in AyahsApi.
+ */
+export interface AyahsApiAyahsCreateRequest {
+    readonly ayahAdd: AyahAdd
+}
+
+/**
+ * Request parameters for ayahsDestroy operation in AyahsApi.
+ */
+export interface AyahsApiAyahsDestroyRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for ayahsList operation in AyahsApi.
+ */
+export interface AyahsApiAyahsListRequest {
+    /**
+     * Number of results to return per page.
+     */
+    readonly limit?: number
+
+    /**
+     * The initial index from which to return the results.
+     */
+    readonly offset?: number
+
+    /**
+     * Which field to use when ordering the results.
+     */
+    readonly ordering?: AyahsListOrderingEnum
+
+    /**
+     * A search term.
+     */
+    readonly search?: string
+
+    readonly surahUuid?: string
+}
+
+/**
+ * Request parameters for ayahsPartialUpdate operation in AyahsApi.
+ */
+export interface AyahsApiAyahsPartialUpdateRequest {
+    readonly uuid: string
+
+    readonly patchedAyah?: PatchedAyah
+}
+
+/**
+ * Request parameters for ayahsRetrieve operation in AyahsApi.
+ */
+export interface AyahsApiAyahsRetrieveRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for ayahsUpdate operation in AyahsApi.
+ */
+export interface AyahsApiAyahsUpdateRequest {
+    readonly uuid: string
+
+    readonly ayah: Ayah
+}
 
 /**
  * AyahsApi - object-oriented interface
@@ -467,73 +527,67 @@ export class AyahsApi extends BaseAPI {
     /**
      * 
      * @summary Create a new Ayah record
-     * @param {AyahAdd} ayahAdd 
+     * @param {AyahsApiAyahsCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public ayahsCreate(ayahAdd: AyahAdd, options?: RawAxiosRequestConfig) {
-        return AyahsApiFp(this.configuration).ayahsCreate(ayahAdd, options).then((request) => request(this.axios, this.basePath));
+    public ayahsCreate(requestParameters: AyahsApiAyahsCreateRequest, options?: RawAxiosRequestConfig) {
+        return AyahsApiFp(this.configuration).ayahsCreate(requestParameters.ayahAdd, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Delete an Ayah record
-     * @param {string} uuid 
+     * @param {AyahsApiAyahsDestroyRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public ayahsDestroy(uuid: string, options?: RawAxiosRequestConfig) {
-        return AyahsApiFp(this.configuration).ayahsDestroy(uuid, options).then((request) => request(this.axios, this.basePath));
+    public ayahsDestroy(requestParameters: AyahsApiAyahsDestroyRequest, options?: RawAxiosRequestConfig) {
+        return AyahsApiFp(this.configuration).ayahsDestroy(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary List all Ayahs (Quran verses)
-     * @param {number} [limit] Number of results to return per page.
-     * @param {number} [offset] The initial index from which to return the results.
-     * @param {AyahsListOrderingEnum} [ordering] Which field to use when ordering the results.
-     * @param {string} [search] A search term.
-     * @param {string} [surahUuid] 
+     * @param {AyahsApiAyahsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public ayahsList(limit?: number, offset?: number, ordering?: AyahsListOrderingEnum, search?: string, surahUuid?: string, options?: RawAxiosRequestConfig) {
-        return AyahsApiFp(this.configuration).ayahsList(limit, offset, ordering, search, surahUuid, options).then((request) => request(this.axios, this.basePath));
+    public ayahsList(requestParameters: AyahsApiAyahsListRequest = {}, options?: RawAxiosRequestConfig) {
+        return AyahsApiFp(this.configuration).ayahsList(requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, requestParameters.surahUuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Partially update an Ayah record
-     * @param {string} uuid 
-     * @param {PatchedAyah} [patchedAyah] 
+     * @param {AyahsApiAyahsPartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public ayahsPartialUpdate(uuid: string, patchedAyah?: PatchedAyah, options?: RawAxiosRequestConfig) {
-        return AyahsApiFp(this.configuration).ayahsPartialUpdate(uuid, patchedAyah, options).then((request) => request(this.axios, this.basePath));
+    public ayahsPartialUpdate(requestParameters: AyahsApiAyahsPartialUpdateRequest, options?: RawAxiosRequestConfig) {
+        return AyahsApiFp(this.configuration).ayahsPartialUpdate(requestParameters.uuid, requestParameters.patchedAyah, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific Ayah by UUID
-     * @param {string} uuid 
+     * @param {AyahsApiAyahsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public ayahsRetrieve(uuid: string, options?: RawAxiosRequestConfig) {
-        return AyahsApiFp(this.configuration).ayahsRetrieve(uuid, options).then((request) => request(this.axios, this.basePath));
+    public ayahsRetrieve(requestParameters: AyahsApiAyahsRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return AyahsApiFp(this.configuration).ayahsRetrieve(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Update an existing Ayah record
-     * @param {string} uuid 
-     * @param {Ayah} ayah 
+     * @param {AyahsApiAyahsUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public ayahsUpdate(uuid: string, ayah: Ayah, options?: RawAxiosRequestConfig) {
-        return AyahsApiFp(this.configuration).ayahsUpdate(uuid, ayah, options).then((request) => request(this.axios, this.basePath));
+    public ayahsUpdate(requestParameters: AyahsApiAyahsUpdateRequest, options?: RawAxiosRequestConfig) {
+        return AyahsApiFp(this.configuration).ayahsUpdate(requestParameters.uuid, requestParameters.ayah, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

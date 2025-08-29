@@ -196,12 +196,12 @@ export const ProfileApiFactory = function (configuration?: Configuration, basePa
         /**
          * GET: Retrieve the current user\'s profile. POST: Update the current user\'s profile information.
          * @summary Get or update the current user\'s profile
-         * @param {Profile} profile 
+         * @param {ProfileApiProfileMeCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        profileMeCreate(profile: Profile, options?: RawAxiosRequestConfig): AxiosPromise<Profile> {
-            return localVarFp.profileMeCreate(profile, options).then((request) => request(axios, basePath));
+        profileMeCreate(requestParameters: ProfileApiProfileMeCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Profile> {
+            return localVarFp.profileMeCreate(requestParameters.profile, options).then((request) => request(axios, basePath));
         },
         /**
          * GET: Retrieve the current user\'s profile. POST: Update the current user\'s profile information.
@@ -215,15 +215,29 @@ export const ProfileApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @summary Retrieve the user\'s profile by uuid
-         * @param {string} uuid 
+         * @param {ProfileApiProfileRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        profileRetrieve(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<Profile> {
-            return localVarFp.profileRetrieve(uuid, options).then((request) => request(axios, basePath));
+        profileRetrieve(requestParameters: ProfileApiProfileRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<Profile> {
+            return localVarFp.profileRetrieve(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
     };
 };
+
+/**
+ * Request parameters for profileMeCreate operation in ProfileApi.
+ */
+export interface ProfileApiProfileMeCreateRequest {
+    readonly profile: Profile
+}
+
+/**
+ * Request parameters for profileRetrieve operation in ProfileApi.
+ */
+export interface ProfileApiProfileRetrieveRequest {
+    readonly uuid: string
+}
 
 /**
  * ProfileApi - object-oriented interface
@@ -232,12 +246,12 @@ export class ProfileApi extends BaseAPI {
     /**
      * GET: Retrieve the current user\'s profile. POST: Update the current user\'s profile information.
      * @summary Get or update the current user\'s profile
-     * @param {Profile} profile 
+     * @param {ProfileApiProfileMeCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public profileMeCreate(profile: Profile, options?: RawAxiosRequestConfig) {
-        return ProfileApiFp(this.configuration).profileMeCreate(profile, options).then((request) => request(this.axios, this.basePath));
+    public profileMeCreate(requestParameters: ProfileApiProfileMeCreateRequest, options?: RawAxiosRequestConfig) {
+        return ProfileApiFp(this.configuration).profileMeCreate(requestParameters.profile, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -253,12 +267,12 @@ export class ProfileApi extends BaseAPI {
     /**
      * 
      * @summary Retrieve the user\'s profile by uuid
-     * @param {string} uuid 
+     * @param {ProfileApiProfileRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public profileRetrieve(uuid: string, options?: RawAxiosRequestConfig) {
-        return ProfileApiFp(this.configuration).profileRetrieve(uuid, options).then((request) => request(this.axios, this.basePath));
+    public profileRetrieve(requestParameters: ProfileApiProfileRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return ProfileApiFp(this.configuration).profileRetrieve(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -766,143 +766,257 @@ export const TakhtitsApiFactory = function (configuration?: Configuration, baseP
         /**
          * Add a new ayahs_breaker to this takhtit. Requires ayah_uuid in the request body.
          * @summary Add an ayahs_breaker to this takhtit
-         * @param {string} uuid 
-         * @param {TakhtitsAyahsBreakersCreateRequest} [takhtitsAyahsBreakersCreateRequest] 
+         * @param {TakhtitsApiTakhtitsAyahsBreakersCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        takhtitsAyahsBreakersCreate(uuid: string, takhtitsAyahsBreakersCreateRequest?: TakhtitsAyahsBreakersCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<AyahBreaker> {
-            return localVarFp.takhtitsAyahsBreakersCreate(uuid, takhtitsAyahsBreakersCreateRequest, options).then((request) => request(axios, basePath));
+        takhtitsAyahsBreakersCreate(requestParameters: TakhtitsApiTakhtitsAyahsBreakersCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<AyahBreaker> {
+            return localVarFp.takhtitsAyahsBreakersCreate(requestParameters.uuid, requestParameters.takhtitsAyahsBreakersCreateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Returns a flat list containing an entry for every ayah in this takhtit, with breaker info similar to the mushaf ayah_map action.
          * @summary List all ayahs_breakers for this takhtit (ayahs map style)
-         * @param {string} uuid 
+         * @param {TakhtitsApiTakhtitsAyahsBreakersListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        takhtitsAyahsBreakersList(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<AyahBreakersResponse>> {
-            return localVarFp.takhtitsAyahsBreakersList(uuid, options).then((request) => request(axios, basePath));
+        takhtitsAyahsBreakersList(requestParameters: TakhtitsApiTakhtitsAyahsBreakersListRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<AyahBreakersResponse>> {
+            return localVarFp.takhtitsAyahsBreakersList(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific ayahs_breaker for this takhtit
-         * @param {string} breakerUuid UUID of the ayahs_breaker.
-         * @param {string} uuid 
+         * @param {TakhtitsApiTakhtitsAyahsBreakersRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        takhtitsAyahsBreakersRetrieve(breakerUuid: string, uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<AyahBreaker> {
-            return localVarFp.takhtitsAyahsBreakersRetrieve(breakerUuid, uuid, options).then((request) => request(axios, basePath));
+        takhtitsAyahsBreakersRetrieve(requestParameters: TakhtitsApiTakhtitsAyahsBreakersRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<AyahBreaker> {
+            return localVarFp.takhtitsAyahsBreakersRetrieve(requestParameters.breakerUuid, requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * Create a new Takhtit. Requires mushaf_uuid and account_uuid in the request body.
          * @summary Create a new Takhtit record
-         * @param {TakhtitsCreateRequest} [takhtitsCreateRequest] 
+         * @param {TakhtitsApiTakhtitsCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        takhtitsCreate(takhtitsCreateRequest?: TakhtitsCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Takhtit> {
-            return localVarFp.takhtitsCreate(takhtitsCreateRequest, options).then((request) => request(axios, basePath));
+        takhtitsCreate(requestParameters: TakhtitsApiTakhtitsCreateRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<Takhtit> {
+            return localVarFp.takhtitsCreate(requestParameters.takhtitsCreateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Delete a Takhtit record
-         * @param {string} uuid 
+         * @param {TakhtitsApiTakhtitsDestroyRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        takhtitsDestroy(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.takhtitsDestroy(uuid, options).then((request) => request(axios, basePath));
+        takhtitsDestroy(requestParameters: TakhtitsApiTakhtitsDestroyRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.takhtitsDestroy(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * Accepts a JSON array of strings with the format \'{surah}:{ayah}\' that denote the ayah at which a new breaker (page by default) begins. Existing breakers whose names start with the provided breaker type (default: \'page\') will be removed before importing the new ones.
          * @summary Import Ayah Breakers for the specified Takhtit
-         * @param {string} uuid 
-         * @param {File} file Text/JSON file containing a list of breakers (e.g. [\\\&#39;2:1\\\&#39;, \\\&#39;2:6\\\&#39;]).
-         * @param {string} [type] Breaker type (e.g., page, juz, hizb, ruku). Defaults to \&#39;page\&#39;.
+         * @param {TakhtitsApiTakhtitsImportCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        takhtitsImportCreate(uuid: string, file: File, type?: string, options?: RawAxiosRequestConfig): AxiosPromise<{ [key: string]: any; }> {
-            return localVarFp.takhtitsImportCreate(uuid, file, type, options).then((request) => request(axios, basePath));
+        takhtitsImportCreate(requestParameters: TakhtitsApiTakhtitsImportCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<{ [key: string]: any; }> {
+            return localVarFp.takhtitsImportCreate(requestParameters.uuid, requestParameters.file, requestParameters.type, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary List all Takhtits (text annotations/notes)
-         * @param {TakhtitsListMushafEnum} [mushaf] Short name of the Mushaf to filter Takhtits by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
+         * @param {TakhtitsApiTakhtitsListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        takhtitsList(mushaf?: TakhtitsListMushafEnum, options?: RawAxiosRequestConfig): AxiosPromise<Array<Takhtit>> {
-            return localVarFp.takhtitsList(mushaf, options).then((request) => request(axios, basePath));
+        takhtitsList(requestParameters: TakhtitsApiTakhtitsListRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<Array<Takhtit>> {
+            return localVarFp.takhtitsList(requestParameters.mushaf, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Partially update a Takhtit record
-         * @param {string} uuid 
-         * @param {PatchedTakhtit} [patchedTakhtit] 
+         * @param {TakhtitsApiTakhtitsPartialUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        takhtitsPartialUpdate(uuid: string, patchedTakhtit?: PatchedTakhtit, options?: RawAxiosRequestConfig): AxiosPromise<Takhtit> {
-            return localVarFp.takhtitsPartialUpdate(uuid, patchedTakhtit, options).then((request) => request(axios, basePath));
+        takhtitsPartialUpdate(requestParameters: TakhtitsApiTakhtitsPartialUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Takhtit> {
+            return localVarFp.takhtitsPartialUpdate(requestParameters.uuid, requestParameters.patchedTakhtit, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific Takhtit by UUID
-         * @param {string} uuid 
+         * @param {TakhtitsApiTakhtitsRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        takhtitsRetrieve(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<Takhtit> {
-            return localVarFp.takhtitsRetrieve(uuid, options).then((request) => request(axios, basePath));
+        takhtitsRetrieve(requestParameters: TakhtitsApiTakhtitsRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<Takhtit> {
+            return localVarFp.takhtitsRetrieve(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Update an existing Takhtit record
-         * @param {string} uuid 
-         * @param {Takhtit} takhtit 
+         * @param {TakhtitsApiTakhtitsUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        takhtitsUpdate(uuid: string, takhtit: Takhtit, options?: RawAxiosRequestConfig): AxiosPromise<Takhtit> {
-            return localVarFp.takhtitsUpdate(uuid, takhtit, options).then((request) => request(axios, basePath));
+        takhtitsUpdate(requestParameters: TakhtitsApiTakhtitsUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<Takhtit> {
+            return localVarFp.takhtitsUpdate(requestParameters.uuid, requestParameters.takhtit, options).then((request) => request(axios, basePath));
         },
         /**
          * Add a new words_breaker to this takhtit. Requires word_uuid in the request body. Only type \'line\' is allowed.
          * @summary Add a words_breaker to this takhtit
-         * @param {string} uuid 
-         * @param {TakhtitsWordsBreakersCreateRequest} [takhtitsWordsBreakersCreateRequest] 
+         * @param {TakhtitsApiTakhtitsWordsBreakersCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        takhtitsWordsBreakersCreate(uuid: string, takhtitsWordsBreakersCreateRequest?: TakhtitsWordsBreakersCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<WordBreakerDetailResponse> {
-            return localVarFp.takhtitsWordsBreakersCreate(uuid, takhtitsWordsBreakersCreateRequest, options).then((request) => request(axios, basePath));
+        takhtitsWordsBreakersCreate(requestParameters: TakhtitsApiTakhtitsWordsBreakersCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<WordBreakerDetailResponse> {
+            return localVarFp.takhtitsWordsBreakersCreate(requestParameters.uuid, requestParameters.takhtitsWordsBreakersCreateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Returns a flat list containing an entry for every word with a breaker for this takhtit, with a line counter (incremented for each breaker).
          * @summary List all words_breakers for this takhtit (with line counters)
-         * @param {string} uuid 
+         * @param {TakhtitsApiTakhtitsWordsBreakersListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        takhtitsWordsBreakersList(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<WordBreakersResponse>> {
-            return localVarFp.takhtitsWordsBreakersList(uuid, options).then((request) => request(axios, basePath));
+        takhtitsWordsBreakersList(requestParameters: TakhtitsApiTakhtitsWordsBreakersListRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<WordBreakersResponse>> {
+            return localVarFp.takhtitsWordsBreakersList(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific words_breaker for this takhtit
-         * @param {string} breakerUuid UUID of the words_breaker.
-         * @param {string} uuid 
+         * @param {TakhtitsApiTakhtitsWordsBreakersRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        takhtitsWordsBreakersRetrieve(breakerUuid: string, uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<WordBreakerDetailResponse> {
-            return localVarFp.takhtitsWordsBreakersRetrieve(breakerUuid, uuid, options).then((request) => request(axios, basePath));
+        takhtitsWordsBreakersRetrieve(requestParameters: TakhtitsApiTakhtitsWordsBreakersRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<WordBreakerDetailResponse> {
+            return localVarFp.takhtitsWordsBreakersRetrieve(requestParameters.breakerUuid, requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
     };
 };
+
+/**
+ * Request parameters for takhtitsAyahsBreakersCreate operation in TakhtitsApi.
+ */
+export interface TakhtitsApiTakhtitsAyahsBreakersCreateRequest {
+    readonly uuid: string
+
+    readonly takhtitsAyahsBreakersCreateRequest?: TakhtitsAyahsBreakersCreateRequest
+}
+
+/**
+ * Request parameters for takhtitsAyahsBreakersList operation in TakhtitsApi.
+ */
+export interface TakhtitsApiTakhtitsAyahsBreakersListRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for takhtitsAyahsBreakersRetrieve operation in TakhtitsApi.
+ */
+export interface TakhtitsApiTakhtitsAyahsBreakersRetrieveRequest {
+    /**
+     * UUID of the ayahs_breaker.
+     */
+    readonly breakerUuid: string
+
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for takhtitsCreate operation in TakhtitsApi.
+ */
+export interface TakhtitsApiTakhtitsCreateRequest {
+    readonly takhtitsCreateRequest?: TakhtitsCreateRequest
+}
+
+/**
+ * Request parameters for takhtitsDestroy operation in TakhtitsApi.
+ */
+export interface TakhtitsApiTakhtitsDestroyRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for takhtitsImportCreate operation in TakhtitsApi.
+ */
+export interface TakhtitsApiTakhtitsImportCreateRequest {
+    readonly uuid: string
+
+    /**
+     * Text/JSON file containing a list of breakers (e.g. [\\\&#39;2:1\\\&#39;, \\\&#39;2:6\\\&#39;]).
+     */
+    readonly file: File
+
+    /**
+     * Breaker type (e.g., page, juz, hizb, ruku). Defaults to \&#39;page\&#39;.
+     */
+    readonly type?: string
+}
+
+/**
+ * Request parameters for takhtitsList operation in TakhtitsApi.
+ */
+export interface TakhtitsApiTakhtitsListRequest {
+    /**
+     * Short name of the Mushaf to filter Takhtits by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
+     */
+    readonly mushaf?: TakhtitsListMushafEnum
+}
+
+/**
+ * Request parameters for takhtitsPartialUpdate operation in TakhtitsApi.
+ */
+export interface TakhtitsApiTakhtitsPartialUpdateRequest {
+    readonly uuid: string
+
+    readonly patchedTakhtit?: PatchedTakhtit
+}
+
+/**
+ * Request parameters for takhtitsRetrieve operation in TakhtitsApi.
+ */
+export interface TakhtitsApiTakhtitsRetrieveRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for takhtitsUpdate operation in TakhtitsApi.
+ */
+export interface TakhtitsApiTakhtitsUpdateRequest {
+    readonly uuid: string
+
+    readonly takhtit: Takhtit
+}
+
+/**
+ * Request parameters for takhtitsWordsBreakersCreate operation in TakhtitsApi.
+ */
+export interface TakhtitsApiTakhtitsWordsBreakersCreateRequest {
+    readonly uuid: string
+
+    readonly takhtitsWordsBreakersCreateRequest?: TakhtitsWordsBreakersCreateRequest
+}
+
+/**
+ * Request parameters for takhtitsWordsBreakersList operation in TakhtitsApi.
+ */
+export interface TakhtitsApiTakhtitsWordsBreakersListRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for takhtitsWordsBreakersRetrieve operation in TakhtitsApi.
+ */
+export interface TakhtitsApiTakhtitsWordsBreakersRetrieveRequest {
+    /**
+     * UUID of the words_breaker.
+     */
+    readonly breakerUuid: string
+
+    readonly uuid: string
+}
 
 /**
  * TakhtitsApi - object-oriented interface
@@ -911,152 +1025,144 @@ export class TakhtitsApi extends BaseAPI {
     /**
      * Add a new ayahs_breaker to this takhtit. Requires ayah_uuid in the request body.
      * @summary Add an ayahs_breaker to this takhtit
-     * @param {string} uuid 
-     * @param {TakhtitsAyahsBreakersCreateRequest} [takhtitsAyahsBreakersCreateRequest] 
+     * @param {TakhtitsApiTakhtitsAyahsBreakersCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public takhtitsAyahsBreakersCreate(uuid: string, takhtitsAyahsBreakersCreateRequest?: TakhtitsAyahsBreakersCreateRequest, options?: RawAxiosRequestConfig) {
-        return TakhtitsApiFp(this.configuration).takhtitsAyahsBreakersCreate(uuid, takhtitsAyahsBreakersCreateRequest, options).then((request) => request(this.axios, this.basePath));
+    public takhtitsAyahsBreakersCreate(requestParameters: TakhtitsApiTakhtitsAyahsBreakersCreateRequest, options?: RawAxiosRequestConfig) {
+        return TakhtitsApiFp(this.configuration).takhtitsAyahsBreakersCreate(requestParameters.uuid, requestParameters.takhtitsAyahsBreakersCreateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Returns a flat list containing an entry for every ayah in this takhtit, with breaker info similar to the mushaf ayah_map action.
      * @summary List all ayahs_breakers for this takhtit (ayahs map style)
-     * @param {string} uuid 
+     * @param {TakhtitsApiTakhtitsAyahsBreakersListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public takhtitsAyahsBreakersList(uuid: string, options?: RawAxiosRequestConfig) {
-        return TakhtitsApiFp(this.configuration).takhtitsAyahsBreakersList(uuid, options).then((request) => request(this.axios, this.basePath));
+    public takhtitsAyahsBreakersList(requestParameters: TakhtitsApiTakhtitsAyahsBreakersListRequest, options?: RawAxiosRequestConfig) {
+        return TakhtitsApiFp(this.configuration).takhtitsAyahsBreakersList(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific ayahs_breaker for this takhtit
-     * @param {string} breakerUuid UUID of the ayahs_breaker.
-     * @param {string} uuid 
+     * @param {TakhtitsApiTakhtitsAyahsBreakersRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public takhtitsAyahsBreakersRetrieve(breakerUuid: string, uuid: string, options?: RawAxiosRequestConfig) {
-        return TakhtitsApiFp(this.configuration).takhtitsAyahsBreakersRetrieve(breakerUuid, uuid, options).then((request) => request(this.axios, this.basePath));
+    public takhtitsAyahsBreakersRetrieve(requestParameters: TakhtitsApiTakhtitsAyahsBreakersRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return TakhtitsApiFp(this.configuration).takhtitsAyahsBreakersRetrieve(requestParameters.breakerUuid, requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Create a new Takhtit. Requires mushaf_uuid and account_uuid in the request body.
      * @summary Create a new Takhtit record
-     * @param {TakhtitsCreateRequest} [takhtitsCreateRequest] 
+     * @param {TakhtitsApiTakhtitsCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public takhtitsCreate(takhtitsCreateRequest?: TakhtitsCreateRequest, options?: RawAxiosRequestConfig) {
-        return TakhtitsApiFp(this.configuration).takhtitsCreate(takhtitsCreateRequest, options).then((request) => request(this.axios, this.basePath));
+    public takhtitsCreate(requestParameters: TakhtitsApiTakhtitsCreateRequest = {}, options?: RawAxiosRequestConfig) {
+        return TakhtitsApiFp(this.configuration).takhtitsCreate(requestParameters.takhtitsCreateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Delete a Takhtit record
-     * @param {string} uuid 
+     * @param {TakhtitsApiTakhtitsDestroyRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public takhtitsDestroy(uuid: string, options?: RawAxiosRequestConfig) {
-        return TakhtitsApiFp(this.configuration).takhtitsDestroy(uuid, options).then((request) => request(this.axios, this.basePath));
+    public takhtitsDestroy(requestParameters: TakhtitsApiTakhtitsDestroyRequest, options?: RawAxiosRequestConfig) {
+        return TakhtitsApiFp(this.configuration).takhtitsDestroy(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Accepts a JSON array of strings with the format \'{surah}:{ayah}\' that denote the ayah at which a new breaker (page by default) begins. Existing breakers whose names start with the provided breaker type (default: \'page\') will be removed before importing the new ones.
      * @summary Import Ayah Breakers for the specified Takhtit
-     * @param {string} uuid 
-     * @param {File} file Text/JSON file containing a list of breakers (e.g. [\\\&#39;2:1\\\&#39;, \\\&#39;2:6\\\&#39;]).
-     * @param {string} [type] Breaker type (e.g., page, juz, hizb, ruku). Defaults to \&#39;page\&#39;.
+     * @param {TakhtitsApiTakhtitsImportCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public takhtitsImportCreate(uuid: string, file: File, type?: string, options?: RawAxiosRequestConfig) {
-        return TakhtitsApiFp(this.configuration).takhtitsImportCreate(uuid, file, type, options).then((request) => request(this.axios, this.basePath));
+    public takhtitsImportCreate(requestParameters: TakhtitsApiTakhtitsImportCreateRequest, options?: RawAxiosRequestConfig) {
+        return TakhtitsApiFp(this.configuration).takhtitsImportCreate(requestParameters.uuid, requestParameters.file, requestParameters.type, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary List all Takhtits (text annotations/notes)
-     * @param {TakhtitsListMushafEnum} [mushaf] Short name of the Mushaf to filter Takhtits by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
+     * @param {TakhtitsApiTakhtitsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public takhtitsList(mushaf?: TakhtitsListMushafEnum, options?: RawAxiosRequestConfig) {
-        return TakhtitsApiFp(this.configuration).takhtitsList(mushaf, options).then((request) => request(this.axios, this.basePath));
+    public takhtitsList(requestParameters: TakhtitsApiTakhtitsListRequest = {}, options?: RawAxiosRequestConfig) {
+        return TakhtitsApiFp(this.configuration).takhtitsList(requestParameters.mushaf, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Partially update a Takhtit record
-     * @param {string} uuid 
-     * @param {PatchedTakhtit} [patchedTakhtit] 
+     * @param {TakhtitsApiTakhtitsPartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public takhtitsPartialUpdate(uuid: string, patchedTakhtit?: PatchedTakhtit, options?: RawAxiosRequestConfig) {
-        return TakhtitsApiFp(this.configuration).takhtitsPartialUpdate(uuid, patchedTakhtit, options).then((request) => request(this.axios, this.basePath));
+    public takhtitsPartialUpdate(requestParameters: TakhtitsApiTakhtitsPartialUpdateRequest, options?: RawAxiosRequestConfig) {
+        return TakhtitsApiFp(this.configuration).takhtitsPartialUpdate(requestParameters.uuid, requestParameters.patchedTakhtit, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific Takhtit by UUID
-     * @param {string} uuid 
+     * @param {TakhtitsApiTakhtitsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public takhtitsRetrieve(uuid: string, options?: RawAxiosRequestConfig) {
-        return TakhtitsApiFp(this.configuration).takhtitsRetrieve(uuid, options).then((request) => request(this.axios, this.basePath));
+    public takhtitsRetrieve(requestParameters: TakhtitsApiTakhtitsRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return TakhtitsApiFp(this.configuration).takhtitsRetrieve(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Update an existing Takhtit record
-     * @param {string} uuid 
-     * @param {Takhtit} takhtit 
+     * @param {TakhtitsApiTakhtitsUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public takhtitsUpdate(uuid: string, takhtit: Takhtit, options?: RawAxiosRequestConfig) {
-        return TakhtitsApiFp(this.configuration).takhtitsUpdate(uuid, takhtit, options).then((request) => request(this.axios, this.basePath));
+    public takhtitsUpdate(requestParameters: TakhtitsApiTakhtitsUpdateRequest, options?: RawAxiosRequestConfig) {
+        return TakhtitsApiFp(this.configuration).takhtitsUpdate(requestParameters.uuid, requestParameters.takhtit, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Add a new words_breaker to this takhtit. Requires word_uuid in the request body. Only type \'line\' is allowed.
      * @summary Add a words_breaker to this takhtit
-     * @param {string} uuid 
-     * @param {TakhtitsWordsBreakersCreateRequest} [takhtitsWordsBreakersCreateRequest] 
+     * @param {TakhtitsApiTakhtitsWordsBreakersCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public takhtitsWordsBreakersCreate(uuid: string, takhtitsWordsBreakersCreateRequest?: TakhtitsWordsBreakersCreateRequest, options?: RawAxiosRequestConfig) {
-        return TakhtitsApiFp(this.configuration).takhtitsWordsBreakersCreate(uuid, takhtitsWordsBreakersCreateRequest, options).then((request) => request(this.axios, this.basePath));
+    public takhtitsWordsBreakersCreate(requestParameters: TakhtitsApiTakhtitsWordsBreakersCreateRequest, options?: RawAxiosRequestConfig) {
+        return TakhtitsApiFp(this.configuration).takhtitsWordsBreakersCreate(requestParameters.uuid, requestParameters.takhtitsWordsBreakersCreateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Returns a flat list containing an entry for every word with a breaker for this takhtit, with a line counter (incremented for each breaker).
      * @summary List all words_breakers for this takhtit (with line counters)
-     * @param {string} uuid 
+     * @param {TakhtitsApiTakhtitsWordsBreakersListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public takhtitsWordsBreakersList(uuid: string, options?: RawAxiosRequestConfig) {
-        return TakhtitsApiFp(this.configuration).takhtitsWordsBreakersList(uuid, options).then((request) => request(this.axios, this.basePath));
+    public takhtitsWordsBreakersList(requestParameters: TakhtitsApiTakhtitsWordsBreakersListRequest, options?: RawAxiosRequestConfig) {
+        return TakhtitsApiFp(this.configuration).takhtitsWordsBreakersList(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific words_breaker for this takhtit
-     * @param {string} breakerUuid UUID of the words_breaker.
-     * @param {string} uuid 
+     * @param {TakhtitsApiTakhtitsWordsBreakersRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public takhtitsWordsBreakersRetrieve(breakerUuid: string, uuid: string, options?: RawAxiosRequestConfig) {
-        return TakhtitsApiFp(this.configuration).takhtitsWordsBreakersRetrieve(breakerUuid, uuid, options).then((request) => request(this.axios, this.basePath));
+    public takhtitsWordsBreakersRetrieve(requestParameters: TakhtitsApiTakhtitsWordsBreakersRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return TakhtitsApiFp(this.configuration).takhtitsWordsBreakersRetrieve(requestParameters.breakerUuid, requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

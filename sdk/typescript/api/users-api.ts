@@ -360,22 +360,22 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
         /**
          * 
          * @summary Create a new user
-         * @param {User} user 
+         * @param {UsersApiUsersCreateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersCreate(user: User, options?: RawAxiosRequestConfig): AxiosPromise<User> {
-            return localVarFp.usersCreate(user, options).then((request) => request(axios, basePath));
+        usersCreate(requestParameters: UsersApiUsersCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<User> {
+            return localVarFp.usersCreate(requestParameters.user, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Delete a user
-         * @param {string} uuid 
+         * @param {UsersApiUsersDestroyRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersDestroy(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.usersDestroy(uuid, options).then((request) => request(axios, basePath));
+        usersDestroy(requestParameters: UsersApiUsersDestroyRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usersDestroy(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -389,37 +389,74 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
         /**
          * 
          * @summary Partially update a user
-         * @param {string} uuid 
-         * @param {PatchedUser} [patchedUser] 
+         * @param {UsersApiUsersPartialUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersPartialUpdate(uuid: string, patchedUser?: PatchedUser, options?: RawAxiosRequestConfig): AxiosPromise<User> {
-            return localVarFp.usersPartialUpdate(uuid, patchedUser, options).then((request) => request(axios, basePath));
+        usersPartialUpdate(requestParameters: UsersApiUsersPartialUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<User> {
+            return localVarFp.usersPartialUpdate(requestParameters.uuid, requestParameters.patchedUser, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific user by UUID
-         * @param {string} uuid 
+         * @param {UsersApiUsersRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersRetrieve(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<User> {
-            return localVarFp.usersRetrieve(uuid, options).then((request) => request(axios, basePath));
+        usersRetrieve(requestParameters: UsersApiUsersRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<User> {
+            return localVarFp.usersRetrieve(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Update an existing user
-         * @param {string} uuid 
-         * @param {User} user 
+         * @param {UsersApiUsersUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersUpdate(uuid: string, user: User, options?: RawAxiosRequestConfig): AxiosPromise<User> {
-            return localVarFp.usersUpdate(uuid, user, options).then((request) => request(axios, basePath));
+        usersUpdate(requestParameters: UsersApiUsersUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<User> {
+            return localVarFp.usersUpdate(requestParameters.uuid, requestParameters.user, options).then((request) => request(axios, basePath));
         },
     };
 };
+
+/**
+ * Request parameters for usersCreate operation in UsersApi.
+ */
+export interface UsersApiUsersCreateRequest {
+    readonly user: User
+}
+
+/**
+ * Request parameters for usersDestroy operation in UsersApi.
+ */
+export interface UsersApiUsersDestroyRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for usersPartialUpdate operation in UsersApi.
+ */
+export interface UsersApiUsersPartialUpdateRequest {
+    readonly uuid: string
+
+    readonly patchedUser?: PatchedUser
+}
+
+/**
+ * Request parameters for usersRetrieve operation in UsersApi.
+ */
+export interface UsersApiUsersRetrieveRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for usersUpdate operation in UsersApi.
+ */
+export interface UsersApiUsersUpdateRequest {
+    readonly uuid: string
+
+    readonly user: User
+}
 
 /**
  * UsersApi - object-oriented interface
@@ -428,23 +465,23 @@ export class UsersApi extends BaseAPI {
     /**
      * 
      * @summary Create a new user
-     * @param {User} user 
+     * @param {UsersApiUsersCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public usersCreate(user: User, options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).usersCreate(user, options).then((request) => request(this.axios, this.basePath));
+    public usersCreate(requestParameters: UsersApiUsersCreateRequest, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).usersCreate(requestParameters.user, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Delete a user
-     * @param {string} uuid 
+     * @param {UsersApiUsersDestroyRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public usersDestroy(uuid: string, options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).usersDestroy(uuid, options).then((request) => request(this.axios, this.basePath));
+    public usersDestroy(requestParameters: UsersApiUsersDestroyRequest, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).usersDestroy(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -460,36 +497,34 @@ export class UsersApi extends BaseAPI {
     /**
      * 
      * @summary Partially update a user
-     * @param {string} uuid 
-     * @param {PatchedUser} [patchedUser] 
+     * @param {UsersApiUsersPartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public usersPartialUpdate(uuid: string, patchedUser?: PatchedUser, options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).usersPartialUpdate(uuid, patchedUser, options).then((request) => request(this.axios, this.basePath));
+    public usersPartialUpdate(requestParameters: UsersApiUsersPartialUpdateRequest, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).usersPartialUpdate(requestParameters.uuid, requestParameters.patchedUser, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific user by UUID
-     * @param {string} uuid 
+     * @param {UsersApiUsersRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public usersRetrieve(uuid: string, options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).usersRetrieve(uuid, options).then((request) => request(this.axios, this.basePath));
+    public usersRetrieve(requestParameters: UsersApiUsersRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).usersRetrieve(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Update an existing user
-     * @param {string} uuid 
-     * @param {User} user 
+     * @param {UsersApiUsersUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public usersUpdate(uuid: string, user: User, options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).usersUpdate(uuid, user, options).then((request) => request(this.axios, this.basePath));
+    public usersUpdate(requestParameters: UsersApiUsersUpdateRequest, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).usersUpdate(requestParameters.uuid, requestParameters.user, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -539,97 +539,213 @@ export const GeneralApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @summary List all Mushafs (Quranic manuscripts/editions)
-         * @param {number} [limit] Number of results to return per page.
-         * @param {number} [offset] The initial index from which to return the results.
-         * @param {MushafsListOrderingEnum} [ordering] Which field to use when ordering the results.
-         * @param {string} [search] A search term.
+         * @param {GeneralApiMushafsListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        mushafsList(limit?: number, offset?: number, ordering?: MushafsListOrderingEnum, search?: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<Mushaf>> {
-            return localVarFp.mushafsList(limit, offset, ordering, search, options).then((request) => request(axios, basePath));
+        mushafsList(requestParameters: GeneralApiMushafsListRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<Array<Mushaf>> {
+            return localVarFp.mushafsList(requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific Mushaf by UUID
-         * @param {string} uuid 
+         * @param {GeneralApiMushafsRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        mushafsRetrieve(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<Mushaf> {
-            return localVarFp.mushafsRetrieve(uuid, options).then((request) => request(axios, basePath));
+        mushafsRetrieve(requestParameters: GeneralApiMushafsRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<Mushaf> {
+            return localVarFp.mushafsRetrieve(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary List all Surahs (Quran chapters)
-         * @param {SurahsListMushafEnum} mushaf Short name of the Mushaf to filter Surahs by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
-         * @param {number} [limit] Number of results to return per page.
-         * @param {number} [offset] The initial index from which to return the results.
-         * @param {SurahsListOrderingEnum} [ordering] Which field to use when ordering the results.
-         * @param {string} [search] A search term.
+         * @param {GeneralApiSurahsListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        surahsList(mushaf: SurahsListMushafEnum, limit?: number, offset?: number, ordering?: SurahsListOrderingEnum, search?: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<Surah>> {
-            return localVarFp.surahsList(mushaf, limit, offset, ordering, search, options).then((request) => request(axios, basePath));
+        surahsList(requestParameters: GeneralApiSurahsListRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<Surah>> {
+            return localVarFp.surahsList(requestParameters.mushaf, requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific Surah by UUID
-         * @param {string} uuid 
+         * @param {GeneralApiSurahsRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        surahsRetrieve(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<SurahDetail> {
-            return localVarFp.surahsRetrieve(uuid, options).then((request) => request(axios, basePath));
+        surahsRetrieve(requestParameters: GeneralApiSurahsRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<SurahDetail> {
+            return localVarFp.surahsRetrieve(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary List all Takhtits (text annotations/notes)
-         * @param {TakhtitsListMushafEnum} [mushaf] Short name of the Mushaf to filter Takhtits by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
+         * @param {GeneralApiTakhtitsListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        takhtitsList(mushaf?: TakhtitsListMushafEnum, options?: RawAxiosRequestConfig): AxiosPromise<Array<Takhtit>> {
-            return localVarFp.takhtitsList(mushaf, options).then((request) => request(axios, basePath));
+        takhtitsList(requestParameters: GeneralApiTakhtitsListRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<Array<Takhtit>> {
+            return localVarFp.takhtitsList(requestParameters.mushaf, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific Takhtit by UUID
-         * @param {string} uuid 
+         * @param {GeneralApiTakhtitsRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        takhtitsRetrieve(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<Takhtit> {
-            return localVarFp.takhtitsRetrieve(uuid, options).then((request) => request(axios, basePath));
+        takhtitsRetrieve(requestParameters: GeneralApiTakhtitsRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<Takhtit> {
+            return localVarFp.takhtitsRetrieve(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary List all Quran Translations
-         * @param {TranslationsListMushafEnum} mushaf Short name of the Mushaf to filter Translations by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
-         * @param {TranslationsListLanguageEnum} [language] Language code to filter Translations by.
-         * @param {number} [limit] Number of results to return per page.
-         * @param {number} [offset] The initial index from which to return the results.
-         * @param {TranslationsListOrderingEnum} [ordering] Which field to use when ordering the results.
-         * @param {string} [search] A search term.
+         * @param {GeneralApiTranslationsListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        translationsList(mushaf: TranslationsListMushafEnum, language?: TranslationsListLanguageEnum, limit?: number, offset?: number, ordering?: TranslationsListOrderingEnum, search?: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<TranslationList>> {
-            return localVarFp.translationsList(mushaf, language, limit, offset, ordering, search, options).then((request) => request(axios, basePath));
+        translationsList(requestParameters: GeneralApiTranslationsListRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<TranslationList>> {
+            return localVarFp.translationsList(requestParameters.mushaf, requestParameters.language, requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Retrieve a specific Translation by UUID
-         * @param {string} uuid 
+         * @param {GeneralApiTranslationsRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        translationsRetrieve(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<Translation> {
-            return localVarFp.translationsRetrieve(uuid, options).then((request) => request(axios, basePath));
+        translationsRetrieve(requestParameters: GeneralApiTranslationsRetrieveRequest, options?: RawAxiosRequestConfig): AxiosPromise<Translation> {
+            return localVarFp.translationsRetrieve(requestParameters.uuid, options).then((request) => request(axios, basePath));
         },
     };
 };
+
+/**
+ * Request parameters for mushafsList operation in GeneralApi.
+ */
+export interface GeneralApiMushafsListRequest {
+    /**
+     * Number of results to return per page.
+     */
+    readonly limit?: number
+
+    /**
+     * The initial index from which to return the results.
+     */
+    readonly offset?: number
+
+    /**
+     * Which field to use when ordering the results.
+     */
+    readonly ordering?: MushafsListOrderingEnum
+
+    /**
+     * A search term.
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for mushafsRetrieve operation in GeneralApi.
+ */
+export interface GeneralApiMushafsRetrieveRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for surahsList operation in GeneralApi.
+ */
+export interface GeneralApiSurahsListRequest {
+    /**
+     * Short name of the Mushaf to filter Surahs by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
+     */
+    readonly mushaf: SurahsListMushafEnum
+
+    /**
+     * Number of results to return per page.
+     */
+    readonly limit?: number
+
+    /**
+     * The initial index from which to return the results.
+     */
+    readonly offset?: number
+
+    /**
+     * Which field to use when ordering the results.
+     */
+    readonly ordering?: SurahsListOrderingEnum
+
+    /**
+     * A search term.
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for surahsRetrieve operation in GeneralApi.
+ */
+export interface GeneralApiSurahsRetrieveRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for takhtitsList operation in GeneralApi.
+ */
+export interface GeneralApiTakhtitsListRequest {
+    /**
+     * Short name of the Mushaf to filter Takhtits by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
+     */
+    readonly mushaf?: TakhtitsListMushafEnum
+}
+
+/**
+ * Request parameters for takhtitsRetrieve operation in GeneralApi.
+ */
+export interface GeneralApiTakhtitsRetrieveRequest {
+    readonly uuid: string
+}
+
+/**
+ * Request parameters for translationsList operation in GeneralApi.
+ */
+export interface GeneralApiTranslationsListRequest {
+    /**
+     * Short name of the Mushaf to filter Translations by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
+     */
+    readonly mushaf: TranslationsListMushafEnum
+
+    /**
+     * Language code to filter Translations by.
+     */
+    readonly language?: TranslationsListLanguageEnum
+
+    /**
+     * Number of results to return per page.
+     */
+    readonly limit?: number
+
+    /**
+     * The initial index from which to return the results.
+     */
+    readonly offset?: number
+
+    /**
+     * Which field to use when ordering the results.
+     */
+    readonly ordering?: TranslationsListOrderingEnum
+
+    /**
+     * A search term.
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for translationsRetrieve operation in GeneralApi.
+ */
+export interface GeneralApiTranslationsRetrieveRequest {
+    readonly uuid: string
+}
 
 /**
  * GeneralApi - object-oriented interface
@@ -638,101 +754,89 @@ export class GeneralApi extends BaseAPI {
     /**
      * 
      * @summary List all Mushafs (Quranic manuscripts/editions)
-     * @param {number} [limit] Number of results to return per page.
-     * @param {number} [offset] The initial index from which to return the results.
-     * @param {MushafsListOrderingEnum} [ordering] Which field to use when ordering the results.
-     * @param {string} [search] A search term.
+     * @param {GeneralApiMushafsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public mushafsList(limit?: number, offset?: number, ordering?: MushafsListOrderingEnum, search?: string, options?: RawAxiosRequestConfig) {
-        return GeneralApiFp(this.configuration).mushafsList(limit, offset, ordering, search, options).then((request) => request(this.axios, this.basePath));
+    public mushafsList(requestParameters: GeneralApiMushafsListRequest = {}, options?: RawAxiosRequestConfig) {
+        return GeneralApiFp(this.configuration).mushafsList(requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific Mushaf by UUID
-     * @param {string} uuid 
+     * @param {GeneralApiMushafsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public mushafsRetrieve(uuid: string, options?: RawAxiosRequestConfig) {
-        return GeneralApiFp(this.configuration).mushafsRetrieve(uuid, options).then((request) => request(this.axios, this.basePath));
+    public mushafsRetrieve(requestParameters: GeneralApiMushafsRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return GeneralApiFp(this.configuration).mushafsRetrieve(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary List all Surahs (Quran chapters)
-     * @param {SurahsListMushafEnum} mushaf Short name of the Mushaf to filter Surahs by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
-     * @param {number} [limit] Number of results to return per page.
-     * @param {number} [offset] The initial index from which to return the results.
-     * @param {SurahsListOrderingEnum} [ordering] Which field to use when ordering the results.
-     * @param {string} [search] A search term.
+     * @param {GeneralApiSurahsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public surahsList(mushaf: SurahsListMushafEnum, limit?: number, offset?: number, ordering?: SurahsListOrderingEnum, search?: string, options?: RawAxiosRequestConfig) {
-        return GeneralApiFp(this.configuration).surahsList(mushaf, limit, offset, ordering, search, options).then((request) => request(this.axios, this.basePath));
+    public surahsList(requestParameters: GeneralApiSurahsListRequest, options?: RawAxiosRequestConfig) {
+        return GeneralApiFp(this.configuration).surahsList(requestParameters.mushaf, requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific Surah by UUID
-     * @param {string} uuid 
+     * @param {GeneralApiSurahsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public surahsRetrieve(uuid: string, options?: RawAxiosRequestConfig) {
-        return GeneralApiFp(this.configuration).surahsRetrieve(uuid, options).then((request) => request(this.axios, this.basePath));
+    public surahsRetrieve(requestParameters: GeneralApiSurahsRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return GeneralApiFp(this.configuration).surahsRetrieve(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary List all Takhtits (text annotations/notes)
-     * @param {TakhtitsListMushafEnum} [mushaf] Short name of the Mushaf to filter Takhtits by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
+     * @param {GeneralApiTakhtitsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public takhtitsList(mushaf?: TakhtitsListMushafEnum, options?: RawAxiosRequestConfig) {
-        return GeneralApiFp(this.configuration).takhtitsList(mushaf, options).then((request) => request(this.axios, this.basePath));
+    public takhtitsList(requestParameters: GeneralApiTakhtitsListRequest = {}, options?: RawAxiosRequestConfig) {
+        return GeneralApiFp(this.configuration).takhtitsList(requestParameters.mushaf, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific Takhtit by UUID
-     * @param {string} uuid 
+     * @param {GeneralApiTakhtitsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public takhtitsRetrieve(uuid: string, options?: RawAxiosRequestConfig) {
-        return GeneralApiFp(this.configuration).takhtitsRetrieve(uuid, options).then((request) => request(this.axios, this.basePath));
+    public takhtitsRetrieve(requestParameters: GeneralApiTakhtitsRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return GeneralApiFp(this.configuration).takhtitsRetrieve(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary List all Quran Translations
-     * @param {TranslationsListMushafEnum} mushaf Short name of the Mushaf to filter Translations by. Common value: \&#39;hafs\&#39;. Any string is accepted. (e.g. \&#39;hafs\&#39;, \&#39;warsh\&#39;, etc.)
-     * @param {TranslationsListLanguageEnum} [language] Language code to filter Translations by.
-     * @param {number} [limit] Number of results to return per page.
-     * @param {number} [offset] The initial index from which to return the results.
-     * @param {TranslationsListOrderingEnum} [ordering] Which field to use when ordering the results.
-     * @param {string} [search] A search term.
+     * @param {GeneralApiTranslationsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public translationsList(mushaf: TranslationsListMushafEnum, language?: TranslationsListLanguageEnum, limit?: number, offset?: number, ordering?: TranslationsListOrderingEnum, search?: string, options?: RawAxiosRequestConfig) {
-        return GeneralApiFp(this.configuration).translationsList(mushaf, language, limit, offset, ordering, search, options).then((request) => request(this.axios, this.basePath));
+    public translationsList(requestParameters: GeneralApiTranslationsListRequest, options?: RawAxiosRequestConfig) {
+        return GeneralApiFp(this.configuration).translationsList(requestParameters.mushaf, requestParameters.language, requestParameters.limit, requestParameters.offset, requestParameters.ordering, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Retrieve a specific Translation by UUID
-     * @param {string} uuid 
+     * @param {GeneralApiTranslationsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public translationsRetrieve(uuid: string, options?: RawAxiosRequestConfig) {
-        return GeneralApiFp(this.configuration).translationsRetrieve(uuid, options).then((request) => request(this.axios, this.basePath));
+    public translationsRetrieve(requestParameters: GeneralApiTranslationsRetrieveRequest, options?: RawAxiosRequestConfig) {
+        return GeneralApiFp(this.configuration).translationsRetrieve(requestParameters.uuid, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

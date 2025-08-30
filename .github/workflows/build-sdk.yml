@@ -1,0 +1,39 @@
+name: Generate and Build SDK
+
+on:
+  pull_request:
+    branches: 
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout the repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js and npm
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: |
+          cd sdk/typescript
+          npm ci
+
+      # 4. Generate TypeScript SDK from schema
+      - name: Generate SDK
+        run: |
+          cd sdk/typescript
+          npm run generate
+
+      # 5. Build the package (compile TS → JS + .d.ts)
+      - name: Build SDK
+        run: |
+          cd sdk/typescript
+          npm run build

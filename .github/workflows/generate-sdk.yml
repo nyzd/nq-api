@@ -64,4 +64,4 @@ jobs:
           cd sdk/typescript
           npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_NTQ_ACCESS_TOKEN }}

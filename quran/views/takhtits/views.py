@@ -98,18 +98,24 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 	def ayahs_breakers(self, request, uuid=None):
 		takhtit = self.get_object()
 		ayah_ids = AyahBreaker.objects.filter(takhtit=takhtit).values_list('ayah_id', flat=True)
-		ayah_qs = Ayah.objects.filter(id__in=ayah_ids).select_related("surah").order_by("surah__number", "number", "id")
+		ayah_qs = Ayah.objects.select_related("surah").prefetch_related("words").order_by("surah__number", "number", "id")
 		breakers_qs = (
 			AyahBreaker.objects
 			.filter(takhtit=takhtit, ayah__in=ayah_qs)
 			.select_related("ayah", "ayah__surah")
 			.order_by("ayah__surah__number", "ayah__number")
 		)
+
 		from collections import defaultdict
+
+        # If the breaker value is 1 then return None
+        # Else return the breaker
+		breaker_or_none = lambda x: (x != 1 and x) or None
+
 		breakers_by_ayah = defaultdict(list)
 		for br in breakers_qs:
 			breakers_by_ayah[br.ayah_id].append(br.type.lower())
-		counters = {k: 0 for k in ["juz", "hizb", "ruku", "page", "rub", "manzil"]}
+		counters = {k: 1 for k in ["juz", "hizb", "ruku", "page", "rub", "manzil"]}
 		data = []
 		for ayah in ayah_qs:
 			for br_type in breakers_by_ayah.get(ayah.id, []):
@@ -120,12 +126,13 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 				"uuid": str(ayah.uuid),
 				"surah": ayah.surah.number,
 				"ayah": ayah.number,
-				"juz": counters["juz"] or None,
-				"hizb": counters["hizb"] or None,
-				"ruku": counters["ruku"] or None,
-				"page": counters["page"] or None,
-				"rub": counters["rub"] or None,
-				"manzil": counters["manzil"] or None,
+				"length": ayah.length,
+				"juz": breaker_or_none(counters["juz"]),
+				"hizb": breaker_or_none(counters["hizb"]),
+				"ruku": breaker_or_none(counters["ruku"]),
+				"page": breaker_or_none(counters["page"]),
+				"rub": breaker_or_none(counters["rub"]),
+				"manzil": breaker_or_none(counters["manzil"]),
 			})
 		return Response(data)
 
@@ -284,7 +291,7 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 	@action(detail=True, methods=["post"], url_path="import", parser_classes=[MultiPartParser, FormParser])
 	def import_breakers(self, request, uuid=None):
 		import json
-		from quran.models import Ayah, AyahBreaker, AyahBreakerType, Surah, Takhtit
+		from quran.models import Ayah, AyahBreaker, Surah
 		takhtit = self.get_object()
 		breaker_type = request.query_params.get('type', 'page')
 		file = request.FILES.get('file')

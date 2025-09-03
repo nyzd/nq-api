@@ -104,7 +104,7 @@ class AyahSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Ayah
-        fields = ['uuid', 'number', 'sajdah', 'text', 'breakers', 'bismillah', 'surah']
+        fields = ['uuid', 'number', 'sajdah', 'text', 'breakers', 'bismillah', 'surah', 'length']
         read_only_fields = ['creator']
     
     def get_surah(self, instance):
@@ -385,7 +385,8 @@ class AyahAddSerializer(serializers.Serializer):
             'surah_uuid': str(instance.surah.uuid),
             'is_bismillah': instance.is_bismillah,
             'bismillah_text': instance.bismillah_text,
-            'sajdah': instance.sajdah
+            'sajdah': instance.sajdah,
+            'length': instance.length
         }
 
     def create(self, validated_data):
@@ -421,6 +422,10 @@ class AyahAddSerializer(serializers.Serializer):
                     text=word_text,
                     creator=self.context['request'].user
                 )
+        
+        # Calculate and update the length after creating words
+        ayah.length = ayah.calculate_length()
+        ayah.save(update_fields=['length'])
         
         return ayah
 

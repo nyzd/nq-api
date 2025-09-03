@@ -41,6 +41,12 @@ def import_mushaf_task(quran_data, user_id):
         for surah_data in quran_data["surahs"]:
             surah = surahs_by_number[surah_data["number"]]
             for ayah in surah_data["ayahs"]:
+                # Calculate length from words if available
+                length = 0
+                if "words" in ayah:
+                    text = ' '.join(word["text"] for word in ayah["words"])
+                    length = len(text)
+                
                 ayah_objs.append(Ayah(
                     creator_id=user.id,
                     surah=surah,
@@ -48,6 +54,7 @@ def import_mushaf_task(quran_data, user_id):
                     sajdah=ayah["sajdah"],
                     is_bismillah=ayah["is_bismillah"],
                     bismillah_text=ayah["bismillah_text"],
+                    length=length,
                 ))
         Ayah.objects.bulk_create(ayah_objs)
         ayahs_by_surah_and_number = {(a.surah.number, a.number): a for a in Ayah.objects.filter(surah__mushaf=mushaf)}

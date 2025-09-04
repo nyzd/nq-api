@@ -40,7 +40,7 @@ class AyahViewSet(viewsets.ModelViewSet):
 		return None
 
 	def get_queryset(self):
-		ayah_fields = ['uuid', 'surah', 'number', 'sajdah', 'is_bismillah', 'bismillah_text', 'creator']
+		ayah_fields = ['uuid', 'surah', 'number', 'sajdah', 'is_bismillah', 'bismillah_text', 'creator', 'length']
 		queryset = super().get_queryset()
 		if self.action == 'retrieve':
 			queryset = queryset.select_related('surah', 'surah__mushaf').prefetch_related('words').only(*ayah_fields)

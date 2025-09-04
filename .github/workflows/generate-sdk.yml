@@ -11,6 +11,7 @@ on:
 jobs:
   generate-schema:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,11 +26,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run migrations
-        run: |
-          python manage.py migrate
-
       - name: Generate OpenAPI schema
+        env:
+          DATABASE_URL: sqlite:///:memory:
         run: |
           python manage.py spectacular --file sdk/schema.yaml
 
@@ -46,42 +45,35 @@ jobs:
     runs-on: ubuntu-latest
     needs: generate-schema
     steps:
-      # 1. Checkout the repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Setup Node.js and npm
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org/
 
-      # 3. Install dependencies
       - name: Install dependencies
         run: |
           cd sdk/typescript
           npm ci
 
-      # 4. Generate TypeScript SDK from schema
       - name: Generate SDK
         run: |
           cd sdk/typescript
           npm run generate
 
-      # 5. Build the package (compile TS → JS + .d.ts)
       - name: Build SDK
         run: |
           cd sdk/typescript
           npm run build
 
-      # 6. Bump the package version
       - name: Bump SDK version
         run: |
           cd sdk/typescript
           npm version patch -m "chore(release): %s [skip ci]"
 
-      # 7. Commit version bump
       - name: Commit version bump
         run: |
           cd sdk/typescript
@@ -92,7 +84,6 @@ jobs:
           git push --follow-tags
         continue-on-error: true
 
-      # 8. Publish to npm
       - name: Publish SDK to npm
         run: |
           cd sdk/typescript

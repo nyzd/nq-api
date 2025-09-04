@@ -43,7 +43,7 @@ class SurahSerializer(serializers.ModelSerializer):
     name = serializers.CharField(write_only=True, required=True)
     number_of_ayahs = serializers.SerializerMethodField(read_only=True)
     bismillah = serializers.SerializerMethodField(read_only=True)
-    
+
     class Meta:
         model = Surah
         fields = ['uuid', 'mushaf', 'mushaf_uuid', 'name', 'names', 'number', 'period', 'search_terms', 'number_of_ayahs', 'bismillah']
@@ -82,7 +82,7 @@ class SurahSerializer(serializers.ModelSerializer):
 
 class SurahInAyahSerializer(serializers.ModelSerializer):
     names = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = Surah
         fields = ['uuid', 'names']
@@ -101,12 +101,12 @@ class AyahSerializer(serializers.ModelSerializer):
     breakers = serializers.SerializerMethodField()
     bismillah = serializers.SerializerMethodField()
     surah = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = Ayah
         fields = ['uuid', 'number', 'sajdah', 'text', 'breakers', 'bismillah', 'surah', 'length']
         read_only_fields = ['creator']
-    
+
     def get_surah(self, instance):
         if instance.number == 1:
             return SurahSerializer(instance.surah).data
@@ -116,12 +116,12 @@ class AyahSerializer(serializers.ModelSerializer):
         words = list(instance.words.all().order_by('id'))
         if not words:
             return [] if self.context.get('text_format') == 'word' else ''
-            
+
         if self.context.get('text_format') == 'word':
             # Get all word breakers for these words
             word_ids = [word.id for word in words]
             word_breakers = WordBreaker.objects.filter(word_id__in=word_ids)
-            
+
             # Group breakers by word_id
             breakers_by_word = {}
             for breaker in word_breakers:
@@ -130,7 +130,7 @@ class AyahSerializer(serializers.ModelSerializer):
                 breakers_by_word[breaker.word_id].append({
                     'name': breaker.name
                 })
-            
+
             # Return words with their breakers (only if they have any)
             result = []
             for word in words:
@@ -139,18 +139,18 @@ class AyahSerializer(serializers.ModelSerializer):
                     word_data['breakers'] = breakers_by_word[word.id]
                 result.append(word_data)
             return result
-            
+
         return ' '.join(word.text for word in words)
 
     def get_breakers(self, instance):
         breakers = instance.breakers.all()
         if not breakers.exists():
             return None
-            
+
         # Get all breakers up to current ayah across all surahs
         current_surah = instance.surah
         current_number = instance.number
-        
+
         all_breakers = AyahBreaker.objects.filter(
             models.Q(
                 ayah__surah__number__lt=current_surah.number
@@ -159,29 +159,29 @@ class AyahSerializer(serializers.ModelSerializer):
                 ayah__number__lte=current_number
             )
         ).order_by('ayah__surah__number', 'ayah__number')
-        
+
         # Keep running count of breakers
         breaker_counts = {}
         ayah_breakers = {}
-        
+
         for breaker in all_breakers:
             # Update count for this breaker type
             if breaker.type not in breaker_counts:
                 breaker_counts[breaker.type] = 1
             else:
                 breaker_counts[breaker.type] += 1
-                
+
             # Store current counts for this ayah
             if breaker.ayah_id not in ayah_breakers:
                 ayah_breakers[breaker.ayah_id] = []
-            
+
             # Only add if type not already in this ayah's breakers
             if not any(b['name'] == breaker.type for b in ayah_breakers[breaker.ayah_id]):
                 ayah_breakers[breaker.ayah_id].append({
                     'name': breaker.type,
                     'number': breaker_counts[breaker.type]
                 })
-        
+
         # Return breakers for current ayah
         return ayah_breakers.get(instance.id, None)
 
@@ -240,7 +240,7 @@ class AyahSerializerView(AyahSerializer):
     surah = SurahInAyahSerializer(read_only=True)
     mushaf = serializers.SerializerMethodField()
     words = WordSerializer(many=True, read_only=True)
-    
+
     class Meta(AyahSerializer.Meta):
         fields = AyahSerializer.Meta.fields + ['surah', 'mushaf', 'words']
 
@@ -252,11 +252,11 @@ class AyahSerializerView(AyahSerializer):
 class AyahInSurahSerializer(AyahSerializer):
     class Meta(AyahSerializer.Meta):
         fields = ['uuid', 'number', 'sajdah', 'is_bismillah', 'bismillah_text', 'text']
-        
+
 
 class SurahDetailSerializer(SurahSerializer):
     ayahs = AyahInSurahSerializer(many=True, read_only=True)
-    
+
     class Meta(SurahSerializer.Meta):
         fields = SurahSerializer.Meta.fields + ['ayahs']
 
@@ -393,14 +393,14 @@ class AyahAddSerializer(serializers.Serializer):
         # Get the text and remove it from validated_data
         text = validated_data.pop('text')
         surah_uuid = validated_data.pop('surah_uuid')
-        
+
         # Get the surah by uuid
         surah = Surah.objects.get(uuid=surah_uuid)
-        
+
         # Get the latest ayah number in this surah and increment it
         latest_ayah = Ayah.objects.filter(surah=surah).order_by('-number').first()
         next_number = 1 if latest_ayah is None else latest_ayah.number + 1
-        
+
         # Create the ayah
         ayah_data = {
             'surah': surah,
@@ -411,7 +411,7 @@ class AyahAddSerializer(serializers.Serializer):
             'sajdah': validated_data.get('sajdah', None)
         }
         ayah = Ayah.objects.create(**ayah_data)
-        
+
         # Create words from the text
         if text:
             # Split text into words (you might want to use a more sophisticated word splitting logic)
@@ -422,11 +422,11 @@ class AyahAddSerializer(serializers.Serializer):
                     text=word_text,
                     creator=self.context['request'].user
                 )
-        
+
         # Calculate and update the length after creating words
         ayah.length = ayah.calculate_length()
         ayah.save(update_fields=['length'])
-        
+
         return ayah
 
 class RecitationSerializer(serializers.ModelSerializer):
@@ -540,7 +540,7 @@ class RecitationSerializer(serializers.ModelSerializer):
 
         if not timestamps:
             return []
-        
+
         # Skip the first ayah and get start times of remaining ayahs
         ayah_start_times = []
         for timestamp in timestamps[1:]:  # Skip first timestamp
@@ -623,7 +623,7 @@ class RecitationListSerializer(serializers.ModelSerializer):
 class TakhtitSerializer(serializers.ModelSerializer):
     mushaf_uuid = serializers.UUIDField(write_only=True, required=True)
     account_uuid = serializers.UUIDField(write_only=True, required=True)
-    
+
     class Meta:
         model = Takhtit
         fields = [
@@ -634,24 +634,25 @@ class TakhtitSerializer(serializers.ModelSerializer):
             'created_at',
         ]
         read_only_fields = ['uuid', 'creator', 'created_at', 'updated_at']
-    
+
     def create(self, validated_data):
         # Remove the UUID fields before creating the model instance
         validated_data.pop('mushaf_uuid', None)
         validated_data.pop('account_uuid', None)
         return super().create(validated_data)
- 
+
 class AyahBreakersResponseSerializer(serializers.Serializer):
     """Serializer for the ayahs_breakers endpoint response"""
     uuid = serializers.UUIDField(help_text="UUID of the ayah")
     surah = serializers.IntegerField(help_text="Surah number")
     ayah = serializers.IntegerField(help_text="Ayah number")
+    length = serializers.IntegerField(help_text="Ayah text length")
     juz = serializers.IntegerField(allow_null=True, help_text="Juz number (null if not a juz breaker)")
     hizb = serializers.IntegerField(allow_null=True, help_text="Hizb number (null if not a hizb breaker)")
     ruku = serializers.IntegerField(allow_null=True, help_text="Ruku number (null if not a ruku breaker)")
     page = serializers.IntegerField(allow_null=True, help_text="Page number (null if not a page breaker)")
     rub = serializers.IntegerField(allow_null=True, help_text="Rub number (null if not a rub breaker)")
-    manzil = serializers.IntegerField(allow_null=True, help_text="Manzil number (null if not a manzil breaker)") 
+    manzil = serializers.IntegerField(allow_null=True, help_text="Manzil number (null if not a manzil breaker)")
 
 class WordBreakersResponseSerializer(serializers.Serializer):
     """Serializer for the words_breakers endpoint response"""
@@ -661,4 +662,4 @@ class WordBreakersResponseSerializer(serializers.Serializer):
 class WordBreakerDetailResponseSerializer(serializers.Serializer):
     """Serializer for individual word breaker responses"""
     word_uuid = serializers.UUIDField(help_text="UUID of the word")
-    type = serializers.CharField(help_text="Breaker type (always 'line')") 
+    type = serializers.CharField(help_text="Breaker type (always 'line')")

@@ -25,7 +25,7 @@ jobs:
 
       - name: Generate OpenAPI schema
         env:
-          DATABASE_URL: sqlite:///:memory:
+          DATABASE_URL: "sqlite:///:memory:"
         run: |
           python manage.py spectacular --file sdk/schema.yaml
 

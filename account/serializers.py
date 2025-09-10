@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name')
+        fields = ('uuid', 'username', 'password', 'password2', 'email', 'first_name', 'last_name')
         extra_kwargs = {
             'first_name': {'required': False},
             'last_name': {'required': False},
@@ -56,7 +56,7 @@ class LoginSerializer(serializers.Serializer):
 
 class ProfileSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
-        fields = ['username', 'email', 'first_name', 'last_name']
+        fields = ['uuid', 'username', 'email', 'first_name', 'last_name']
         extra_kwargs = {
             'first_name': {'required': False},
             'last_name': {'required': False},

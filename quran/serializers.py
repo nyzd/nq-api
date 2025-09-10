@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.db import models
 from datetime import datetime
 from django.conf import settings
+from drf_spectacular.utils import extend_schema_field
 
 from quran.models import (
     Mushaf,
@@ -32,12 +33,12 @@ class MushafSerializer(serializers.ModelSerializer):
 
 class SurahNameSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=50)
-    name_pronunciation = serializers.CharField(required=False, allow_null=True)
-    name_translation = serializers.CharField(required=False, allow_null=True)
-    name_transliteration = serializers.CharField(required=False, allow_null=True)
+    pronunciation = serializers.CharField(required=False, allow_null=True)
+    translation = serializers.CharField(required=False, allow_null=True)
+    transliteration = serializers.CharField(required=False, allow_null=True)
 
 class SurahSerializer(serializers.ModelSerializer):
-    names = serializers.SerializerMethodField(read_only=True)
+    names = SurahNameSerializer(many=True, read_only=True)
     mushaf = MushafSerializer(read_only=True)
     mushaf_uuid = serializers.UUIDField(write_only=True, required=True)
     name = serializers.CharField(write_only=True, required=True)
@@ -81,7 +82,7 @@ class SurahSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 class SurahInAyahSerializer(serializers.ModelSerializer):
-    names = serializers.SerializerMethodField()
+    names = SurahNameSerializer(many=True, read_only=True)
 
     class Meta:
         model = Surah
@@ -107,6 +108,7 @@ class AyahSerializer(serializers.ModelSerializer):
         fields = ['uuid', 'number', 'sajdah', 'text', 'breakers', 'bismillah', 'surah', 'length']
         read_only_fields = ['creator']
 
+    @extend_schema_field(SurahSerializer(allow_null=True))
     def get_surah(self, instance):
         if instance.number == 1:
             return SurahSerializer(instance.surah).data
@@ -380,7 +382,7 @@ class AyahAddSerializer(serializers.Serializer):
 
     def to_representation(self, instance):
         return {
-            'id': instance.id,
+            'uuid': str(instance.uuid),
             'number': instance.number,
             'surah_uuid': str(instance.surah.uuid),
             'is_bismillah': instance.is_bismillah,

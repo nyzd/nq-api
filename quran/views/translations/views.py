@@ -160,7 +160,7 @@ class TranslationViewSet(viewsets.ModelViewSet):
 	@action(detail=True, methods=["get"], url_path="ayahs")
 	def ayahs(self, request, *args, **kwargs):
 		translation = self.get_object()
-		ayah_translations = translation.ayah_translations.select_related('ayah', 'ayah__surah').order_by('ayah__number')
+		ayah_translations = translation.ayah_translations.select_related('ayah', 'ayah__surah').order_by('ayah__surah__number', 'ayah__number')
 		surah_uuid = request.query_params.get('surah_uuid')
 		if surah_uuid:
 			ayah_translations = ayah_translations.filter(ayah__surah__uuid=surah_uuid)

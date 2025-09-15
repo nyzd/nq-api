@@ -38,7 +38,7 @@ class SurahNameSerializer(serializers.Serializer):
     transliteration = serializers.CharField(required=False, allow_null=True)
 
 class SurahSerializer(serializers.ModelSerializer):
-    names = SurahNameSerializer(many=True, read_only=True)
+    names = serializers.SerializerMethodField(read_only=True)
     mushaf = MushafSerializer(read_only=True)
     mushaf_uuid = serializers.UUIDField(write_only=True, required=True)
     name = serializers.CharField(write_only=True, required=True)
@@ -82,7 +82,7 @@ class SurahSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 class SurahInAyahSerializer(serializers.ModelSerializer):
-    names = SurahNameSerializer(many=True, read_only=True)
+    names = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Surah

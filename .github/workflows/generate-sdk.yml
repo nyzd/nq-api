@@ -18,6 +18,8 @@ jobs:
           POSTGRES_DB: postgres
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
         options: >-
           --health-cmd "pg_isready -U postgres"
           --health-interval 10s
@@ -28,7 +30,7 @@ jobs:
       DATABASE_USERNAME: postgres
       DATABASE_PASSWORD: password
       DATABASE_HOST: 127.0.0.1
-      DATABASE_PORT: "${{ job.services.postgres.ports[5432] }}"
+      DATABASE_PORT: "5432"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

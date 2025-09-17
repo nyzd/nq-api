@@ -160,10 +160,17 @@ class TranslationViewSet(viewsets.ModelViewSet):
 	@action(detail=True, methods=["get"], url_path="ayahs")
 	def ayahs(self, request, *args, **kwargs):
 		translation = self.get_object()
-		ayah_translations = translation.ayah_translations.select_related('ayah', 'ayah__surah').order_by('ayah__surah__number', 'ayah__number')
+		# Ensure ayahs are aligned with canonical ayah ordering within the same mushaf
+		ayah_translations = (
+			translation
+			.ayah_translations
+			.select_related('ayah', 'ayah__surah')
+			.filter(ayah__surah__mushaf=translation.mushaf)
+			.order_by('ayah__surah__number', 'ayah__number', 'ayah__id')
+		)
 		surah_uuid = request.query_params.get('surah_uuid')
 		if surah_uuid:
-			ayah_translations = ayah_translations.filter(ayah__surah__uuid=surah_uuid)
+			ayah_translations = ayah_translations.filter(ayah__surah__uuid=surah_uuid).order_by('ayah__number', 'ayah__id')
 		paginator = CustomLimitOffsetPagination()
 		page = paginator.paginate_queryset(ayah_translations, request)
 		def process_bismillah(data):

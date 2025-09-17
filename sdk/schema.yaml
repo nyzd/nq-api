@@ -3028,8 +3028,15 @@ components:
           type: string
           readOnly: true
         surah:
-          type: string
+          allOf:
+          - $ref: '#/components/schemas/Surah'
+          nullable: true
           readOnly: true
+        length:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Character count of the ayah text (joined words)
       required:
       - bismillah
       - breakers
@@ -3098,6 +3105,9 @@ components:
         ayah:
           type: integer
           description: Ayah number
+        length:
+          type: integer
+          description: Ayah text length
         juz:
           type: integer
           nullable: true
@@ -3126,6 +3136,7 @@ components:
       - ayah
       - hizb
       - juz
+      - length
       - manzil
       - page
       - rub
@@ -3195,6 +3206,11 @@ components:
           allOf:
           - $ref: '#/components/schemas/SurahInAyah'
           readOnly: true
+        length:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Character count of the ayah text (joined words)
         mushaf:
           type: string
           readOnly: true
@@ -3459,8 +3475,15 @@ components:
           type: string
           readOnly: true
         surah:
-          type: string
+          allOf:
+          - $ref: '#/components/schemas/Surah'
+          nullable: true
           readOnly: true
+        length:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Character count of the ayah text (joined words)
     PatchedGroup:
       type: object
       properties:
@@ -3717,6 +3740,10 @@ components:
     PatchedUser:
       type: object
       properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
         username:
           type: string
           description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
@@ -3777,6 +3804,10 @@ components:
     Profile:
       type: object
       properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
         username:
           type: string
           description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
@@ -3796,6 +3827,7 @@ components:
           maxLength: 150
       required:
       - username
+      - uuid
     Recitation:
       type: object
       properties:
@@ -4245,6 +4277,10 @@ components:
     User:
       type: object
       properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
         username:
           type: string
           description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
@@ -4273,6 +4309,7 @@ components:
       - password
       - password2
       - username
+      - uuid
     Word:
       type: object
       properties:

@@ -102,6 +102,10 @@ jobs:
       - name: Bump SDK version
         run: |
           cd sdk/typescript
+          BRANCH_NAME="${GITHUB_REF_NAME}"
+          git fetch origin "$BRANCH_NAME"
+          git checkout "$BRANCH_NAME"
+          git pull --rebase origin "$BRANCH_NAME"
           npm version patch -m "chore(release): %s [skip ci]"
 
       # 7. Commit version bump

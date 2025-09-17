@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "sdk/schema.yaml"
-      - "sdk/typescript/**"
 
 jobs:
   generate-schema:

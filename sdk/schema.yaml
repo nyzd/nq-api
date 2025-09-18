@@ -3653,7 +3653,9 @@ components:
           type: string
           writeOnly: true
         names:
-          type: string
+          type: array
+          items:
+            $ref: '#/components/schemas/SurahName'
           readOnly: true
         number:
           type: integer
@@ -3678,7 +3680,8 @@ components:
           type: string
           readOnly: true
         bismillah:
-          type: string
+          allOf:
+          - $ref: '#/components/schemas/SurahBismillah'
           readOnly: true
     PatchedTakhtit:
       type: object
@@ -3978,7 +3981,9 @@ components:
           type: string
           writeOnly: true
         names:
-          type: string
+          type: array
+          items:
+            $ref: '#/components/schemas/SurahName'
           readOnly: true
         number:
           type: integer
@@ -4003,7 +4008,8 @@ components:
           type: string
           readOnly: true
         bismillah:
-          type: string
+          allOf:
+          - $ref: '#/components/schemas/SurahBismillah'
           readOnly: true
       required:
       - bismillah
@@ -4014,6 +4020,16 @@ components:
       - number
       - number_of_ayahs
       - uuid
+    SurahBismillah:
+      type: object
+      properties:
+        is_ayah:
+          type: boolean
+        text:
+          type: string
+      required:
+      - is_ayah
+      - text
     SurahDetail:
       type: object
       properties:
@@ -4033,7 +4049,9 @@ components:
           type: string
           writeOnly: true
         names:
-          type: string
+          type: array
+          items:
+            $ref: '#/components/schemas/SurahName'
           readOnly: true
         number:
           type: integer
@@ -4058,7 +4076,8 @@ components:
           type: string
           readOnly: true
         bismillah:
-          type: string
+          allOf:
+          - $ref: '#/components/schemas/SurahBismillah'
           readOnly: true
         ayahs:
           type: array
@@ -4083,11 +4102,30 @@ components:
           format: uuid
           readOnly: true
         names:
-          type: string
+          type: array
+          items:
+            $ref: '#/components/schemas/SurahName'
           readOnly: true
       required:
       - names
       - uuid
+    SurahName:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 50
+        pronunciation:
+          type: string
+          nullable: true
+        translation:
+          type: string
+          nullable: true
+        transliteration:
+          type: string
+          nullable: true
+      required:
+      - name
     Takhtit:
       type: object
       properties:

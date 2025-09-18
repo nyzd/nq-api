@@ -37,6 +37,10 @@ class SurahNameSerializer(serializers.Serializer):
     translation = serializers.CharField(required=False, allow_null=True)
     transliteration = serializers.CharField(required=False, allow_null=True)
 
+class SurahBismillahSerializer(serializers.Serializer):
+    is_ayah = serializers.BooleanField()
+    text = serializers.CharField()
+
 class SurahSerializer(serializers.ModelSerializer):
     names = serializers.SerializerMethodField(read_only=True)
     mushaf = MushafSerializer(read_only=True)
@@ -50,6 +54,7 @@ class SurahSerializer(serializers.ModelSerializer):
         fields = ['uuid', 'mushaf', 'mushaf_uuid', 'name', 'names', 'number', 'period', 'search_terms', 'number_of_ayahs', 'bismillah']
         read_only_fields = ['creator']
 
+    @extend_schema_field(SurahBismillahSerializer)
     def get_bismillah(self, instance):
         # Get the first ayah of this surah
         first_ayah = instance.ayahs.order_by('number').first()
@@ -63,6 +68,7 @@ class SurahSerializer(serializers.ModelSerializer):
     def get_number_of_ayahs(self, instance):
         return instance.ayahs.count()
 
+    @extend_schema_field(SurahNameSerializer(many=True))
     def get_names(self, instance):
         return [{
             'name': instance.name,
@@ -89,6 +95,7 @@ class SurahInAyahSerializer(serializers.ModelSerializer):
         fields = ['uuid', 'names']
         read_only_fields = ['creator']
 
+    @extend_schema_field(SurahNameSerializer(many=True))
     def get_names(self, instance):
         return [{
             'name': instance.name,

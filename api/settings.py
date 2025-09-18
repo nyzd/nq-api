@@ -37,6 +37,8 @@ CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS","http://127.0.0.1
 
 CORS_ALLOWED_ORIGINS = os.getenv("DJANGO_CORS_ALLOWED_ORIGINS ","http://localhost:3000").split(",")
 
+CORS_ALLOW_ALL_ORIGINS = bool(os.getenv("DJANGO_CORS_ALLOWED_ALL_ORIGINS", default=0))
+
 # Application definition
 
 INSTALLED_APPS = [

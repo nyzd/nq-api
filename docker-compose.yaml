@@ -25,7 +25,7 @@ services:
       - forced-alignment
       - rabbitmq
     volumes:
-      - ${STATIC_VOLUME:-static}:/app/staticfiles
+      - ${NATIQ_API_STATIC_VOLUME:-static}:/app/staticfiles
     environment: &default_env
       SECRET_KEY: "${SECRET_KEY:-bruh}"
       DEBUG: "${DEBUG:-1}"
@@ -52,7 +52,7 @@ services:
       - "${NGINX_PORT:-80}:${NGINX_TARGET_PORT:-80}"
     volumes:
       - ${NGINX_CONF_PATH:-./nginx.conf}:/etc/nginx/nginx.conf:ro
-      - ${STATIC_VOLUME:-static}:/static:ro
+      - ${NGINX_STATIC_VOLUME:-static}:/static:ro
     depends_on:
       - natiq-api
 

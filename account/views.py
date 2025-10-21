@@ -2,15 +2,14 @@ from django.contrib.auth.models import Group
 from .models import CustomUser
 from django.contrib.auth import login
 from rest_framework import permissions, viewsets, status
-from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny 
 from rest_framework.response import Response
 from knox.models import AuthToken
 from knox.views import LoginView as KnoxLoginView
 from .serializers import ProfileSerializer, UserSerializer, GroupSerializer, LoginSerializer
 from rest_framework.authtoken.serializers import AuthTokenSerializer
-from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample, extend_schema_view, inline_serializer
-from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample, extend_schema_view
 from rest_framework import serializers
 
 # Response schemas for authentication endpoints

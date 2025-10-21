@@ -2,7 +2,9 @@ from rest_framework import serializers
 from django.db import models
 from datetime import datetime
 from django.conf import settings
+from django.conf.global_settings import LANGUAGES
 from drf_spectacular.utils import extend_schema_field
+from core.rtl_languages import RTL_LANGUAGE_CODES
 
 from quran.models import (
     Mushaf,
@@ -285,22 +287,22 @@ class AyahTranslationNestedSerializer(serializers.ModelSerializer):
         return None
 
 class LangCodeField(serializers.ChoiceField):
-    """A field for ISO 639-1 language codes."""
+    """A field for ISO 639-1 language codes using Django LANGUAGES."""
     def __init__(self, **kwargs):
-        LANGCODES = [
-            "ar", "en", "fr", "ur", "tr", "id", "fa", "ru", "es", "de", "bn", "zh", "ms", "hi", "sw", "ps", "ku", "az", "ha", "so", "ta", "te", "ml", "pa", "sd", "ug", "uz", "kk", "ky", "tk", "tg", "syr", "ber", "am", "om", "wo", "yo", "other"
-        ]
-        super().__init__(choices=LANGCODES, **kwargs)
+        # Extract language codes from Django LANGUAGES
+        language_codes = [code for code, name in LANGUAGES]
+        super().__init__(choices=language_codes, **kwargs)
 
 
 class TranslationSerializer(serializers.ModelSerializer):
     mushaf_uuid = serializers.SerializerMethodField()
     translator_uuid = serializers.SerializerMethodField()
     language = LangCodeField()
+    language_is_rtl = serializers.SerializerMethodField()
 
     class Meta:
         model = Translation
-        fields = ['uuid', 'mushaf_uuid', 'translator_uuid', 'language', 'release_date', 'source', 'status']
+        fields = ['uuid', 'mushaf_uuid', 'translator_uuid', 'language', 'language_is_rtl', 'release_date', 'source', 'status']
         read_only_fields = ['creator']
 
     def get_mushaf_uuid(self, obj):
@@ -308,6 +310,12 @@ class TranslationSerializer(serializers.ModelSerializer):
 
     def get_translator_uuid(self, obj):
         return str(obj.translator.uuid) if obj.translator else None
+
+    def get_language_is_rtl(self, obj):
+        code = (obj.language or '').strip().lower()
+        base = code.split('-')[0]
+        return code in RTL_LANGUAGE_CODES or base in RTL_LANGUAGE_CODES
+
     def to_internal_value(self, data):
         # Extract UUIDs for input
         mushaf_uuid = data.get('mushaf_uuid')
@@ -581,10 +589,11 @@ class RecitationSerializer(serializers.ModelSerializer):
 class TranslationListSerializer(serializers.ModelSerializer):
     mushaf_uuid = serializers.SerializerMethodField()
     translator_uuid = serializers.SerializerMethodField()
+    language_is_rtl = serializers.SerializerMethodField()
 
     class Meta:
         model = Translation
-        fields = ['uuid', 'mushaf_uuid', 'translator_uuid', 'language', 'release_date', 'source', 'status']
+        fields = ['uuid', 'mushaf_uuid', 'translator_uuid', 'language', 'language_is_rtl', 'release_date', 'source', 'status']
         read_only_fields = ['creator']
 
     def get_mushaf_uuid(self, obj):
@@ -592,6 +601,11 @@ class TranslationListSerializer(serializers.ModelSerializer):
 
     def get_translator_uuid(self, obj):
         return str(obj.translator.uuid) if obj.translator else None
+
+    def get_language_is_rtl(self, obj):
+        code = (obj.language or '').strip().lower()
+        base = code.split('-')[0]
+        return code in RTL_LANGUAGE_CODES or base in RTL_LANGUAGE_CODES
 
 class RecitationSurahSerializer(serializers.ModelSerializer):
     file_url = serializers.SerializerMethodField()

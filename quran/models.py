@@ -1,6 +1,7 @@
 from django.db import models
 from account.models import CustomUser
 from core.models import File
+from django.conf.global_settings import LANGUAGES
 import uuid
 
 class Status(models.TextChoices):
@@ -116,7 +117,7 @@ class Translation(models.Model):
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='translations')
     mushaf = models.ForeignKey(Mushaf, on_delete=models.CASCADE, related_name='translations')
     translator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='translated_works')
-    language = models.CharField(max_length=5)  # ISO 639-1 language code
+    language = models.CharField(max_length=7, choices=LANGUAGES)  # ISO 639-1 language code
     release_date = models.DateField(blank=True, null=True)
     source = models.CharField(max_length=300, blank=True, null=True)
     # approved = models.BooleanField(default=False)

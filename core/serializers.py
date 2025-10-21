@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.core.validators import RegexValidator
 from django.db import models
+from core.rtl_languages import RTL_LANGUAGE_CODES
 
 from core.models import ErrorLog, PhraseTranslation, Phrase, Notification
 
@@ -10,10 +11,17 @@ class ErrorLogSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PhraseTranslationSerializer(serializers.ModelSerializer):
+    language_is_rtl = serializers.SerializerMethodField()
+    
     class Meta:
         model = PhraseTranslation
-        fields = ['uuid', 'phrase', 'text', 'language']
+        fields = ['uuid', 'phrase', 'text', 'language', 'language_is_rtl']
         read_only_fields = ['creator', 'uuid']
+    
+    def get_language_is_rtl(self, obj):
+        code = (obj.language or '').strip().lower()
+        base = code.split('-')[0]
+        return code in RTL_LANGUAGE_CODES or base in RTL_LANGUAGE_CODES
         
     def create(self, validated_data):
         validated_data['creator'] = self.context['request'].user

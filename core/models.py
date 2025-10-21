@@ -1,5 +1,6 @@
 from django.db import models
 from account.models import CustomUser
+from django.conf.global_settings import LANGUAGES
 import os
 import uuid
 
@@ -46,7 +47,7 @@ class PhraseTranslation(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     phrase = models.ForeignKey(Phrase, models.DO_NOTHING, related_name='translations')
     text = models.TextField()
-    language = models.CharField(max_length=3)
+    language = models.CharField(max_length=7, choices=LANGUAGES)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -7,7 +7,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiPara
 
 from core import permissions as core_permissions
 from core.pagination import CustomLimitOffsetPagination
-from quran.models import Recitation, Surah, Ayah, AyahTranslation, RecitationSurah, RecitationSurahTimestamp
+from quran.models import Recitation, Surah, Ayah, AyahTranslation, RecitationSurah, RecitationSurahTimestamp, Word
 from quran.serializers import RecitationSerializer
 
 
@@ -140,6 +140,8 @@ class RecitationViewSet(viewsets.ModelViewSet):
 			new_file = upload_mp3_to_s3(file_obj, request.user, folder="recitations")
 		except ValueError as e:
 			return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+		except Exception as e:
+			return Response({"error": f"Upload failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 		with transaction.atomic():
 			recitation_surah, _ = RecitationSurah.objects.get_or_create(
 				recitation=recitation,
@@ -150,7 +152,6 @@ class RecitationViewSet(viewsets.ModelViewSet):
 				recitation_surah.file = new_file
 				recitation_surah.save(update_fields=["file"])
 			if word_timestamps:
-				from quran.models import Word
 				from datetime import datetime
 				ts_objs = []
 				for ts in word_timestamps:
@@ -166,6 +167,23 @@ class RecitationViewSet(viewsets.ModelViewSet):
 				if ts_objs:
 					RecitationSurahTimestamp.objects.bulk_create(ts_objs)
 			if not word_timestamps:
-				from quran.tasks import generate_recitation_surah_timestamps_task
-				transaction.on_commit(lambda: generate_recitation_surah_timestamps_task.delay(recitation, surah, new_file))
+				from quran.tasks import forced_alignment
+    
+				# Construct the audio URL using s3_uuid
+				audio_url = new_file.get_absolute_url()
+
+				# Get all words in the surah, ordered by ayah number and id (creation order)
+				words = list(Word.objects.filter(ayah__surah=surah).order_by('ayah__number', 'id'))
+				text = ' '.join([w.text for w in words])
+				
+				# Prepare additional data to pass through forced_alignment to forced_alignment_done
+				additional = {
+					"recitation_uuid": str(recitation.uuid),
+					"surah_uuid": str(surah.uuid),
+					"file_s3_uuid": str(new_file.s3_uuid),
+					"word_uuids": [str(w.uuid) for w in words],
+					"user_id": request.user.id,
+				}
+				
+				transaction.on_commit(lambda: forced_alignment.delay(audio_url, text, additional))
 		return Response({"detail": "Upload processed successfully."}, status=status.HTTP_201_CREATED)

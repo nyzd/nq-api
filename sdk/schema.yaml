@@ -2085,191 +2085,105 @@ paths:
         schema:
           type: string
           enum:
-          - ber
-          - aa
-          - ab
-          - ae
           - af
-          - ak
-          - am
-          - an
           - ar
-          - as
-          - av
-          - ay
+          - ar-dz
+          - ast
           - az
-          - ba
-          - be
           - bg
-          - bh
-          - bi
-          - bm
+          - be
           - bn
-          - bo
           - br
           - bs
           - ca
-          - ce
-          - ch
-          - co
-          - cr
+          - ckb
           - cs
-          - cu
-          - cv
           - cy
           - da
           - de
-          - dv
-          - dz
-          - ee
+          - dsb
           - el
           - en
+          - en-au
+          - en-gb
           - eo
           - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
           - et
           - eu
           - fa
-          - ff
           - fi
-          - fj
-          - fo
           - fr
           - fy
           - ga
           - gd
           - gl
-          - gn
-          - gu
-          - gv
-          - ha
           - he
           - hi
-          - ho
           - hr
-          - ht
+          - hsb
           - hu
           - hy
-          - hz
           - ia
           - id
-          - ie
           - ig
-          - ii
-          - ik
           - io
           - is
           - it
-          - iu
           - ja
-          - jv
           - ka
-          - kg
-          - ki
-          - kj
+          - kab
           - kk
-          - kl
           - km
           - kn
           - ko
-          - kr
-          - ks
-          - ku
-          - kv
-          - kw
           - ky
-          - la
           - lb
-          - lg
-          - li
-          - ln
-          - lo
           - lt
-          - lu
           - lv
-          - mg
-          - mh
-          - mi
           - mk
           - ml
           - mn
           - mr
           - ms
-          - mt
           - my
-          - na
           - nb
-          - nd
           - ne
-          - ng
           - nl
           - nn
-          - 'no'
-          - nr
-          - nv
-          - ny
-          - oc
-          - oj
-          - om
-          - or
           - os
           - pa
-          - pi
           - pl
-          - ps
           - pt
-          - qu
-          - rm
-          - rn
+          - pt-br
           - ro
           - ru
-          - rw
-          - sa
-          - sc
-          - sd
-          - se
-          - sg
-          - si
           - sk
           - sl
-          - sm
-          - sn
-          - so
           - sq
           - sr
-          - ss
-          - st
-          - su
+          - sr-latn
           - sv
           - sw
           - ta
           - te
           - tg
           - th
-          - ti
           - tk
-          - tl
-          - tn
-          - to
           - tr
-          - ts
           - tt
-          - tw
-          - ty
+          - udm
           - ug
           - uk
           - ur
           - uz
-          - ve
           - vi
-          - vo
-          - wa
-          - wo
-          - xh
-          - yi
-          - yo
-          - za
-          - zh
-          - zu
+          - zh-hans
+          - zh-hant
         description: Language code to filter Translations by.
       - name: limit
         required: false
@@ -3719,8 +3633,211 @@ components:
           type: string
           readOnly: true
         language:
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - bg
+          - be
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
           type: string
-          maxLength: 5
+          description: |-
+            * `af` - Afrikaans
+            * `ar` - Arabic
+            * `ar-dz` - Algerian Arabic
+            * `ast` - Asturian
+            * `az` - Azerbaijani
+            * `bg` - Bulgarian
+            * `be` - Belarusian
+            * `bn` - Bengali
+            * `br` - Breton
+            * `bs` - Bosnian
+            * `ca` - Catalan
+            * `ckb` - Central Kurdish (Sorani)
+            * `cs` - Czech
+            * `cy` - Welsh
+            * `da` - Danish
+            * `de` - German
+            * `dsb` - Lower Sorbian
+            * `el` - Greek
+            * `en` - English
+            * `en-au` - Australian English
+            * `en-gb` - British English
+            * `eo` - Esperanto
+            * `es` - Spanish
+            * `es-ar` - Argentinian Spanish
+            * `es-co` - Colombian Spanish
+            * `es-mx` - Mexican Spanish
+            * `es-ni` - Nicaraguan Spanish
+            * `es-ve` - Venezuelan Spanish
+            * `et` - Estonian
+            * `eu` - Basque
+            * `fa` - Persian
+            * `fi` - Finnish
+            * `fr` - French
+            * `fy` - Frisian
+            * `ga` - Irish
+            * `gd` - Scottish Gaelic
+            * `gl` - Galician
+            * `he` - Hebrew
+            * `hi` - Hindi
+            * `hr` - Croatian
+            * `hsb` - Upper Sorbian
+            * `hu` - Hungarian
+            * `hy` - Armenian
+            * `ia` - Interlingua
+            * `id` - Indonesian
+            * `ig` - Igbo
+            * `io` - Ido
+            * `is` - Icelandic
+            * `it` - Italian
+            * `ja` - Japanese
+            * `ka` - Georgian
+            * `kab` - Kabyle
+            * `kk` - Kazakh
+            * `km` - Khmer
+            * `kn` - Kannada
+            * `ko` - Korean
+            * `ky` - Kyrgyz
+            * `lb` - Luxembourgish
+            * `lt` - Lithuanian
+            * `lv` - Latvian
+            * `mk` - Macedonian
+            * `ml` - Malayalam
+            * `mn` - Mongolian
+            * `mr` - Marathi
+            * `ms` - Malay
+            * `my` - Burmese
+            * `nb` - Norwegian Bokmål
+            * `ne` - Nepali
+            * `nl` - Dutch
+            * `nn` - Norwegian Nynorsk
+            * `os` - Ossetic
+            * `pa` - Punjabi
+            * `pl` - Polish
+            * `pt` - Portuguese
+            * `pt-br` - Brazilian Portuguese
+            * `ro` - Romanian
+            * `ru` - Russian
+            * `sk` - Slovak
+            * `sl` - Slovenian
+            * `sq` - Albanian
+            * `sr` - Serbian
+            * `sr-latn` - Serbian Latin
+            * `sv` - Swedish
+            * `sw` - Swahili
+            * `ta` - Tamil
+            * `te` - Telugu
+            * `tg` - Tajik
+            * `th` - Thai
+            * `tk` - Turkmen
+            * `tr` - Turkish
+            * `tt` - Tatar
+            * `udm` - Udmurt
+            * `ug` - Uyghur
+            * `uk` - Ukrainian
+            * `ur` - Urdu
+            * `uz` - Uzbek
+            * `vi` - Vietnamese
+            * `zh-hans` - Simplified Chinese
+            * `zh-hant` - Traditional Chinese
+          x-spec-enum-id: 0748316cbadb2285
+        language_is_rtl:
+          type: string
+          readOnly: true
         release_date:
           type: string
           format: date
@@ -4169,85 +4286,210 @@ components:
           readOnly: true
         language:
           enum:
+          - af
           - ar
-          - en
-          - fr
-          - ur
-          - tr
-          - id
-          - fa
-          - ru
-          - es
-          - de
-          - bn
-          - zh
-          - ms
-          - hi
-          - sw
-          - ps
-          - ku
+          - ar-dz
+          - ast
           - az
-          - ha
-          - so
+          - bg
+          - be
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
           - ta
           - te
-          - ml
-          - pa
-          - sd
-          - ug
-          - uz
-          - kk
-          - ky
-          - tk
           - tg
-          - syr
-          - ber
-          - am
-          - om
-          - wo
-          - yo
-          - other
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
           type: string
           description: |-
+            * `af` - af
             * `ar` - ar
-            * `en` - en
-            * `fr` - fr
-            * `ur` - ur
-            * `tr` - tr
-            * `id` - id
-            * `fa` - fa
-            * `ru` - ru
-            * `es` - es
-            * `de` - de
-            * `bn` - bn
-            * `zh` - zh
-            * `ms` - ms
-            * `hi` - hi
-            * `sw` - sw
-            * `ps` - ps
-            * `ku` - ku
+            * `ar-dz` - ar-dz
+            * `ast` - ast
             * `az` - az
-            * `ha` - ha
-            * `so` - so
+            * `bg` - bg
+            * `be` - be
+            * `bn` - bn
+            * `br` - br
+            * `bs` - bs
+            * `ca` - ca
+            * `ckb` - ckb
+            * `cs` - cs
+            * `cy` - cy
+            * `da` - da
+            * `de` - de
+            * `dsb` - dsb
+            * `el` - el
+            * `en` - en
+            * `en-au` - en-au
+            * `en-gb` - en-gb
+            * `eo` - eo
+            * `es` - es
+            * `es-ar` - es-ar
+            * `es-co` - es-co
+            * `es-mx` - es-mx
+            * `es-ni` - es-ni
+            * `es-ve` - es-ve
+            * `et` - et
+            * `eu` - eu
+            * `fa` - fa
+            * `fi` - fi
+            * `fr` - fr
+            * `fy` - fy
+            * `ga` - ga
+            * `gd` - gd
+            * `gl` - gl
+            * `he` - he
+            * `hi` - hi
+            * `hr` - hr
+            * `hsb` - hsb
+            * `hu` - hu
+            * `hy` - hy
+            * `ia` - ia
+            * `id` - id
+            * `ig` - ig
+            * `io` - io
+            * `is` - is
+            * `it` - it
+            * `ja` - ja
+            * `ka` - ka
+            * `kab` - kab
+            * `kk` - kk
+            * `km` - km
+            * `kn` - kn
+            * `ko` - ko
+            * `ky` - ky
+            * `lb` - lb
+            * `lt` - lt
+            * `lv` - lv
+            * `mk` - mk
+            * `ml` - ml
+            * `mn` - mn
+            * `mr` - mr
+            * `ms` - ms
+            * `my` - my
+            * `nb` - nb
+            * `ne` - ne
+            * `nl` - nl
+            * `nn` - nn
+            * `os` - os
+            * `pa` - pa
+            * `pl` - pl
+            * `pt` - pt
+            * `pt-br` - pt-br
+            * `ro` - ro
+            * `ru` - ru
+            * `sk` - sk
+            * `sl` - sl
+            * `sq` - sq
+            * `sr` - sr
+            * `sr-latn` - sr-latn
+            * `sv` - sv
+            * `sw` - sw
             * `ta` - ta
             * `te` - te
-            * `ml` - ml
-            * `pa` - pa
-            * `sd` - sd
-            * `ug` - ug
-            * `uz` - uz
-            * `kk` - kk
-            * `ky` - ky
-            * `tk` - tk
             * `tg` - tg
-            * `syr` - syr
-            * `ber` - ber
-            * `am` - am
-            * `om` - om
-            * `wo` - wo
-            * `yo` - yo
-            * `other` - other
-          x-spec-enum-id: 2896e0b57f61fd1b
+            * `th` - th
+            * `tk` - tk
+            * `tr` - tr
+            * `tt` - tt
+            * `udm` - udm
+            * `ug` - ug
+            * `uk` - uk
+            * `ur` - ur
+            * `uz` - uz
+            * `vi` - vi
+            * `zh-hans` - zh-hans
+            * `zh-hant` - zh-hant
+          x-spec-enum-id: 3edde070403d1922
+        language_is_rtl:
+          type: string
+          readOnly: true
         release_date:
           type: string
           format: date
@@ -4269,6 +4511,7 @@ components:
           x-spec-enum-id: 115b2e47abe9bd4d
       required:
       - language
+      - language_is_rtl
       - mushaf_uuid
       - translator_uuid
       - uuid
@@ -4286,8 +4529,211 @@ components:
           type: string
           readOnly: true
         language:
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - bg
+          - be
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
           type: string
-          maxLength: 5
+          description: |-
+            * `af` - Afrikaans
+            * `ar` - Arabic
+            * `ar-dz` - Algerian Arabic
+            * `ast` - Asturian
+            * `az` - Azerbaijani
+            * `bg` - Bulgarian
+            * `be` - Belarusian
+            * `bn` - Bengali
+            * `br` - Breton
+            * `bs` - Bosnian
+            * `ca` - Catalan
+            * `ckb` - Central Kurdish (Sorani)
+            * `cs` - Czech
+            * `cy` - Welsh
+            * `da` - Danish
+            * `de` - German
+            * `dsb` - Lower Sorbian
+            * `el` - Greek
+            * `en` - English
+            * `en-au` - Australian English
+            * `en-gb` - British English
+            * `eo` - Esperanto
+            * `es` - Spanish
+            * `es-ar` - Argentinian Spanish
+            * `es-co` - Colombian Spanish
+            * `es-mx` - Mexican Spanish
+            * `es-ni` - Nicaraguan Spanish
+            * `es-ve` - Venezuelan Spanish
+            * `et` - Estonian
+            * `eu` - Basque
+            * `fa` - Persian
+            * `fi` - Finnish
+            * `fr` - French
+            * `fy` - Frisian
+            * `ga` - Irish
+            * `gd` - Scottish Gaelic
+            * `gl` - Galician
+            * `he` - Hebrew
+            * `hi` - Hindi
+            * `hr` - Croatian
+            * `hsb` - Upper Sorbian
+            * `hu` - Hungarian
+            * `hy` - Armenian
+            * `ia` - Interlingua
+            * `id` - Indonesian
+            * `ig` - Igbo
+            * `io` - Ido
+            * `is` - Icelandic
+            * `it` - Italian
+            * `ja` - Japanese
+            * `ka` - Georgian
+            * `kab` - Kabyle
+            * `kk` - Kazakh
+            * `km` - Khmer
+            * `kn` - Kannada
+            * `ko` - Korean
+            * `ky` - Kyrgyz
+            * `lb` - Luxembourgish
+            * `lt` - Lithuanian
+            * `lv` - Latvian
+            * `mk` - Macedonian
+            * `ml` - Malayalam
+            * `mn` - Mongolian
+            * `mr` - Marathi
+            * `ms` - Malay
+            * `my` - Burmese
+            * `nb` - Norwegian Bokmål
+            * `ne` - Nepali
+            * `nl` - Dutch
+            * `nn` - Norwegian Nynorsk
+            * `os` - Ossetic
+            * `pa` - Punjabi
+            * `pl` - Polish
+            * `pt` - Portuguese
+            * `pt-br` - Brazilian Portuguese
+            * `ro` - Romanian
+            * `ru` - Russian
+            * `sk` - Slovak
+            * `sl` - Slovenian
+            * `sq` - Albanian
+            * `sr` - Serbian
+            * `sr-latn` - Serbian Latin
+            * `sv` - Swedish
+            * `sw` - Swahili
+            * `ta` - Tamil
+            * `te` - Telugu
+            * `tg` - Tajik
+            * `th` - Thai
+            * `tk` - Turkmen
+            * `tr` - Turkish
+            * `tt` - Tatar
+            * `udm` - Udmurt
+            * `ug` - Uyghur
+            * `uk` - Ukrainian
+            * `ur` - Urdu
+            * `uz` - Uzbek
+            * `vi` - Vietnamese
+            * `zh-hans` - Simplified Chinese
+            * `zh-hant` - Traditional Chinese
+          x-spec-enum-id: 0748316cbadb2285
+        language_is_rtl:
+          type: string
+          readOnly: true
         release_date:
           type: string
           format: date
@@ -4309,6 +4755,7 @@ components:
           x-spec-enum-id: 115b2e47abe9bd4d
       required:
       - language
+      - language_is_rtl
       - mushaf_uuid
       - translator_uuid
       - uuid

@@ -1,5 +1,6 @@
 import hashlib
 import os
+from django.conf import settings
 from core.models import File as CoreFile
 from core.views import Storage
 import uuid
@@ -9,8 +10,17 @@ def upload_mp3_to_s3(file_obj, uploader, folder="recitations"):
     """
     Uploads an MP3 file to S3 and creates a CoreFile record.
     Returns the CoreFile instance.
-    Raises ValueError if file type is not mp3.
+    Raises ValueError if file type is not mp3 or if S3 configuration is invalid.
     """
+    # Validate S3 configuration
+    endpoint_url = settings.AWS_S3_ENDPOINT_URL
+    if not endpoint_url or not endpoint_url.strip():
+        raise ValueError(
+            f"Invalid endpoint: AWS_S3_ENDPOINT_URL is not configured or is empty. "
+            f"Current value: '{endpoint_url}'. "
+            f"Please set AWS_S3_ENDPOINT_URL in your environment variables or .env file and restart the server."
+        )
+    
     # Calculate file hash
     sha256_hash = hashlib.sha256()
     for chunk in file_obj.chunks():
@@ -35,9 +45,16 @@ def upload_mp3_to_s3(file_obj, uploader, folder="recitations"):
     new_filename = f"{file_uuid}.{ext}"
 
     # Save file to S3 with public access in specified folder
-    storage = Storage()
-    storage.location = folder
-    storage.save(new_filename, file_obj)
+    try:
+        storage = Storage()
+        storage.location = folder
+        storage.save(new_filename, file_obj)
+    except Exception as e:
+        # Wrap S3 errors in ValueError for consistent error handling
+        error_msg = str(e)
+        if "endpoint" in error_msg.lower():
+            raise ValueError(f"Invalid endpoint: {error_msg}")
+        raise ValueError(f"S3 upload failed: {error_msg}")
 
     # Create file record in database
     new_file = CoreFile.objects.create(

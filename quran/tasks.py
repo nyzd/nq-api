@@ -1,6 +1,9 @@
 from celery import shared_task
 from quran.models import (
     Mushaf,
+    Recitation,
+    RecitationSurah,
+    RecitationSurahTimestamp,
     Surah,
     Ayah,
     Word,
@@ -10,9 +13,156 @@ from quran.models import (
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.conf import settings
-import requests
+from datetime import datetime, timedelta, timezone
 
 from core.models import Notification
+
+@shared_task(bind=True, serializer="json", name="forced-alignment-done")
+def forced_alignment_done(self, words_timestamps, additional):
+    """
+    Process forced alignment results and create RecitationSurahTimestamp objects.
+    
+    Args:
+        words_timestamps: List of dicts with 'text', 'start', and optionally 'end' keys
+        additional: Dict containing:
+            - recitation_uuid: UUID of the Recitation
+            - surah_uuid: UUID of the Surah
+            - file_s3_uuid: s3_uuid of the File (optional)
+            - word_uuids: List of Word UUIDs in order (optional, will fetch from surah if not provided)
+            - user_id: ID of the user for notifications (optional)
+    """
+    try:
+        recitation_uuid = additional.get("recitation_uuid")
+        surah_uuid = additional.get("surah_uuid")
+        file_s3_uuid = additional.get("file_s3_uuid")
+        word_uuids = additional.get("word_uuids")
+        user_id = additional.get("user_id")
+        
+        if not recitation_uuid or not surah_uuid:
+            raise ValueError("recitation_uuid and surah_uuid are required in additional")
+        
+        try:
+            recitation = Recitation.objects.get(uuid=recitation_uuid)
+        except Recitation.DoesNotExist:
+            raise ValueError(f"Recitation with uuid {recitation_uuid} not found")
+        
+        try:
+            surah = Surah.objects.get(uuid=surah_uuid)
+        except Surah.DoesNotExist:
+            raise ValueError(f"Surah with uuid {surah_uuid} not found")
+        
+        file_obj = None
+        if file_s3_uuid:
+            from core.models import File
+            try:
+                file_obj = File.objects.get(s3_uuid=file_s3_uuid)
+            except File.DoesNotExist:
+                pass
+        
+        recitation_surah, created = RecitationSurah.objects.get_or_create(
+            recitation=recitation,
+            surah=surah,
+            defaults={"file": file_obj} if file_obj else {}
+        )
+        
+        if file_obj and not recitation_surah.file_id:
+            recitation_surah.file = file_obj
+            recitation_surah.save(update_fields=["file"])
+        
+        if word_uuids:
+            words = list(Word.objects.filter(uuid__in=word_uuids).order_by('ayah__number', 'id'))
+        else:
+            words = list(Word.objects.filter(ayah__surah=surah).order_by('ayah__number', 'id'))
+        
+        if not words:
+            raise ValueError(f"No words found for surah {surah_uuid}")
+        
+        word_idx = 0
+        timestamp_objs = []
+        
+        with transaction.atomic():
+            for word_data in words_timestamps:
+                while word_idx < len(words) and words[word_idx].text != word_data.get('text'):
+                    word_idx += 1
+                
+                if word_idx < len(words):
+                    word_obj = words[word_idx]
+                    start_time = (datetime.min + timedelta(seconds=word_data['start'])).time()
+                    end_time = (datetime.min + timedelta(seconds=word_data['end'])).time() if word_data.get('end') else None
+                    
+                    timestamp_objs.append(
+                        RecitationSurahTimestamp(
+                            recitation_surah=recitation_surah,
+                            start_time=start_time,
+                            end_time=end_time,
+                            word=word_obj
+                        )
+                    )
+                    word_idx += 1
+            
+            if timestamp_objs:
+                RecitationSurahTimestamp.objects.bulk_create(timestamp_objs)
+        
+        if user_id:
+            try:
+                User = get_user_model()
+                user = User.objects.get(id=user_id)
+                Notification.objects.create(
+                    user=user,
+                    resource_controller="recitations",
+                    resource_action="",
+                    resource_uuid=recitation.uuid,
+                    status=Notification.STATUS_NOTHING,
+                    description=f'Recitation timestamps generated',
+                    message=f'Recitation timestamps generated for recitation {recitation.uuid}.',
+                    message_type=Notification.MESSAGE_TYPE_SUCCESS
+                )
+            except Exception:
+                pass 
+        
+        return f'Timestamps generated successfully for {len(timestamp_objs)} words'
+        
+    except Exception as e:
+        if additional.get("user_id"):
+            try:
+                User = get_user_model()
+                user = User.objects.get(id=additional["user_id"])
+                recitation_uuid = additional.get("recitation_uuid", "unknown")
+                Notification.objects.create(
+                    user=user,
+                    resource_controller="quran.tasks.forced_alignment_done",
+                    resource_action="",
+                    resource_uuid=recitation_uuid if isinstance(recitation_uuid, str) else None,
+                    status=Notification.STATUS_NOTHING,
+                    description=f'Failed to generate recitation timestamps',
+                    message=f'Failed to generate recitation timestamps: {str(e)}',
+                    message_type=Notification.MESSAGE_TYPE_FAILED
+                )
+            except Exception:
+                pass 
+        
+        return f'Failed to generate timestamps: {str(e)}'
+
+@shared_task(bind=True, serializer="json")
+def forced_alignment(self, audio_url, text, additional):
+    task_info = {
+        'task_id': self.request.id,
+        'input_data': {
+            'mp3_url': audio_url,
+            'text': text,
+            'additional': additional,
+        },
+        'created_at': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+        'task_type': 'forcedalignment_processing'
+    }
+    print("TASK info:", task_info)
+    
+    return {
+        'status': 'queued',
+        'task_id': self.request.id,
+        'message': 'Task queued for Forced alignment processing'
+    }
+
 
 @shared_task
 def import_mushaf_task(quran_data, user_id):
@@ -133,128 +283,3 @@ def import_translation_task(translation_data, user_id):
         message_type=Notification.MESSAGE_TYPE_SUCCESS
     )
     return f'Translation {translation.uuid} imported successfully.'
-
-@shared_task(serializer="pickle")
-def generate_recitation_surah_timestamps_task(recitation, surah, file_obj):
-    from quran.models import RecitationSurah, RecitationSurahTimestamp, Word
-    
-    # Get or create the RecitationSurah association
-    recitation_surah, created = RecitationSurah.objects.get_or_create(
-        recitation=recitation,
-        surah=surah,
-        defaults={"file": file_obj}
-    )
-    
-    # If it already existed but had no file, attach the file
-    if not created and not recitation_surah.file_id:
-        recitation_surah.file = file_obj
-        recitation_surah.save(update_fields=["file"])
-    
-    # Construct the audio URL using s3_uuid
-    audio_url = file_obj.get_absolute_url()
-
-    # Get all words in the surah, ordered by ayah number and id (creation order)
-    words = list(Word.objects.filter(ayah__surah=surah).order_by('ayah__number', 'id'))
-    text = ' '.join([w.text for w in words])
-    user = getattr(recitation, 'creator', None)
-    try:
-        if audio_url and text:
-            try:
-                headers = {}
-                if getattr(settings, 'FORCED_ALIGNMENT_SECRET_KEY', None):
-                    if settings.FORCED_ALIGNMENT_SECRET_KEY:
-                        headers['Authorization'] = settings.FORCED_ALIGNMENT_SECRET_KEY
-                align_response = requests.post(
-                    f'{settings.FORCED_ALIGNMENT_API_URL}/align',
-                    json={
-                        'mp3_url': audio_url,
-                        'text': text,
-                        'language': 'ar'
-                    },
-                    headers=headers if headers else None,
-                    timeout=120
-                )
-                align_response.raise_for_status()
-                alignment_data = align_response.json()
-                from datetime import datetime, timedelta
-                # Match force-alignment words to ayah words by text
-                word_idx = 0
-                for word_data in alignment_data:
-                    # Ensure 'word' key exists in word_data
-                    # Find the next matching word in ayah words
-                    while word_idx < len(words) and words[word_idx].text != word_data['text']:
-                        word_idx += 1
-                    if word_idx < len(words):
-                        word_obj = words[word_idx]
-                        start_time = (datetime.min + timedelta(seconds=word_data['start'])).time()
-                        end_time = (datetime.min + timedelta(seconds=word_data['end'])).time() if word_data.get('end') else None
-                        # Ensure we have a RecitationSurah for this recitation/surah combo
-                        # recitation_surah, _ = RecitationSurah.objects.get_or_create(
-                        #     recitation=recitation,
-                        #     surah=surah,
-                        #     defaults={"file_id": getattr(recitation, "file_id", None)},
-                        # )
-
-                        RecitationSurahTimestamp.objects.create(
-                            recitation_surah=recitation_surah,
-                            start_time=start_time,
-                            end_time=end_time,
-                            word=word_obj
-                        )
-                        word_idx += 1
-                    # If not matched, skip this word_data
-                # Send notification to user if available
-                if user:
-                    Notification.objects.create(
-                        user=user,
-                        resource_controller="recitations",
-                        resource_action="",
-                        resource_uuid=getattr(recitation, 'uuid', None),
-                        status=Notification.STATUS_NOTHING,
-                        description=f'Recitation timestamps generated',
-                        message=f'Recitation timestamps generated for recitation {getattr(recitation, "uuid", "")}.',
-                        message_type=Notification.MESSAGE_TYPE_SUCCESS
-                    )
-                return 'timestamps generated'
-            except Exception as e:
-                # Send failure notification to user if available
-                if user:
-                    Notification.objects.create(
-                        user=user,
-                        resource_controller="quran.generate_recitation_timestamps",
-                        resource_action="",
-                        resource_uuid=getattr(recitation, 'uuid', None),
-                        status=Notification.STATUS_NOTHING,
-                        description=f'Failed to generate recitation timestamps',
-                        message=f'Failed to generate recitation timestamps for recitation {getattr(recitation, "uuid", "")}: {str(e)}',
-                        message_type=Notification.MESSAGE_TYPE_FAILED
-                    )
-                return f'Failed to generate timestamps: {str(e)}'
-        else:
-            # Send failure notification to user if available
-            if user:
-                Notification.objects.create(
-                    user=user,
-                    resource_controller="quran.tasks.generate_recitation_timestamps",
-                    resource_action="",
-                    resource_uuid=getattr(recitation, 'uuid', None),
-                    status=Notification.STATUS_NOTHING,
-                    description=f'Failed to generate recitation timestamps',
-                    message=f'Failed to generate recitation timestamps for recitation {getattr(recitation, "uuid", "")}: missing audio_url or text',
-                    message_type=Notification.MESSAGE_TYPE_FAILED
-                )
-            return 'Failed: missing audio_url or text'
-    except Exception as e:
-        # Send failure notification to user if available
-        if user:
-            Notification.objects.create(
-                user=user,
-                resource_controller="quran.tasks.generate_recitation_timestamps",
-                resource_action="",
-                resource_uuid=getattr(recitation, 'uuid', None),
-                status=Notification.STATUS_NOTHING,
-                description=f'Failed to generate recitation timestamps',
-                message=f'Failed to generate recitation timestamps for recitation {getattr(recitation, "uuid", "")}: {str(e)}',
-                message_type=Notification.MESSAGE_TYPE_FAILED
-            )
-        return f'Failed to generate timestamps: {str(e)}'

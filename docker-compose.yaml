@@ -63,6 +63,14 @@ services:
   forced-alignment:
     image: ${ALIGNMENT_IMAGE:-natiqquran/forced-alignment}
     container_name: ${ALIGNMENT_CONTAINER_NAME:-forced-alignment}
+    environment:
+      CONSUME_QUEUE_NAME: forced_alignment
+      CONSUME_ROUTING_KEY: forcedalignment.processing
+      RABBITMQ_URL: amqp://guest:guest@localhost:5672//
+      RESULT_CELERY_TASK_NAME: forced-alignment-done
+      RESULT_QUEUE_NAME: forced_alignment_done
+      RESULT_QUEUE_EXCHANGE: forced_alignment_done
+      RESULT_QUEUE_ROUTING_KEY: forcedalignment_done.processing
   
   rabbitmq:
     image: ${RABBITMQ_IMAGE:-rabbitmq:3-management}
@@ -80,7 +88,7 @@ services:
     restart: always
     image: ${CELERY_IMAGE:-natiqquran/nq-api:latest}
     entrypoint: ${CELERY_ENTRYPOINT:-celery}
-    command: -A ${CELERY_APP_NAME:-api} worker -l ${CELERY_LOGLEVEL:-info}
+    command: -A ${CELERY_APP_NAME:-api} worker -Q default,high_priority,forced_alignment_done -l ${CELERY_LOGLEVEL:-info}
     environment: *default_env
     depends_on:
       - postgres-db

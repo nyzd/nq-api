@@ -279,7 +279,6 @@ def health_check(request):
             'database': {'status': 'unknown', 'details': ''},
             's3': {'status': 'unknown', 'details': ''},
             'rabbitmq': {'status': 'unknown', 'details': ''},
-            'forced_alignment': {'status': 'unknown', 'details': ''}
         }
     }
     
@@ -360,34 +359,6 @@ def health_check(request):
     except Exception as e:
         health_status['services']['rabbitmq']['status'] = 'unhealthy'
         health_status['services']['rabbitmq']['details'] = str(e)
-    
-    # Check Forced Alignment Service
-    try:
-        if settings.FORCED_ALIGNMENT_API_URL:
-            import requests
-            # Make a simple health check request to the forced alignment service
-            # The service only has /align endpoint
-            try:
-                response = requests.get(f"{settings.FORCED_ALIGNMENT_API_URL}/align", timeout=5)
-                if response.status_code in [200, 204, 405]:
-                    health_status['services']['forced_alignment']['status'] = 'healthy'
-                    health_status['services']['forced_alignment']['details'] = 'Forced alignment service is responding'
-                    healthy_services += 1
-                else:
-                    health_status['services']['forced_alignment']['status'] = 'unhealthy'
-                    health_status['services']['forced_alignment']['details'] = f'Forced alignment service returned status {response.status_code}'
-            except requests.exceptions.RequestException as e:
-                health_status['services']['forced_alignment']['status'] = 'unhealthy'
-                health_status['services']['forced_alignment']['details'] = f'Forced alignment service connection failed: {str(e)}'
-            except Exception as e:
-                health_status['services']['forced_alignment']['status'] = 'unhealthy'
-                health_status['services']['forced_alignment']['details'] = str(e)
-        else:
-            health_status['services']['forced_alignment']['status'] = 'unhealthy'
-            health_status['services']['forced_alignment']['details'] = 'FORCED_ALIGNMENT_API_URL not configured'
-    except Exception as e:
-        health_status['services']['forced_alignment']['status'] = 'unhealthy'
-        health_status['services']['forced_alignment']['details'] = str(e)
     
     # Determine overall status based on service health
     if healthy_services == total_services:

@@ -145,7 +145,7 @@ class AyahSerializer(serializers.ModelSerializer):
             # Return words with their breakers (only if they have any)
             result = []
             for word in words:
-                word_data = {'text': word.text}
+                word_data = {'uuid': word.uuid, 'text': word.text}
                 if word.id in breakers_by_word:
                     word_data['breakers'] = breakers_by_word[word.id]
                 result.append(word_data)

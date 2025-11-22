@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready" ]
+      test: ["CMD-SHELL", "pg_isready"]
       interval: "${POSTGRES_HEALTHCHECK_INTERVAL:-1s}"
       timeout: "${POSTGRES_HEALTHCHECK_TIMEOUT:-5s}"
       retries: ${POSTGRES_HEALTHCHECK_RETRIES:-10}
@@ -71,7 +71,7 @@ services:
       RESULT_QUEUE_NAME: forced_alignment_done
       RESULT_QUEUE_EXCHANGE: forced_alignment_done
       RESULT_QUEUE_ROUTING_KEY: forcedalignment_done.processing
-  
+
   rabbitmq:
     image: ${RABBITMQ_IMAGE:-rabbitmq:3-management}
     container_name: ${RABBITMQ_CONTAINER_NAME:-nq-rabbitmq}
@@ -88,7 +88,7 @@ services:
     restart: always
     image: ${CELERY_IMAGE:-natiqquran/nq-api:latest}
     entrypoint: ${CELERY_ENTRYPOINT:-celery}
-    command: -A ${CELERY_APP_NAME:-api} worker -Q default,high_priority,forced_alignment_done -l ${CELERY_LOGLEVEL:-info}
+    command: -A ${CELERY_APP_NAME:-api} worker -Q default,celery,high_priority,forced_alignment_done -l ${CELERY_LOGLEVEL:-info}
     environment: *default_env
     depends_on:
       - postgres-db

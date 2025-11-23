@@ -39,7 +39,7 @@ services:
       DATABASE_PASSWORD: ${DATABASE_PASSWORD:-password}
       DATABASE_HOST: ${DATABASE_HOST:-postgres-db}
       DATABASE_PORT: ${DATABASE_PORT:-5432}
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-rabbitmq}
+      CELERY_BROKER_URL: "amqp://${RABBITMQ_DEFAULT_USER:-guest}:${RABBITMQ_DEFAULT_PASS:-guest}@${RABBITMQ_HOST:-rabbitmq}:${RABBITMQ_PORT:-5672}//"
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-your_access_key}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-your_secret_key}
       AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL:-http://example.com}
@@ -64,13 +64,11 @@ services:
     environment:
       CONSUME_QUEUE_NAME: ${CONSUME_QUEUE_NAME:-forced_alignment}
       CONSUME_ROUTING_KEY: ${CONSUME_ROUTING_KEY:-forcedalignment.processing}
-      RABBITMQ_URL: ${RABBITMQ_URL:-rabbitmq}
+      RABBITMQ_URL: "amqp://${RABBITMQ_DEFAULT_USER:-guest}:${RABBITMQ_DEFAULT_PASS:-guest}@${RABBITMQ_HOST:-rabbitmq}:${RABBITMQ_PORT:-5672}//"
       RESULT_CELERY_TASK_NAME: ${RESULT_CELERY_TASK_NAME:-forced-alignment-done}
       RESULT_QUEUE_NAME: ${RESULT_QUEUE_NAME:-forced_alignment_done}
       RESULT_QUEUE_EXCHANGE: ${RESULT_QUEUE_EXCHANGE:-forced_alignment_done}
       RESULT_QUEUE_ROUTING_KEY: ${RESULT_QUEUE_ROUTING_KEY:-forcedalignment_done.processing}
-    depends_on:
-      - natiq-api
   
   rabbitmq:
     image: ${RABBITMQ_IMAGE:-rabbitmq:3-management}

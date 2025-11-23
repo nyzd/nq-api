@@ -22,6 +22,7 @@ services:
       - "${API_PORT:-8001}:${API_TARGET_PORT:-80}"
     depends_on:
       - postgres-db
+      - forced-alignment
       - rabbitmq
     volumes:
       - ${NATIQ_API_STATIC_VOLUME:-static}:/app/staticfiles
@@ -68,8 +69,6 @@ services:
       RESULT_QUEUE_NAME: ${RESULT_QUEUE_NAME:-forced_alignment_done}
       RESULT_QUEUE_EXCHANGE: ${RESULT_QUEUE_EXCHANGE:-forced_alignment_done}
       RESULT_QUEUE_ROUTING_KEY: ${RESULT_QUEUE_ROUTING_KEY:-forcedalignment_done.processing}
-    depends_on:
-      - natiq-api
   
   rabbitmq:
     image: ${RABBITMQ_IMAGE:-rabbitmq:3-management}

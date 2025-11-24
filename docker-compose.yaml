@@ -69,6 +69,8 @@ services:
       RESULT_QUEUE_NAME: ${RESULT_QUEUE_NAME:-forced_alignment_done}
       RESULT_QUEUE_EXCHANGE: ${RESULT_QUEUE_EXCHANGE:-forced_alignment_done}
       RESULT_QUEUE_ROUTING_KEY: ${RESULT_QUEUE_ROUTING_KEY:-forcedalignment_done.processing}
+    depends_on:
+      - rabbitmq
   
   rabbitmq:
     image: ${RABBITMQ_IMAGE:-rabbitmq:3-management}

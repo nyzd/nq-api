@@ -80,6 +80,7 @@ services:
       - "${RABBITMQ_MANAGEMENT_PORT:-15672}:${RABBITMQ_MANAGEMENT_TARGET_PORT:-15672}"
     volumes:
       - ${RABBITMQ_VOLUME:-rabbitmq_data}:/var/lib/rabbitmq/mnesia
+      - ${RABBITMQ_CONF_PATH:-./rabbitmq.conf}:/etc/rabbitmq/rabbitmq.conf
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-guest}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-guest}

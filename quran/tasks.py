@@ -14,23 +14,13 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.conf import settings
 from datetime import datetime, timedelta, timezone
+import requests
 
 from core.models import Notification
 
+
 @shared_task(bind=True, serializer="json", name="forced-alignment-done")
 def forced_alignment_done(self, words_timestamps, additional):
-    """
-    Process forced alignment results and create RecitationSurahTimestamp objects.
-    
-    Args:
-        words_timestamps: List of dicts with 'text', 'start', and optionally 'end' keys
-        additional: Dict containing:
-            - recitation_uuid: UUID of the Recitation
-            - surah_uuid: UUID of the Surah
-            - file_s3_uuid: s3_uuid of the File (optional)
-            - word_uuids: List of Word UUIDs in order (optional, will fetch from surah if not provided)
-            - user_id: ID of the user for notifications (optional)
-    """
     try:
         recitation_uuid = additional.get("recitation_uuid")
         surah_uuid = additional.get("surah_uuid")
@@ -40,11 +30,26 @@ def forced_alignment_done(self, words_timestamps, additional):
         
         if not recitation_uuid or not surah_uuid:
             raise ValueError("recitation_uuid and surah_uuid are required in additional")
+
+        # words_timestamps is now expected to be a URL returning JSON: { "results": [ ... ] }
+        if not isinstance(words_timestamps, str):
+            raise ValueError("words_timestamps must be a URL string to the alignment results JSON")
+
+        response = requests.get(words_timestamps, timeout=30)
+        response.raise_for_status()
+        payload = response.json()
+
+        # Extract list from { "results": [...] }
+        words_timestamps_data = payload.get("results")
+        if not isinstance(words_timestamps_data, list):
+            raise ValueError("Alignment results JSON must have a 'results' key with a list value")
         
         try:
             recitation = Recitation.objects.get(uuid=recitation_uuid)
         except Recitation.DoesNotExist:
             raise ValueError(f"Recitation with uuid {recitation_uuid} not found")
+        
+        print(words_timestamps_data)
         
         try:
             surah = Surah.objects.get(uuid=surah_uuid)
@@ -81,7 +86,7 @@ def forced_alignment_done(self, words_timestamps, additional):
         timestamp_objs = []
         
         with transaction.atomic():
-            for word_data in words_timestamps:
+            for word_data in words_timestamps_data:
                 while word_idx < len(words) and words[word_idx].text != word_data.get('text'):
                     word_idx += 1
                 

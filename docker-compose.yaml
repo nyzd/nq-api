@@ -74,6 +74,9 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-secret}
       AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL:-https://}
 
+    depends_on:
+      - rabbitmq
+  
   rabbitmq:
     image: ${RABBITMQ_IMAGE:-rabbitmq:3-management}
     container_name: ${RABBITMQ_CONTAINER_NAME:-nq-rabbitmq}

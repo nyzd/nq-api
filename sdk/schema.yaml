@@ -3629,8 +3629,10 @@ components:
         mushaf_uuid:
           type: string
           readOnly: true
-        translator_uuid:
-          type: string
+        translator:
+          allOf:
+          - $ref: '#/components/schemas/TranslatorDetail'
+          nullable: true
           readOnly: true
         language:
           enum:
@@ -4048,9 +4050,10 @@ components:
           type: string
           format: date-time
           readOnly: true
-        reciter_account_uuid:
-          type: string
-          format: uuid
+        reciter:
+          allOf:
+          - $ref: '#/components/schemas/ReciterDetail'
+          nullable: true
           readOnly: true
         mushaf_uuid:
           type: string
@@ -4063,8 +4066,19 @@ components:
       - recitation_date
       - recitation_location
       - recitation_type
-      - reciter_account_uuid
+      - reciter
       - updated_at
+      - uuid
+    ReciterDetail:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+      required:
+      - name
       - uuid
     RegisterResponse:
       type: object
@@ -4525,8 +4539,10 @@ components:
         mushaf_uuid:
           type: string
           readOnly: true
-        translator_uuid:
-          type: string
+        translator:
+          allOf:
+          - $ref: '#/components/schemas/TranslatorDetail'
+          nullable: true
           readOnly: true
         language:
           enum:
@@ -4757,7 +4773,18 @@ components:
       - language
       - language_is_rtl
       - mushaf_uuid
-      - translator_uuid
+      - translator
+      - uuid
+    TranslatorDetail:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+      required:
+      - name
       - uuid
     User:
       type: object

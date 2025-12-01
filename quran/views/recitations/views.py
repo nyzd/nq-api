@@ -8,7 +8,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiPara
 from core import permissions as core_permissions
 from core.pagination import CustomLimitOffsetPagination
 from quran.models import Recitation, Surah, Ayah, AyahTranslation, RecitationSurah, RecitationSurahTimestamp, Word
-from quran.serializers import RecitationSerializer
+from quran.serializers import RecitationSerializer, RecitationListSerializer
 
 
 @extend_schema_view(
@@ -30,7 +30,8 @@ from quran.serializers import RecitationSerializer
 				required=False,
 				description="UUID of the Reciter to filter Recitations by."
 			)
-		]
+		],
+		responses={200: RecitationListSerializer(many=True)}
 	),
 	retrieve=extend_schema(summary="Retrieve a specific Recitation by UUID"),
 	create=extend_schema(summary="Create a new Recitation record"),

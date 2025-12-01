@@ -586,21 +586,42 @@ class RecitationSerializer(serializers.ModelSerializer):
             )
         return timestamps
 
+class TranslatorDetailSerializer(serializers.Serializer):
+    uuid = serializers.UUIDField()
+    name = serializers.CharField()
+
+class ReciterDetailSerializer(serializers.Serializer):
+    uuid = serializers.UUIDField()
+    name = serializers.CharField()
+
 class TranslationListSerializer(serializers.ModelSerializer):
     mushaf_uuid = serializers.SerializerMethodField()
-    translator_uuid = serializers.SerializerMethodField()
+    translator = serializers.SerializerMethodField()
     language_is_rtl = serializers.SerializerMethodField()
 
     class Meta:
         model = Translation
-        fields = ['uuid', 'mushaf_uuid', 'translator_uuid', 'language', 'language_is_rtl', 'release_date', 'source', 'status']
+        fields = ['uuid', 'mushaf_uuid', 'translator', 'language', 'language_is_rtl', 'release_date', 'source', 'status']
         read_only_fields = ['creator']
 
     def get_mushaf_uuid(self, obj):
         return str(obj.mushaf.uuid) if obj.mushaf else None
 
-    def get_translator_uuid(self, obj):
-        return str(obj.translator.uuid) if obj.translator else None
+    @extend_schema_field(TranslatorDetailSerializer(allow_null=True))
+    def get_translator(self, obj):
+        if not obj.translator:
+            return None
+        # Construct name from first_name and last_name, or fallback to username
+        name_parts = []
+        if obj.translator.first_name:
+            name_parts.append(obj.translator.first_name)
+        if obj.translator.last_name:
+            name_parts.append(obj.translator.last_name)
+        name = ' '.join(name_parts) if name_parts else obj.translator.username
+        return {
+            'uuid': str(obj.translator.uuid),
+            'name': name
+        }
 
     def get_language_is_rtl(self, obj):
         code = (obj.language or '').strip().lower()
@@ -625,7 +646,7 @@ class RecitationSurahSerializer(serializers.ModelSerializer):
 
 # Recitation list serializer (no recitation_surahs)
 class RecitationListSerializer(serializers.ModelSerializer):
-    reciter_account_uuid = serializers.UUIDField(source="reciter_account.uuid", read_only=True)
+    reciter = serializers.SerializerMethodField()
     mushaf_uuid = serializers.UUIDField(source="mushaf.uuid", read_only=True)
 
     class Meta:
@@ -639,9 +660,25 @@ class RecitationListSerializer(serializers.ModelSerializer):
             "recitation_type",
             "created_at",
             "updated_at",
-            "reciter_account_uuid",
+            "reciter",
             "mushaf_uuid",
         ]
+
+    @extend_schema_field(ReciterDetailSerializer(allow_null=True))
+    def get_reciter(self, obj):
+        if not obj.reciter_account:
+            return None
+        # Construct name from first_name and last_name, or fallback to username
+        name_parts = []
+        if obj.reciter_account.first_name:
+            name_parts.append(obj.reciter_account.first_name)
+        if obj.reciter_account.last_name:
+            name_parts.append(obj.reciter_account.last_name)
+        name = ' '.join(name_parts) if name_parts else obj.reciter_account.username
+        return {
+            'uuid': str(obj.reciter_account.uuid),
+            'name': name
+        }
 
 class TakhtitSerializer(serializers.ModelSerializer):
     mushaf_uuid = serializers.UUIDField(write_only=True, required=True)

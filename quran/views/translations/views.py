@@ -43,6 +43,7 @@ import json
 			)
 		],
 		tags=["general", "translations"],
+		responses={200: TranslationListSerializer(many=True)}
 	),
 	retrieve=extend_schema(
 		summary="Retrieve a specific Translation by UUID",

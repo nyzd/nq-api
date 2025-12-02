@@ -177,7 +177,7 @@ class RecitationViewSet(viewsets.ModelViewSet):
 				words = list(Word.objects.filter(ayah__surah=surah).order_by('ayah__number', 'id'))
 				text = ' '.join([w.text for w in words])
 				
-				# Prepare additional data to pass through forced_alignment to forced_alignment_done
+				# Prepare additional data to pass through forced_alignment to forced_alignment_result
 				additional = {
 					"recitation_uuid": str(recitation.uuid),
 					"surah_uuid": str(surah.uuid),

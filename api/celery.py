@@ -15,9 +15,9 @@ app.conf.task_queues = {
         'exchange': 'forced_alignment',
         'routing_key': 'forcedalignment.processing',
     },
-    'forced_alignment_done': {
-        'exchange': 'forced_alignment_done',
-        'routing_key': 'forcedalignment_done.processing',
+    'forced_alignment_result': {
+        'exchange': 'forced_alignment_result',
+        'routing_key': 'forcedalignment_result.processing',
     },
 }
 
@@ -26,8 +26,8 @@ app.conf.task_routes = {
         'queue': 'forced_alignment',
         'routing_key': 'forcedalignment.processing',
     },
-    'quran.tasks.forced_alignment_done': {
-        'queue':'forced_alignment_done',
-        'routing_key': 'forcedalignment_done.processing',
+    'quran.tasks.forced_alignment_result': {
+        'queue':'forced_alignment_result',
+        'routing_key': 'forcedalignment_result.processing',
     }
 }

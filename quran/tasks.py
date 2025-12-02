@@ -19,8 +19,8 @@ import requests
 from core.models import Notification
 
 
-@shared_task(bind=True, serializer="json", name="forced-alignment-done")
-def forced_alignment_done(self, words_timestamps, additional):
+@shared_task(bind=True, serializer="json", name="forced-alignment-result")
+def forced_alignment_result(self, words_timestamps, additional):
     try:
         recitation_uuid = additional.get("recitation_uuid")
         surah_uuid = additional.get("surah_uuid")
@@ -135,7 +135,7 @@ def forced_alignment_done(self, words_timestamps, additional):
                 recitation_uuid = additional.get("recitation_uuid", "unknown")
                 Notification.objects.create(
                     user=user,
-                    resource_controller="quran.tasks.forced_alignment_done",
+                    resource_controller="quran.tasks.forced_alignment_result",
                     resource_action="",
                     resource_uuid=recitation_uuid if isinstance(recitation_uuid, str) else None,
                     status=Notification.STATUS_NOTHING,

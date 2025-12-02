@@ -65,10 +65,10 @@ services:
       CONSUME_QUEUE_NAME: ${CONSUME_QUEUE_NAME:-forced_alignment}
       CONSUME_ROUTING_KEY: ${CONSUME_ROUTING_KEY:-forcedalignment.processing}
       RABBITMQ_URL: "amqp://${RABBITMQ_DEFAULT_USER:-guest}:${RABBITMQ_DEFAULT_PASS:-guest}@${RABBITMQ_HOST:-rabbitmq}:${RABBITMQ_PORT:-5672}//"
-      RESULT_CELERY_TASK_NAME: ${RESULT_CELERY_TASK_NAME:-forced-alignment-done}
-      RESULT_QUEUE_NAME: ${RESULT_QUEUE_NAME:-forced_alignment_done}
-      RESULT_QUEUE_EXCHANGE: ${RESULT_QUEUE_EXCHANGE:-forced_alignment_done}
-      RESULT_QUEUE_ROUTING_KEY: ${RESULT_QUEUE_ROUTING_KEY:-forcedalignment_done.processing}
+      RESULT_CELERY_TASK_NAME: ${RESULT_CELERY_TASK_NAME:-forced-alignment-result}
+      RESULT_QUEUE_NAME: ${RESULT_QUEUE_NAME:-forced_alignment_result}
+      RESULT_QUEUE_EXCHANGE: ${RESULT_QUEUE_EXCHANGE:-forced_alignment_result}
+      RESULT_QUEUE_ROUTING_KEY: ${RESULT_QUEUE_ROUTING_KEY:-forcedalignment_result.processing}
       AWS_S3_BUCKET: ${AWS_S3_BUCKET:-forced-alignment}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-uuid}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-secret}
@@ -94,7 +94,7 @@ services:
     restart: always
     image: ${CELERY_IMAGE:-natiqquran/nq-api:latest}
     entrypoint: ${CELERY_ENTRYPOINT:-celery}
-    command: -A ${CELERY_APP_NAME:-api} worker -Q default,celery,high_priority,forced_alignment_done -l ${CELERY_LOGLEVEL:-info}
+    command: -A ${CELERY_APP_NAME:-api} worker -Q default,celery,high_priority,forced_alignment_result -l ${CELERY_LOGLEVEL:-info}
     environment: *default_env
     depends_on:
       - postgres-db

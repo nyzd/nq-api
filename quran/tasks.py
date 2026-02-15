@@ -18,10 +18,17 @@ import requests
 
 from core.models import Notification
 
-
 @shared_task(bind=True, serializer="json", name="forced-alignment-result")
-def forced_alignment_result(self, words_timestamps, additional):
+def forced_alignment_result(self, words_timestamps):
     try:
+        response = requests.get(words_timestamps, timeout=30)
+        response.raise_for_status()
+        payload = response.json()
+
+        additional = payload.get("additional")
+        if not additional:
+            raise ValueError("Additional data is not found in the downloaded words_timestamps data!")
+
         recitation_uuid = additional.get("recitation_uuid")
         surah_uuid = additional.get("surah_uuid")
         file_s3_uuid = additional.get("file_s3_uuid")
@@ -35,9 +42,6 @@ def forced_alignment_result(self, words_timestamps, additional):
         if not isinstance(words_timestamps, str):
             raise ValueError("words_timestamps must be a URL string to the alignment results JSON")
 
-        response = requests.get(words_timestamps, timeout=30)
-        response.raise_for_status()
-        payload = response.json()
 
         # Extract list from { "results": [...] }
         words_timestamps_data = payload.get("results")
@@ -69,11 +73,10 @@ def forced_alignment_result(self, words_timestamps, additional):
             surah=surah,
             defaults={"file": file_obj} if file_obj else {}
         )
-        
+
         if file_obj and not recitation_surah.file_id:
             recitation_surah.file = file_obj
             recitation_surah.save(update_fields=["file"])
-        
         if word_uuids:
             words = list(Word.objects.filter(uuid__in=word_uuids).order_by('ayah__number', 'id'))
         else:

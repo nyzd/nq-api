@@ -65,13 +65,13 @@ class RecitationViewSet(viewsets.ModelViewSet):
 	]
 	filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 	search_fields = ["recitation_date", "recitation_location", "recitation_type"]
-	ordering_fields = ['created_at', 'duration', 'recitation_date']
+	ordering_fields = ['created_at', 'recitation_date']
 	pagination_class = CustomLimitOffsetPagination
 	limited_fields = {"status": ["published"]}
 	lookup_field = "uuid"
 
 	def get_queryset(self):
-		recitation_fields = ['uuid', 'mushaf', 'reciter_account', 'recitation_date', 'recitation_location', 'duration', 'recitation_type', 'status', 'creator']
+		recitation_fields = ['uuid', 'mushaf', 'reciter_account', 'recitation_date', 'recitation_location', 'recitation_type', 'status', 'creator']
 		queryset = Recitation.objects.select_related('mushaf', 'reciter_account').only(*recitation_fields)
 		mushaf_short_name = self.request.query_params.get('mushaf')
 		if self.action == 'list' and not mushaf_short_name:

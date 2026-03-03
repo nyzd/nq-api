@@ -271,7 +271,7 @@ PRIVATE_MEDIA_LOCATION = f"{LOCATION_PREFIX}private"
 AWS_DEFAULT_ACL = None
 AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default="")
 AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default="")
-AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default="natiq")
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default="test-bucket-nq")
 # Set "virtual" for https://<bucket_name>.<endpoint>.com
 # Set "path" for https://<endpoint>.com/<bucket_name>
 # Hetzner Object Storage uses "virtual".

@@ -452,8 +452,8 @@ class RecitationSerializer(serializers.ModelSerializer):
 
     # Add read-only fields for output
     get_mushaf_uuid = serializers.SerializerMethodField(read_only=True)
-    # reciter_account_uuid is accepted in the request body (write-only). We manually
-    # add it back in `to_representation` so it also appears in responses.
+
+    track_count = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Recitation
@@ -465,12 +465,15 @@ class RecitationSerializer(serializers.ModelSerializer):
             'reciter_account_uuid',
             'recitation_date',
             'recitation_location',
-            'duration',
+            'track_count',
             'recitation_type',
             'created_at',
             'updated_at',
         ]
         read_only_fields = ['creator', 'get_mushaf_uuid']
+
+    def get_track_count(self, obj):
+        return len(list(obj.recitation_surahs.all()))
 
     def get_get_mushaf_uuid(self, obj):
         return str(obj.mushaf.uuid) if obj.mushaf else None
@@ -684,6 +687,7 @@ class TrackDetailSerializer(serializers.ModelSerializer):
 class RecitationListSerializer(serializers.ModelSerializer):
     reciter = serializers.SerializerMethodField()
     mushaf_uuid = serializers.UUIDField(source="mushaf.uuid", read_only=True)
+    track_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Recitation
@@ -692,13 +696,16 @@ class RecitationListSerializer(serializers.ModelSerializer):
             "status",
             "recitation_date",
             "recitation_location",
-            "duration",
             "recitation_type",
+            "track_count",
             "created_at",
             "updated_at",
             "reciter",
             "mushaf_uuid",
         ]
+
+    def get_track_count(self, obj):
+        return len(list(obj.recitation_surahs.all()))
 
     @extend_schema_field(ReciterDetailSerializer(allow_null=True))
     def get_reciter(self, obj):
@@ -745,7 +752,6 @@ class AyahBreakersResponseSerializer(serializers.Serializer):
     length = serializers.IntegerField(help_text="Ayah text length")
     juz = serializers.IntegerField(allow_null=True, help_text="Juz number (null if not a juz breaker)")
     hizb = serializers.IntegerField(allow_null=True, help_text="Hizb number (null if not a hizb breaker)")
-    ruku = serializers.IntegerField(allow_null=True, help_text="Ruku number (null if not a ruku breaker)")
     page = serializers.IntegerField(allow_null=True, help_text="Page number (null if not a page breaker)")
     rub = serializers.IntegerField(allow_null=True, help_text="Rub number (null if not a rub breaker)")
     manzil = serializers.IntegerField(allow_null=True, help_text="Manzil number (null if not a manzil breaker)")

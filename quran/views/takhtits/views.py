@@ -1,8 +1,10 @@
-from rest_framework import permissions, viewsets, status
+from rest_framework import permissions, viewsets, status, filters
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, FormParser
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter, OpenApiTypes
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 from core import permissions as core_permissions
 from core.pagination import CustomLimitOffsetPagination
@@ -56,6 +58,8 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 		core_permissions.IsCreatorOrReadOnly,
 		permissions.IsAuthenticatedOrReadOnly | permissions.DjangoModelPermissions
 	]
+	filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+	pagination_class = CustomLimitOffsetPagination
 	filterset_fields = ['mushaf', 'account', 'creator']
 	search_fields = []
 	ordering_fields = ['created_at', 'updated_at']
@@ -115,7 +119,7 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 		breakers_by_ayah = defaultdict(list)
 		for br in breakers_qs:
 			breakers_by_ayah[br.ayah_id].append(br.type.lower())
-		counters = {k: 1 for k in ["juz", "hizb", "ruku", "page", "rub", "manzil"]}
+		counters = {k: 1 for k in ["juz", "hizb", "page", "rub", "manzil"]}
 		data = []
 		for ayah in ayah_qs:
 			for br_type in breakers_by_ayah.get(ayah.id, []):
@@ -129,12 +133,13 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 				"length": ayah.length,
 				"juz": breaker_or_none(counters["juz"]),
 				"hizb": breaker_or_none(counters["hizb"]),
-				"ruku": breaker_or_none(counters["ruku"]),
 				"page": breaker_or_none(counters["page"]),
 				"rub": breaker_or_none(counters["rub"]),
 				"manzil": breaker_or_none(counters["manzil"]),
 			})
-		return Response(data)
+		paginator = CustomLimitOffsetPagination()
+		page = paginator.paginate_queryset(data, request)
+		return Response(page)
 
 	@extend_schema(
 		summary="Add an ayahs_breaker to this takhtit",
@@ -285,7 +290,7 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 			}
 		},
 		methods=["POST"],
-		parameters=[OpenApiParameter(name="type", type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description="Breaker type (e.g., page, juz, hizb, ruku). Defaults to 'page'.")],
+		parameters=[OpenApiParameter(name="type", type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description="Breaker type (e.g., page, juz, hizb). Defaults to 'page'.")],
 		responses={201: OpenApiTypes.OBJECT},
 	)
 	@action(detail=True, methods=["post"], url_path="import", parser_classes=[MultiPartParser, FormParser])

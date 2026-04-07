@@ -16,6 +16,7 @@ router.register(r'surahs', quran_views.SurahViewSet)
 router.register(r'ayahs', quran_views.AyahViewSet)
 router.register(r'words', quran_views.WordViewSet)
 router.register(r'translations', quran_views.TranslationViewSet)
+router.register(r'provenances', quran_views.ProvenanceViewSet)
 # router.register(r'ayah-translations', quran_views.AyahTranslationViewSet)  # Removed: handled via TranslationViewSet.
 router.register(r'auth', account_views.AuthViewSet, basename='auth')
 router.register(r'profile', account_views.ProfileViewSet, basename="profile")

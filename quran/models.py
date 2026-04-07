@@ -31,12 +31,8 @@ class Surah(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='surahs')
     mushaf = models.ForeignKey(Mushaf, on_delete=models.CASCADE, related_name='surahs')
-    name = models.CharField(max_length=50)
     number = models.IntegerField()
     period = models.CharField(max_length=50, choices=PERIOD_CHOICES, blank=True, null=True)
-    name_pronunciation = models.TextField(blank=True, null=True)
-    name_translation = models.TextField(blank=True, null=True)
-    name_transliteration = models.TextField(blank=True, null=True)
     search_terms = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -46,7 +42,7 @@ class Surah(models.Model):
         unique_together = ['mushaf', 'number']
 
     def __str__(self):
-        return f"{self.number}. {self.name}"
+        return f"{self.number}"
 
 class Ayah(models.Model):
     SAJDAH_CHOICES = [
@@ -69,7 +65,7 @@ class Ayah(models.Model):
         unique_together = ['surah', 'number']
 
     def __str__(self):
-        return f"{self.surah.name} - {self.number}"
+        return f"{self.number}"
     
     def calculate_length(self):
         """Calculate the character count of the ayah text by joining all words."""
@@ -216,7 +212,7 @@ class RecitationSurah(models.Model):
     recitation = models.ForeignKey(Recitation, on_delete=models.CASCADE, related_name='recitation_surahs')
     surah = models.ForeignKey(Surah, on_delete=models.CASCADE, related_name='recitation_surahs')
     file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='recitation_surahs')
-    # duration = models.DateTimeField()
+    duration = models.DurationField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -240,3 +236,28 @@ class RecitationSurahTimestamp(models.Model):
 
     def __str__(self):
         return f"Timestamp for {self.recitation_surah} at {self.start_time}"
+
+class SurahName(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    surah = models.ForeignKey(Surah, on_delete=models.CASCADE, related_name='names')
+    name = models.CharField(max_length=50)
+    pronunciation = models.TextField(blank=True, null=True)
+    translation = models.TextField(blank=True, null=True)
+    transliteration = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class Provenance(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='provenances_creator')
+    account = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='provenances_acc')
+    child_provenance = models.OneToOneField(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="parent_provenance"
+    )
+    role = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

@@ -101,7 +101,6 @@ class PhraseViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
 
-
 @extend_schema_view(
     list=extend_schema(summary="List all phrase translations"),
     retrieve=extend_schema(summary="Retrieve a specific phrase translation by ID"),

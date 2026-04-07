@@ -5,10 +5,12 @@ from django.conf import settings
 from django.conf.global_settings import LANGUAGES
 from drf_spectacular.utils import extend_schema_field
 from core.rtl_languages import RTL_LANGUAGE_CODES
+from datetime import timedelta
 
 from quran.models import (
     Mushaf,
     Surah,
+    SurahName,
     Ayah,
     Takhtit,
     Word,
@@ -16,6 +18,7 @@ from quran.models import (
     AyahTranslation,
     AyahBreaker,
     WordBreaker,
+    Provenance,
     Recitation,
     File,
     RecitationSurah,
@@ -33,27 +36,26 @@ class MushafSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return Mushaf.objects.create(**validated_data)
 
-class SurahNameSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=50)
-    pronunciation = serializers.CharField(required=False, allow_null=True)
-    translation = serializers.CharField(required=False, allow_null=True)
-    transliteration = serializers.CharField(required=False, allow_null=True)
+class SurahNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SurahName
+        fields = ['uuid', 'name', 'pronunciation', 'translation', 'transliteration']
+        read_only_fields = ['creator']
 
 class SurahBismillahSerializer(serializers.Serializer):
     is_ayah = serializers.BooleanField()
     text = serializers.CharField()
 
 class SurahSerializer(serializers.ModelSerializer):
-    names = serializers.SerializerMethodField(read_only=True)
     mushaf = MushafSerializer(read_only=True)
     mushaf_uuid = serializers.UUIDField(write_only=True, required=True)
-    name = serializers.CharField(write_only=True, required=True)
     number_of_ayahs = serializers.SerializerMethodField(read_only=True)
     bismillah = serializers.SerializerMethodField(read_only=True)
+    names = SurahNameSerializer(read_only=True, many=True)
 
     class Meta:
         model = Surah
-        fields = ['uuid', 'mushaf', 'mushaf_uuid', 'name', 'names', 'number', 'period', 'search_terms', 'number_of_ayahs', 'bismillah']
+        fields = ['uuid', 'mushaf', 'mushaf_uuid', 'names', 'number', 'period', 'search_terms', 'number_of_ayahs', 'bismillah']
         read_only_fields = ['creator']
 
     @extend_schema_field(SurahBismillahSerializer)
@@ -70,22 +72,16 @@ class SurahSerializer(serializers.ModelSerializer):
     def get_number_of_ayahs(self, instance):
         return instance.ayahs.count()
 
-    @extend_schema_field(SurahNameSerializer(many=True))
     def get_names(self, instance):
-        return [{
-            'name': instance.name,
-            'pronunciation': instance.name_pronunciation,
-            'translation': instance.name_translation,
-            'transliteration': instance.name_transliteration
-        }]
+        return instance.names.all()
 
     def create(self, validated_data):
         mushaf_uuid = validated_data.pop('mushaf_uuid')
-        name = validated_data.pop('name')
+        name = validated_data.pop('names')
         from quran.models import Mushaf
         mushaf = Mushaf.objects.get(uuid=mushaf_uuid)
         validated_data['mushaf'] = mushaf
-        validated_data['name'] = name
+        validated_data['names'] = names
         validated_data['creator'] = self.context['request'].user
         return super().create(validated_data)
 
@@ -455,6 +451,8 @@ class RecitationSerializer(serializers.ModelSerializer):
 
     track_count = serializers.SerializerMethodField(read_only=True)
 
+    total_duration = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Recitation
         fields = [
@@ -466,6 +464,7 @@ class RecitationSerializer(serializers.ModelSerializer):
             'recitation_date',
             'recitation_location',
             'track_count',
+            'total_duration',
             'recitation_type',
             'created_at',
             'updated_at',
@@ -480,6 +479,9 @@ class RecitationSerializer(serializers.ModelSerializer):
 
     def get_reciter_account_uuid(self, obj):
         return str(obj.reciter_account.uuid) if obj.reciter_account else None
+    
+    def get_total_duration(self, obj):
+        return sum(list(map(lambda x: x.duration, obj.recitation_surahs.all())), timedelta())
 
     def to_internal_value(self, data):
         mushaf_uuid = data.get('mushaf_uuid')
@@ -583,7 +585,7 @@ class RecitationSurahSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RecitationSurah
-        fields = ['uuid', 'surah_uuid', 'file_url']
+        fields = ['uuid', 'surah_uuid', 'file_url', 'duration']
 
     def get_file_url(self, obj):
         if obj.file and hasattr(obj.file, 'get_absolute_url'):
@@ -765,3 +767,35 @@ class WordBreakerDetailResponseSerializer(serializers.Serializer):
     """Serializer for individual word breaker responses"""
     word_uuid = serializers.UUIDField(help_text="UUID of the word")
     type = serializers.CharField(help_text="Breaker type (always 'line')")
+
+class ProvenanceSerializer(serializers.ModelSerializer):
+    recipient = serializers.SerializerMethodField()
+    account = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Provenance
+        fields = ['uuid', 'role', 'recipient', 'account']
+        read_only_fields = ['creator']
+
+    def get_recipient(self, obj):
+        if obj.child_provenance:
+            return ProvenanceChildSerializer(obj.child_provenance).data
+        return None
+    def get_account(self, obj):
+        if not obj.account:
+            return None
+        return {
+            'uuid': obj.account.uuid,
+            'firstname': obj.account.first_name,
+            'lastname': obj.account.last_name,
+        }
+
+    def create(self, validated_data):
+        validated_data['creator'] = self.context['request'].user
+        return super().create(validated_data)
+
+class ProvenanceChildSerializer(ProvenanceSerializer):
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation.pop("uuid")
+        return representation 

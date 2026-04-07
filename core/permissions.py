@@ -35,6 +35,8 @@ class IsCreatorOfParentOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return True
+        if request.user.is_superuser:
+            return True
         if request.method == "POST":
             get_parent = getattr(view, "get_parent_for_permission", None)
             parent = get_parent(request) if callable(get_parent) else None
@@ -50,5 +52,7 @@ class IsCreatorOrReadOnly(permissions.BasePermission):
     """
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
+            return True
+        if request.user.is_superuser:
             return True
         return hasattr(obj, "creator") and obj.creator == request.user

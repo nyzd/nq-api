@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from core import permissions as core_permissions
 from core.pagination import CustomLimitOffsetPagination
 from quran.models import Provenance
-from quran.serializers import ProvenanceSerializer
+from quran.serializers import ProvenanceSerializer, ProvenanceAddSerializer
 from django.db.models import Q
 
 class ProvenanceViewSet(viewsets.ModelViewSet):
@@ -22,4 +22,8 @@ class ProvenanceViewSet(viewsets.ModelViewSet):
     pagination_class = CustomLimitOffsetPagination
     lookup_field = "uuid"
 
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return ProvenanceAddSerializer
+        return ProvenanceSerializer
 

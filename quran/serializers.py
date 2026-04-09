@@ -27,6 +27,16 @@ from quran.models import (
 )
 from account.models import CustomUser
 
+class RecursiveField(serializers.Serializer):
+    def to_representation(self, value):
+        serializer = self.parent.__class__(value, context=self.context)
+        return serializer.data
+
+    def to_internal_value(self, data):
+        serializer = self.parent.__class__(data=data, context=self.context)
+        serializer.is_valid(raise_exception=True)
+        return serializer.validated_data
+
 class MushafSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mushaf
@@ -781,6 +791,7 @@ class ProvenanceSerializer(serializers.ModelSerializer):
         if obj.child_provenance:
             return ProvenanceChildSerializer(obj.child_provenance).data
         return None
+
     def get_account(self, obj):
         if not obj.account:
             return None
@@ -794,6 +805,41 @@ class ProvenanceSerializer(serializers.ModelSerializer):
         validated_data['creator'] = self.context['request'].user
         return super().create(validated_data)
 
+class ProvenanceAddSerializer(serializers.Serializer):
+    account_uuid = serializers.UUIDField()
+    role = serializers.CharField()
+    recipient = RecursiveField(required=False, allow_null=True)
+
+    def to_representation(self, instance):
+        return {
+            'uuid': str(instance.uuid),
+            'role': instance.role,
+            'recipient': instance.child_provenance,
+        }
+
+    def create(self, validated_data):
+        recip = validated_data.get("recipient", None)
+        account = CustomUser.objects.get(uuid=validated_data["account_uuid"])
+        proven = Provenance.objects.create(
+            creator=self.context['request'].user,
+            account=account,
+            role=validated_data["role"]
+        )
+
+        if recip:
+            next = recip
+            while next != None:
+                n_account = CustomUser.objects.get(uuid=next["account_uuid"])
+                c_proven = Provenance.objects.create(
+                    creator=self.context['request'].user,
+                    account=n_account,
+                    role=next["role"]
+                )
+                proven.child_provenance = c_proven
+                proven.save()
+                proven = c_proven
+                next = next["recipient"]
+        return proven
 class ProvenanceChildSerializer(ProvenanceSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)

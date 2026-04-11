@@ -7,6 +7,7 @@ from core.pagination import CustomLimitOffsetPagination
 from quran.models import Provenance
 from quran.serializers import ProvenanceSerializer, ProvenanceAddSerializer
 from django.db.models import Q
+from account.models import CustomUser
 
 class ProvenanceViewSet(viewsets.ModelViewSet):
     queryset = Provenance.objects.filter(~Q(child_provenance=None) & Q(parent_provenance=None))
@@ -27,3 +28,35 @@ class ProvenanceViewSet(viewsets.ModelViewSet):
             return ProvenanceAddSerializer
         return ProvenanceSerializer
 
+    def update(self, request, *args, **kwargs):
+        try:
+            provenance_uuid = kwargs.get('uuid')
+            provenance = Provenance.objects.get(uuid=provenance_uuid)
+        except Provenance.DoesNotExist:
+            return Response({"detail": "Object not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        if provenance.child_provenance:
+            provenance.child_provenance.delete()
+
+
+        request_data = request.data
+        serializer = ProvenanceAddSerializer(provenance, data=request_data, partial=False)
+        recip = request_data["recipient"]
+        serializer.is_valid(raise_exception=True)
+
+        # Now we create a new provenance if user provided one
+        if recip:
+            next = recip
+            while next != None:
+                n_account = CustomUser.objects.get(uuid=next["account_uuid"])
+                c_proven = Provenance.objects.create(
+                    creator=request.user,
+                    account=n_account,
+                    role=next["role"]
+                )
+                provenance.child_provenance = c_proven
+                provenance.save()
+                provenance = c_proven
+                next = next["recipient"]
+
+        return Response({"status": "updated"})

@@ -840,6 +840,7 @@ class ProvenanceAddSerializer(serializers.Serializer):
                 proven = c_proven
                 next = next["recipient"]
         return proven
+
 class ProvenanceChildSerializer(ProvenanceSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)

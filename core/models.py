@@ -1,5 +1,4 @@
 from django.db import models
-from account.models import CustomUser
 from django.conf.global_settings import LANGUAGES
 import os
 import uuid
@@ -30,7 +29,7 @@ class ErrorLog(models.Model):
 
 
 class Phrase(models.Model):
-    creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='phrases')
+    creator = models.ForeignKey("account.CustomUser", on_delete=models.CASCADE, related_name='phrases')
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     phrase = models.TextField(unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -43,7 +42,7 @@ class Phrase(models.Model):
         return self.phrase
 
 class PhraseTranslation(models.Model):
-    creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='phrase_translation')
+    creator = models.ForeignKey("account.CustomUser", on_delete=models.CASCADE, related_name='phrase_translation')
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     phrase = models.ForeignKey(Phrase, models.DO_NOTHING, related_name='translations')
     text = models.TextField()
@@ -75,8 +74,8 @@ class File(models.Model):
     upload_name = models.CharField(max_length=255)
     file_hash = models.CharField(max_length=64, null=True, blank=True)  # SHA256 hash is 64 characters
     deleted_time = models.DateTimeField(null=True, blank=True)
-    deleted_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='deleted_files')
-    uploader = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='uploaded_files')
+    deleted_by = models.ForeignKey("account.CustomUser", on_delete=models.SET_NULL, null=True, blank=True, related_name='deleted_files')
+    uploader = models.ForeignKey("account.CustomUser", on_delete=models.CASCADE, related_name='uploaded_files')
     uploaded_time = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -107,7 +106,7 @@ class Notification(models.Model):
         (STATUS_OPENED, 'User Opened Notification'),
     ]
 
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='notifications')
+    user = models.ForeignKey("account.CustomUser", on_delete=models.CASCADE, related_name='notifications')
     resource_controller = models.CharField(max_length=128)
     resource_action = models.CharField(max_length=128)
     resource_uuid = models.UUIDField(blank=True, null=True)

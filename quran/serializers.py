@@ -96,21 +96,10 @@ class SurahSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 class SurahInAyahSerializer(serializers.ModelSerializer):
-    names = serializers.SerializerMethodField(read_only=True)
-
     class Meta:
         model = Surah
         fields = ['uuid', 'names']
         read_only_fields = ['creator']
-
-    @extend_schema_field(SurahNameSerializer(many=True))
-    def get_names(self, instance):
-        return [{
-            'name': instance.name,
-            'pronunciation': instance.name_pronunciation,
-            'translation': instance.name_translation,
-            'transliteration': instance.name_transliteration
-        }]
 
 class AyahSerializer(serializers.ModelSerializer):
     text = serializers.SerializerMethodField()
@@ -240,6 +229,10 @@ class WordSerializer(serializers.ModelSerializer):
         fields = ['uuid', 'ayah_uuid', 'text']
         read_only_fields = ['creator']
 
+    def __init__(self, no_ayah_uuid, **kwargs):
+        self.no_ayah_uuid = no_ayah_uuid
+        super().__init__(**kwargs)
+
     def create(self, validated_data):
         from quran.models import Ayah
         ayah_uuid = validated_data.pop('ayah_uuid')
@@ -250,13 +243,14 @@ class WordSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        rep['ayah_uuid'] = str(instance.ayah.uuid)
+        if not self.no_ayah_uuid:
+            rep['ayah_uuid'] = str(instance.ayah.uuid)
         return rep
 
 class AyahSerializerView(AyahSerializer):
     surah = SurahInAyahSerializer(read_only=True)
     mushaf = serializers.SerializerMethodField()
-    words = WordSerializer(many=True, read_only=True)
+    words = WordSerializer(many=True, read_only=True, no_ayah_uuid=True)
 
     class Meta(AyahSerializer.Meta):
         fields = AyahSerializer.Meta.fields + ['surah', 'mushaf', 'words']
@@ -572,12 +566,9 @@ class TranslationListSerializer(serializers.ModelSerializer):
     def get_translator(self, obj):
         if not obj.translator:
             return None
-        # Construct name from first_name and last_name, or fallback to username
         name_parts = []
-        if obj.translator.first_name:
-            name_parts.append(obj.translator.first_name)
-        if obj.translator.last_name:
-            name_parts.append(obj.translator.last_name)
+        if obj.translator.display_name:
+            name_parts.append(obj.translator.display_name)
         name = ' '.join(name_parts) if name_parts else obj.translator.username
         return {
             'uuid': str(obj.translator.uuid),
@@ -723,12 +714,9 @@ class RecitationListSerializer(serializers.ModelSerializer):
     def get_reciter(self, obj):
         if not obj.reciter_account:
             return None
-        # Construct name from first_name and last_name, or fallback to username
         name_parts = []
-        if obj.reciter_account.first_name:
-            name_parts.append(obj.reciter_account.first_name)
-        if obj.reciter_account.last_name:
-            name_parts.append(obj.reciter_account.last_name)
+        if obj.reciter_account.display_name:
+            name_parts.append(obj.reciter_account.display_name)
         name = ' '.join(name_parts) if name_parts else obj.reciter_account.username
         return {
             'uuid': str(obj.reciter_account.uuid),
@@ -797,8 +785,7 @@ class ProvenanceSerializer(serializers.ModelSerializer):
             return None
         return {
             'uuid': obj.account.uuid,
-            'firstname': obj.account.first_name,
-            'lastname': obj.account.last_name,
+            'display_name': obj.account.display_name,
         }
 
     def create(self, validated_data):

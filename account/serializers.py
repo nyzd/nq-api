@@ -2,7 +2,7 @@ from django.contrib.auth.models import Group
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
-from account.models import CustomUser
+from account.models import CustomUser, UserName
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
@@ -10,10 +10,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('uuid', 'username', 'password', 'password2', 'email', 'first_name', 'last_name', 'birth_date', 'death_date', 'is_dead')
+        fields = ('uuid', 'username', 'password', 'password2', 'email', 'display_name', 'birth_date', 'death_date', 'is_dead')
         extra_kwargs = {
-            'first_name': {'required': False},
-            'last_name': {'required': False},
+            'display_name': {'required': False},
             'email': {'required': True}
         }
 
@@ -56,10 +55,9 @@ class LoginSerializer(serializers.Serializer):
 
 class ProfileSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
-        fields = ['uuid', 'username', 'email', 'first_name', 'last_name', 'birth_date', 'death_date', 'is_dead']
+        fields = ['uuid', 'username', 'email', 'display_name', 'birth_date', 'death_date', 'is_dead']
         extra_kwargs = {
-            'first_name': {'required': False},
-            'last_name': {'required': False},
+            'display_name': {'required': False},
             'password': {'required': False},
             'password2': {'required': False},
             'email': {'required': False},
@@ -80,3 +78,15 @@ class ProfileSerializer(UserSerializer):
     # overwrite password check
     def validate(self, args):
         return args
+
+class UserNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserName
+        fields = [
+            'uuid',
+            'language',
+            'phrase',
+            'type',
+            'text',
+            'is_primary',
+        ]

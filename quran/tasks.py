@@ -190,7 +190,7 @@ def import_mushaf_task(quran_data, user_id):
                 creator_id=user.id,
                 mushaf=mushaf,
                 number=surah_data["number"],
-                name=surah_data["name"],
+                #name=surah_data["name"],
                 period=surah_data["period"]
             ))
         Surah.objects.bulk_create(surah_objs)

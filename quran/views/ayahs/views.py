@@ -1,12 +1,14 @@
 from rest_framework import permissions, viewsets, status, filters, serializers
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter, OpenApiTypes
-
 from core import permissions as core_permissions
 from core.pagination import CustomLimitOffsetPagination
 from quran.models import Surah, Ayah
 from quran.serializers import AyahSerializer, AyahSerializerView, AyahAddSerializer
-
+from django.db.models import Max, Min
+import random
 
 @extend_schema_view(
     list=extend_schema(
@@ -50,6 +52,20 @@ class AyahViewSet(viewsets.ModelViewSet):
         if surah_uuid is not None:
             queryset = queryset.filter(surah__uuid=surah_uuid)
         return queryset
+
+    @action(detail=False, methods=["get"], url_path="random")
+    def random(self, request, *args, **kwargs):
+        id_range = Ayah.objects.aggregate(min_id=Min('id'), max_id=Max('id'))
+
+        if id_range['min_id'] is None or id_range['max_id'] is None:
+            return None
+
+        while True:
+            pk = random.randint(id_range['min_id'], id_range['max_id'])
+            obj = Ayah.objects.filter(pk=pk).first()
+            if obj:
+                ayah_serializer = AyahSerializerView(obj)
+                return Response(ayah_serializer.data)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()

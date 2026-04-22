@@ -5,9 +5,10 @@ from rest_framework import permissions, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny 
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError, ParseError
 from knox.models import AuthToken
 from knox.views import LoginView as KnoxLoginView
-from .serializers import ProfileSerializer, UserSerializer, GroupSerializer, LoginSerializer, UserNameSerializer
+from .serializers import ProfileSerializer, UserSerializer, GroupSerializer, LoginSerializer, UserNameSerializer, UserNameCreateSerializer
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample, extend_schema_view
 from rest_framework import serializers
@@ -246,6 +247,9 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
     lookup_field = "uuid"
+
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
  
     @action(detail=True, methods=['get', 'post'], url_path="names")
     def names(self, request, *args, **kwargs):
@@ -254,29 +258,27 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer = UserNameSerializer(user.names, many=True)
             return Response(serializer.data)
         elif request.method == "POST":
-            serializer = UserNameSerializer(data=request.data)
+            serializer = UserNameCreateSerializer(data=request.data, context={'request': request, 'user': user})
             serializer.is_valid(raise_exception=True)
-
-            language = serializer.validated_data.get("language")
-            phrase = serializer.validated_data.get("phrase")
-            ty = serializer.validated_data.get("type")
-            is_primary = serializer.validated_data.get("is_primary", False)
-
-            user_name, created = UserName.objects.update_or_create(
-                user=user,
-                language=language,
-                defaults={
-                    'language': language,
-                    'translation': translation,
-                    'type': ty,
-                    'is_primary': is_primary,
-                }
-            )
-            return Response({"status": "created"})
+            primary = serializer.validated_data["is_primary"]
+            if primary:
+                primary_name = UserName.objects.get(user=user, is_primary=True)
+                primary_name.is_primary = False
+                primary_name.save()
+                serializer.save()
+                return Response({"status": "Created and made as primary"})
+            serializer.save()
+            return Response({"status": "Created"})
         return Response({"error": "Not supported"})
-        @action(detail=True, methods=['put', 'patch'], url_path="names/(?P<name_id>[^/.]+)")
-        def edit_name(self, request, name_id=None, *args, **kwargs):
+
+        @action(detail=True, methods=['put', 'patch', 'get'], url_path="names/(?P<name_id>[0-9a-f-]+)")
+        def get_edit_name(self, request, name_id=None, *args, **kwargs):
             user: CustomUser = self.get_object()
+
+            if request.method == 'GET':
+                name = UserName.objects.get(uuid=name_id, user=user)
+                serializer = UserNameSerializer(name)
+                return Response(serializer.data)
             try:
                 user_name = UserName.objects.get(uuid=name_id, user=user)
             except UserName.DoesNotExist:

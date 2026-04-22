@@ -3,17 +3,35 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 from account.models import CustomUser, UserName
+from core.serializers import PhraseSerializer
+from core.models import Phrase
+from django.utils.crypto import get_random_string
+
+class UserNameSerializer(serializers.ModelSerializer):
+    phrase = PhraseSerializer(read_only=True)
+    class Meta:
+        model = UserName
+        fields = [
+            'uuid',
+            'language',
+            'phrase',
+            'type',
+            'text',
+            'is_primary',
+        ]
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
+    names = UserNameSerializer(read_only=True, many=True)
 
     class Meta:
         model = CustomUser
-        fields = ('uuid', 'username', 'password', 'password2', 'email', 'display_name', 'birth_date', 'death_date', 'is_dead')
+        fields = ('uuid', 'username' ,'password', 'password2', 'email', 'display_name', 'birth_date', 'death_date', 'is_dead', 'names')
         extra_kwargs = {
             'display_name': {'required': False},
-            'email': {'required': True}
+            'email': {'required': True},
+            'username': {'read_only': True},
         }
 
     def validate(self, attrs):
@@ -22,9 +40,14 @@ class UserSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
+        digits = 6
         validated_data.pop('password2')
-        user = CustomUser.objects.create_user(**validated_data)
-        return user
+        while True:
+            username = 'u' + get_random_string(digits, '0123456789')
+            if not CustomUser.objects.filter(username=username).exists():
+                validated_data['username'] = username
+                return CustomUser.objects.create_user(**validated_data)
+            digits += 1
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
@@ -79,14 +102,23 @@ class ProfileSerializer(UserSerializer):
     def validate(self, args):
         return args
 
-class UserNameSerializer(serializers.ModelSerializer):
+class UserNameCreateSerializer(UserNameSerializer):
+    phrase_uuid = serializers.UUIDField(write_only=True)
+
     class Meta:
         model = UserName
         fields = [
             'uuid',
             'language',
-            'phrase',
+            'phrase_uuid',
             'type',
             'text',
             'is_primary',
         ]
+
+    def create(self, validated_data):
+        phrase_uuid = validated_data.pop('phrase_uuid')
+        phrase = Phrase.objects.get(uuid=phrase_uuid)
+        validated_data["phrase"] = phrase
+        validated_data['user'] = self.context['user']
+        return super().create(validated_data)

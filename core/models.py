@@ -41,10 +41,10 @@ class Phrase(models.Model):
     def __str__(self):
         return self.phrase
 
-class PhraseTranslation(models.Model):
-    creator = models.ForeignKey("account.CustomUser", on_delete=models.CASCADE, related_name='phrase_translation')
+class PhraseValues(models.Model):
+    creator = models.ForeignKey("account.CustomUser", on_delete=models.CASCADE, related_name='phrase_value')
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    phrase = models.ForeignKey(Phrase, models.DO_NOTHING, related_name='translations')
+    phrase = models.ForeignKey(Phrase, models.DO_NOTHING, related_name='values')
     text = models.TextField()
     language = models.CharField(max_length=7, choices=LANGUAGES)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -42,6 +42,6 @@ class UserName(models.Model):
         choices=NAME_TYPE_CHOICES,
     )
     text = models.TextField()
-    is_primary = models.BooleanField(default=False)
+    is_primary = models.BooleanField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

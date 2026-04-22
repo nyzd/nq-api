@@ -1,9 +1,9 @@
 from django.http import HttpResponse
 from rest_framework import viewsets, permissions
-from .models import ErrorLog, Phrase, PhraseTranslation, Notification
+from .models import ErrorLog, Phrase, PhraseValues, Notification
 from .serializers import (ErrorLogSerializer, PhraseModifySerializer,
                           PhraseSerializer,
-                          PhraseTranslationSerializer,
+                          PhraseValuesSerializer,
                           NotificationSerializer)
 from rest_framework.decorators import action
 from storages.backends.s3boto3 import S3Boto3Storage
@@ -24,10 +24,10 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Phrase, PhraseTranslation, Notification
+from .models import Phrase, PhraseValues, Notification
 from .serializers import (
     PhraseSerializer, 
-    PhraseTranslationSerializer, 
+    PhraseValuesSerializer, 
     NotificationSerializer
 )
 from .pagination import CustomLimitOffsetPagination
@@ -76,8 +76,8 @@ class PhraseViewSet(viewsets.ModelViewSet):
                 description="Language code for the translation (required)."
             ),
         ],
-        summary="Modify phrase translations",
-        description="Modify phrase translations for a given language. The 'language' query parameter is required."
+        summary="Modify phrase values",
+        description="Modify phrase values for a given language. The 'language' query parameter is required."
     )
     @action(detail=False, methods=['post'], serializer_class=PhraseModifySerializer)
     def modify(self, request):
@@ -92,7 +92,7 @@ class PhraseViewSet(viewsets.ModelViewSet):
             if phrase is None:
                 return HttpResponse(content=f"Phrase '{p}' not found!", status=404)
 
-            phrase.translations.update_or_create(language=language, defaults={
+            phrase.values.update_or_create(language=language, defaults={
                     "text": val, "creator_id": self.request.user.id,
                     }
                 )
@@ -102,16 +102,16 @@ class PhraseViewSet(viewsets.ModelViewSet):
         serializer.save(creator=self.request.user)
 
 @extend_schema_view(
-    list=extend_schema(summary="List all phrase translations"),
-    retrieve=extend_schema(summary="Retrieve a specific phrase translation by ID"),
-    create=extend_schema(summary="Create a new phrase translation"),
-    update=extend_schema(summary="Update an existing phrase translation"),
-    partial_update=extend_schema(summary="Partially update a phrase translation"),
-    destroy=extend_schema(summary="Delete a phrase translation")
+    list=extend_schema(summary="List all phrase values (translations)"),
+    retrieve=extend_schema(summary="Retrieve a specific phrase value by ID"),
+    create=extend_schema(summary="Create a new phrase value"),
+    update=extend_schema(summary="Update an existing phrase value"),
+    partial_update=extend_schema(summary="Partially update a phrase value"),
+    destroy=extend_schema(summary="Delete a phrase value")
 )
-class PhraseTranslationViewSet(viewsets.ModelViewSet):
-    queryset = PhraseTranslation.objects.all()
-    serializer_class = PhraseTranslationSerializer
+class PhraseValuesViewSet(viewsets.ModelViewSet):
+    queryset = PhraseValues.objects.all()
+    serializer_class = PhraseValuesSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 

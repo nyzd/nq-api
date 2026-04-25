@@ -46,7 +46,7 @@ import json
         responses={200: TranslationListSerializer(many=True)}
     ),
     retrieve=extend_schema(
-        summary="Retrieve a specific Translation by UUID",
+        summary="Retrieve a specific Translation by id",
         tags=["general", "translations"],
     ),
     create=extend_schema(summary="Create a new Translation record"),
@@ -67,10 +67,10 @@ class TranslationViewSet(viewsets.ModelViewSet):
     ordering_fields = ['created_at']
     pagination_class = CustomLimitOffsetPagination
     limited_fields = {"status": ["published"]}
-    lookup_field = "uuid"
+    lookup_field = "id"
 
     def get_queryset(self):
-        translation_fields = ['uuid', 'mushaf', 'translator', 'language', 'release_date', 'source', 'status', 'creator']
+        translation_fields = ['id', 'mushaf', 'translator', 'language', 'release_date', 'source', 'status', 'creator']
         queryset = Translation.objects.select_related('mushaf', 'translator').only(*translation_fields)
         mushaf_short_name = self.request.query_params.get('mushaf')
         if self.action == 'list' and not mushaf_short_name:
@@ -149,14 +149,14 @@ class TranslationViewSet(viewsets.ModelViewSet):
 
     @extend_schema(
         summary="List all AyahTranslations for this Translation",
-        description=("Returns a paginated list of all AyahTranslation objects for the given Translation UUID. Optionally filter by surah_uuid (query param)."),
+        description=("Returns a paginated list of all AyahTranslation objects for the given Translation id. Optionally filter by surah_id (query param)."),
         parameters=[
             OpenApiParameter(
-                name="surah_uuid",
+                name="surah_id",
                 type=OpenApiTypes.UUID,
                 location=OpenApiParameter.QUERY,
                 required=False,
-                description="UUID of the Surah to filter AyahTranslations by."
+                description="id of the Surah to filter AyahTranslations by."
             )
         ],
         responses={200: AyahTranslationSerializer(many=True)}
@@ -172,9 +172,9 @@ class TranslationViewSet(viewsets.ModelViewSet):
             .filter(ayah__surah__mushaf=translation.mushaf)
             .order_by('ayah__surah__number', 'ayah__number', 'ayah__id')
         )
-        surah_uuid = request.query_params.get('surah_uuid')
-        if surah_uuid:
-            ayah_translations = ayah_translations.filter(ayah__surah__uuid=surah_uuid).order_by('ayah__number', 'ayah__id')
+        surah_id = request.query_params.get('surah_id')
+        if surah_id:
+            ayah_translations = ayah_translations.filter(ayah__surah__id=surah_id).order_by('ayah__number', 'ayah__id')
         paginator = CustomLimitOffsetPagination()
         page = paginator.paginate_queryset(ayah_translations, request)
         def process_bismillah(data):
@@ -195,16 +195,16 @@ class TranslationViewSet(viewsets.ModelViewSet):
 
     @extend_schema(
         summary="Retrieve a single AyahTranslation for this Translation",
-        description=("Returns a single AyahTranslation object for the given Translation UUID and Ayah UUID. URL: /translations/{translation_uuid}/ayahs/{ayah_uuid}/"),
+        description=("Returns a single AyahTranslation object for the given Translation id and Ayah id. URL: /translations/{translation_id}/ayahs/{ayah_id}/"),
         methods=["GET"],
         responses={200: AyahTranslationSerializer}
     )
-    @action(detail=True, methods=["get"], url_path="ayahs/(?P<ayah_uuid>[^/.]+)")
+    @action(detail=True, methods=["get"], url_path="ayahs/(?P<ayah_id>[^/.]+)")
     def get_ayah_translation(self, request, *args, **kwargs):
         translation: Translation = self.get_object()
-        ayah_uuid = kwargs.get("ayah_uuid")
+        ayah_id = kwargs.get("ayah_id")
         try:
-            ayah_translation = translation.ayah_translations.select_related('ayah', 'ayah__surah').get(ayah__uuid=ayah_uuid)
+            ayah_translation = translation.ayah_translations.select_related('ayah', 'ayah__surah').get(ayah__id=ayah_id)
         except AyahTranslation.DoesNotExist:
             return Response({'detail': 'AyahTranslation not found for this translation and ayah.'}, status=status.HTTP_404_NOT_FOUND)
         serializer = AyahTranslationSerializer(ayah_translation)
@@ -212,7 +212,7 @@ class TranslationViewSet(viewsets.ModelViewSet):
 
     @extend_schema(
         summary="Create or update (upsert) a specific AyahTranslation",
-        description=("Provide the ayah's UUID in the URL path and the translation's UUID as the primary resource path. Body requires only `text` (and optional `bismillah`). If an AyahTranslation already exists it will be updated, otherwise it will be created."),
+        description=("Provide the ayah's id in the URL path and the translation's id as the primary resource path. Body requires only `text` (and optional `bismillah`). If an AyahTranslation already exists it will be updated, otherwise it will be created."),
         request={
             "application/json": {
                 "type": "object",
@@ -223,16 +223,16 @@ class TranslationViewSet(viewsets.ModelViewSet):
         methods=["PUT", "POST"],
         responses={201: AyahTranslationSerializer, 200: AyahTranslationSerializer}
     )
-    @action(detail=True, methods=["put", "post"], url_path="ayahs/(?P<ayah_uuid>[^/.]+)")
+    @action(detail=True, methods=["put", "post"], url_path="ayahs/(?P<ayah_id>[^/.]+)")
     def modify_ayah_translation(self, request, *args, **kwargs):
         translation: Translation = self.get_object()
-        ayah_uuid = kwargs.get("ayah_uuid")
+        ayah_id = kwargs.get("ayah_id")
         serializer = AyahTranslationSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         text = serializer.validated_data.get('text')
         bismillah = serializer.validated_data.get('bismillah', None)
         ayah_translation, created = AyahTranslation.objects.update_or_create(
-            ayah__uuid=ayah_uuid,
+            ayah__id=ayah_id,
             translation=translation,
             defaults={'text': text, 'bismillah': bismillah, 'creator': request.user}
         )

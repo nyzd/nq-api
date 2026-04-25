@@ -26,24 +26,24 @@ from datetime import timedelta
                 examples=[OpenApiExample('hafs', value='hafs', summary='Most common')]
             ),
             OpenApiParameter(
-                name="reciter_uuid",
+                name="reciter_id",
                 type=OpenApiTypes.UUID,
                 location=OpenApiParameter.QUERY,
                 required=False,
-                description="UUID of the Reciter to filter Recitations by."
+                description="id of the Reciter to filter Recitations by."
             )
         ],
         responses={200: RecitationListSerializer(many=True)}
     ),
     retrieve=extend_schema(
-        summary="Retrieve a specific Recitation by UUID",
+        summary="Retrieve a specific Recitation by id",
         parameters=[
             OpenApiParameter(
-                name="surah_uuid",
+                name="surah_id",
                 type=OpenApiTypes.UUID,
                 location=OpenApiParameter.QUERY,
                 required=False,
-                description="UUID of the Surah to filter timestamps by. When provided, only timestamps for this surah are returned."
+                description="id of the Surah to filter timestamps by. When provided, only timestamps for this surah are returned."
             )
         ],
     ),
@@ -70,10 +70,10 @@ class RecitationViewSet(viewsets.ModelViewSet):
     ordering_fields = ['created_at', 'recitation_date']
     pagination_class = CustomLimitOffsetPagination
     limited_fields = {"status": ["published"]}
-    lookup_field = "uuid"
+    lookup_field = "id"
 
     def get_queryset(self):
-        recitation_fields = ['uuid', 'mushaf', 'reciter_account', 'recitation_date', 'recitation_location', 'recitation_type', 'status', 'creator']
+        recitation_fields = ['id', 'mushaf', 'reciter_account', 'recitation_date', 'recitation_location', 'recitation_type', 'status', 'creator']
         queryset = Recitation.objects.select_related('mushaf', 'reciter_account').only(*recitation_fields)
         mushaf_short_name = self.request.query_params.get('mushaf')
         if self.action == 'list' and not mushaf_short_name:
@@ -82,9 +82,9 @@ class RecitationViewSet(viewsets.ModelViewSet):
             queryset = queryset.exclude(Q(status="draft") | Q(status="pending_review"))
         if mushaf_short_name:
             queryset = queryset.filter(mushaf__short_name=mushaf_short_name)
-        reciter_uuid = self.request.query_params.get('reciter_uuid', None)
-        if reciter_uuid is not None:
-            queryset = queryset.filter(reciter_account__uuid=reciter_uuid)
+        reciter_id = self.request.query_params.get('reciter_id', None)
+        if reciter_id is not None:
+            queryset = queryset.filter(reciter_account__id=reciter_id)
         if self.action == 'retrieve':
             queryset = queryset.prefetch_related('recitation_surahs__timestamps')
         return queryset
@@ -115,7 +115,7 @@ class RecitationViewSet(viewsets.ModelViewSet):
         summary="List or create Tracks (per-surah audio files) for this Recitation",
         description=(
             "GET: list all tracks (RecitationSurah) for this recitation, "
-            "optionally filtered by surah_uuid. "
+            "optionally filtered by surah_id. "
             "POST: upload a surah audio file and optional word-level timestamps for this recitation."
         ),
         request={
@@ -123,13 +123,13 @@ class RecitationViewSet(viewsets.ModelViewSet):
                 "type": "object",
                 "properties": {
                     "file": {"type": "string", "format": "binary"},
-                    "surah_uuid": {"type": "string", "format": "uuid"},
+                    "surah_id": {"type": "string", "format": "id"},
                     "word_timestamps": {
                         "type": "string",
                         "description": "JSON list of word timestamps, optional",
                     },
                 },
-                "required": ["file", "surah_uuid"],
+                "required": ["file", "surah_id"],
             },
         },
     )
@@ -141,25 +141,25 @@ class RecitationViewSet(viewsets.ModelViewSet):
         recitation: Recitation = self.get_object()
         self.check_object_permissions(request, recitation)
 
-        # LIST TRACKS FOR THIS RECITATION (lightweight: uuid + surah_uuid + file_url)
+        # LIST TRACKS FOR THIS RECITATION (lightweight: id + surah_id + file_url)
         if request.method.lower() == "get":
             queryset = RecitationSurah.objects.filter(recitation=recitation).select_related("surah", "file")
-            surah_uuid = request.query_params.get("surah_uuid")
-            if surah_uuid:
-                queryset = queryset.filter(surah__uuid=surah_uuid)
+            surah_id = request.query_params.get("surah_id")
+            if surah_id:
+                queryset = queryset.filter(surah__id=surah_id)
             from quran.serializers import RecitationSurahSerializer
             serializer = RecitationSurahSerializer(queryset, many=True, context=self.get_serializer_context())
             return Response(serializer.data)
 
         # CREATE A NEW TRACK (UPLOAD)
         file_obj = request.FILES.get("file")
-        surah_uuid = request.data.get("surah_uuid")
+        surah_id = request.data.get("surah_id")
         word_ts_raw = request.data.get("word_timestamps")
         errors = {}
         if not file_obj:
             errors["file"] = "This field is required."
-        if not surah_uuid:
-            errors["surah_uuid"] = "This field is required."
+        if not surah_id:
+            errors["surah_id"] = "This field is required."
         if errors:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -167,9 +167,9 @@ class RecitationViewSet(viewsets.ModelViewSet):
         track_duration = timedelta(audio.info.length)
 
         try:
-            surah = Surah.objects.get(uuid=surah_uuid)
+            surah = Surah.objects.get(id=surah_id)
         except Surah.DoesNotExist:
-            return Response({"surah_uuid": "Surah not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"surah_id": "Surah not found."}, status=status.HTTP_404_NOT_FOUND)
 
         if surah.mushaf_id != recitation.mushaf_id:
             return Response(
@@ -220,8 +220,8 @@ class RecitationViewSet(viewsets.ModelViewSet):
                             datetime.strptime(ts["end"], "%H:%M:%S.%f") if ts.get("end") else None
                         )
                         word = None
-                        if ts.get("word_uuid"):
-                            word = Word.objects.filter(uuid=ts["word_uuid"]).first()
+                        if ts.get("word_id"):
+                            word = Word.objects.filter(id=ts["word_id"]).first()
                         ts_objs.append(
                             RecitationSurahTimestamp(
                                 recitation_surah=recitation_surah,
@@ -238,7 +238,7 @@ class RecitationViewSet(viewsets.ModelViewSet):
             if not word_timestamps:
                 from quran.tasks import forced_alignment
 
-                # Construct the audio URL using s3_uuid
+                # Construct the audio URL using s3_id
                 audio_url = new_file.get_absolute_url()
 
                 # Get all words in the surah, ordered by ayah number and id (creation order)
@@ -247,10 +247,10 @@ class RecitationViewSet(viewsets.ModelViewSet):
 
                 # Prepare additional data to pass through forced_alignment to forced_alignment_result
                 additional = {
-                    "recitation_uuid": str(recitation.uuid),
-                    "surah_uuid": str(surah.uuid),
-                    "file_s3_uuid": str(new_file.s3_uuid),
-                    "word_uuids": [str(w.uuid) for w in words],
+                    "recitation_id": str(recitation.id),
+                    "surah_id": str(surah.id),
+                    "file_s3_id": str(new_file.s3_id),
+                    "word_ids": [str(w.id) for w in words],
                     "user_id": request.user.id,
                 }
 
@@ -270,7 +270,7 @@ class RecitationViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         methods=["get", "patch", "delete"],
-        url_path="track/(?P<track_uuid>[^/.]+)",
+        url_path="track/(?P<track_id>[^/.]+)",
         parser_classes=[MultiPartParser, FormParser],
     )
     def track_detail(self, request, *args, **kwargs):
@@ -279,10 +279,10 @@ class RecitationViewSet(viewsets.ModelViewSet):
 
         recitation: Recitation = self.get_object()
         self.check_object_permissions(request, recitation)
-        track_uuid = kwargs.get("track_uuid")
+        track_id = kwargs.get("track_id")
 
         try:
-            recitation_surah = RecitationSurah.objects.get(uuid=track_uuid, recitation=recitation)
+            recitation_surah = RecitationSurah.objects.get(id=track_id, recitation=recitation)
         except RecitationSurah.DoesNotExist:
             return Response({"detail": "Track not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -344,8 +344,8 @@ class RecitationViewSet(viewsets.ModelViewSet):
                             datetime.strptime(ts["end"], "%H:%M:%S.%f") if ts.get("end") else None
                         )
                         word = None
-                        if ts.get("word_uuid"):
-                            word = Word.objects.filter(uuid=ts["word_uuid"]).first()
+                        if ts.get("word_id"):
+                            word = Word.objects.filter(id=ts["word_id"]).first()
                         ts_objs.append(
                             RecitationSurahTimestamp(
                                 recitation_surah=recitation_surah,

@@ -3,6 +3,7 @@ from account.models import CustomUser
 from core.models import File
 from django.conf.global_settings import LANGUAGES
 import uuid
+from core.expressions import UUIDv7
 
 class Status(models.TextChoices):
     DRAFT = "draft", "Draft"
@@ -10,7 +11,7 @@ class Status(models.TextChoices):
     PUBLISHED = "published", "Published"
 
 class Mushaf(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(db_default=UUIDv7(), primary_key=True,  editable=False, unique=True)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='mushafs')
     short_name = models.CharField(max_length=100, unique=True)
     name = models.TextField()
@@ -28,7 +29,7 @@ class Surah(models.Model):
         ('madani', 'Madani'),
     ]
 
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(db_default=UUIDv7(), primary_key=True,  editable=False, unique=True)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='surahs')
     mushaf = models.ForeignKey(Mushaf, on_delete=models.CASCADE, related_name='surahs')
     number = models.IntegerField()
@@ -49,7 +50,7 @@ class Ayah(models.Model):
         ('none', 'None'),
     ]
 
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(db_default=UUIDv7(), primary_key=True,  editable=False, unique=True)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='ayahs')
     surah = models.ForeignKey(Surah, on_delete=models.CASCADE, related_name='ayahs')
     number = models.IntegerField()
@@ -83,7 +84,7 @@ class Ayah(models.Model):
         super().save(*args, **kwargs)
 
 class Word(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(db_default=UUIDv7(), primary_key=True,  editable=False, unique=True)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='words')
     ayah = models.ForeignKey(Ayah, on_delete=models.CASCADE, related_name='words')
     text = models.TextField()
@@ -109,7 +110,7 @@ class Word(models.Model):
         ayah.save(update_fields=['length'])
 
 class Translation(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(db_default=UUIDv7(), primary_key=True,  editable=False, unique=True)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='translations')
     mushaf = models.ForeignKey(Mushaf, on_delete=models.CASCADE, related_name='translations')
     translator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='translated_works')
@@ -128,7 +129,7 @@ class Translation(models.Model):
         return f"{self.mushaf.name} - {self.language} by {self.translator.username}"
 
 class AyahTranslation(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(db_default=UUIDv7(), primary_key=True,  editable=False, unique=True)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='ayah_translations')
     translation = models.ForeignKey(Translation, on_delete=models.CASCADE, related_name='ayah_translations')
     ayah = models.ForeignKey(Ayah, on_delete=models.CASCADE, related_name='translations')
@@ -152,7 +153,7 @@ class AyahBreakerType(models.TextChoices):
     RUKU = "ruku", "Ruku"
 
 class Takhtit(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(db_default=UUIDv7(), primary_key=True,  editable=False, unique=True)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='takhtits')
     mushaf = models.ForeignKey(Mushaf, on_delete=models.CASCADE, related_name='takhtits')
     account = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='takhtit_accounts')
@@ -163,7 +164,7 @@ class Takhtit(models.Model):
         return str(self.account)
 
 class AyahBreaker(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(db_default=UUIDv7(), primary_key=True,  editable=False, unique=True)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='ayah_breakers')
     ayah = models.ForeignKey(Ayah, on_delete=models.CASCADE, related_name='breakers')
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='owned_ayah_breakers', null=True, blank=True)
@@ -176,7 +177,7 @@ class AyahBreaker(models.Model):
         return f"{self.type} - {self.ayah}"
 
 class WordBreaker(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(db_default=UUIDv7(), primary_key=True,  editable=False, unique=True)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='word_breakers')
     word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name='breakers')
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='owned_word_breakers', null=True, blank=True)
@@ -192,7 +193,7 @@ class WordBreaker(models.Model):
         return f"{self.type} - {self.word}"
 
 class Recitation(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(db_default=UUIDv7(), primary_key=True,  editable=False, unique=True)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='recitations')
     mushaf = models.ForeignKey(Mushaf, on_delete=models.CASCADE, related_name='recitations')
     reciter_account = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='recited_works')
@@ -208,7 +209,7 @@ class Recitation(models.Model):
 
 class RecitationSurah(models.Model):
     """Associates a Recitation with a specific Surah and the corresponding audio file."""
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(db_default=UUIDv7(), primary_key=True,  editable=False, unique=True)
     recitation = models.ForeignKey(Recitation, on_delete=models.CASCADE, related_name='recitation_surahs')
     surah = models.ForeignKey(Surah, on_delete=models.CASCADE, related_name='recitation_surahs')
     file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='recitation_surahs')
@@ -223,7 +224,7 @@ class RecitationSurah(models.Model):
         return f"{self.recitation} - Surah {self.surah.number}"
 
 class RecitationSurahTimestamp(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(db_default=UUIDv7(), primary_key=True,  editable=False, unique=True)
     recitation_surah = models.ForeignKey(RecitationSurah, on_delete=models.CASCADE, related_name='timestamps')
     start_time = models.TimeField()
     end_time = models.TimeField(null=True, blank=True)
@@ -238,7 +239,7 @@ class RecitationSurahTimestamp(models.Model):
         return f"Timestamp for {self.recitation_surah} at {self.start_time}"
 
 class SurahName(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(db_default=UUIDv7(), primary_key=True,  editable=False, unique=True)
     surah = models.ForeignKey(Surah, on_delete=models.CASCADE, related_name='names')
     name = models.CharField(max_length=50)
     pronunciation = models.TextField(blank=True, null=True)
@@ -248,7 +249,7 @@ class SurahName(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 class Provenance(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(db_default=UUIDv7(), primary_key=True,  editable=False, unique=True)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='provenances_creator')
     account = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='provenances_acc')
     child_provenance = models.OneToOneField(

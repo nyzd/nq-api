@@ -24,7 +24,7 @@ from quran.serializers import SurahSerializer, SurahDetailSerializer, SurahNameS
         ],
         tags=["general", "surahs"],
     ),
-    retrieve=extend_schema(summary="Retrieve a specific Surah by UUID", tags=["general", "surahs"]),
+    retrieve=extend_schema(summary="Retrieve a specific Surah by id", tags=["general", "surahs"]),
     create=extend_schema(summary="Create a new Surah record"),
     update=extend_schema(summary="Update an existing Surah record"),
     partial_update=extend_schema(summary="Partially update a Surah record"),
@@ -41,12 +41,12 @@ class SurahViewSet(viewsets.ModelViewSet):
     search_fields = ["name"]
     ordering_fields = ['created_at']
     pagination_class = CustomLimitOffsetPagination
-    lookup_field = "uuid"
+    lookup_field = "id"
 
     def get_parent_for_permission(self, request):
-        mushaf_uuid = request.data.get('mushaf_uuid', None)
-        if mushaf_uuid:
-            return Mushaf.objects.filter(uuid=mushaf_uuid).first()
+        mushaf_id = request.data.get('mushaf_id', None)
+        if mushaf_id:
+            return Mushaf.objects.filter(id=mushaf_id).first()
         return None
 
     def get_serializer_class(self):
@@ -55,7 +55,7 @@ class SurahViewSet(viewsets.ModelViewSet):
         return SurahSerializer
     def get_queryset(self):
         surah_fields = [
-            'uuid', 'mushaf', 'number', 'period', 'search_terms', 'creator'
+            'id', 'mushaf', 'number', 'period', 'search_terms', 'creator'
         ]
         queryset = Surah.objects.all()
         if self.action == 'retrieve':
@@ -100,14 +100,14 @@ class SurahViewSet(viewsets.ModelViewSet):
 
         return Response({"status": "created"})
 
-    @action(detail=True, methods=["post", "delete"], url_path="names/(?P<name_uuid>[^/.]+)")
+    @action(detail=True, methods=["post", "delete"], url_path="names/(?P<name_id>[^/.]+)")
     def edit_name(self, request, *args, **kwargs):
         surah: Surah = self.get_object()
-        name_uuid = kwargs.get("name_uuid")
+        name_id = kwargs.get("name_id")
         new_surah_name = request.data
 
         if request.method.lower() == "delete":
-            surah_name = SurahName.objects.get(uuid=name_uuid)
+            surah_name = SurahName.objects.get(id=name_id)
             surah_name.delete()
             return Response({"status": "Removed"})
 
@@ -119,7 +119,7 @@ class SurahViewSet(viewsets.ModelViewSet):
         translation = serializer.validated_data.get("translation")
 
         surah_name, created = SurahName.objects.update_or_create(
-            uuid=name_uuid,
+            id=name_id,
             defaults={
                 'name': name,
                 'pronunciation': pron,

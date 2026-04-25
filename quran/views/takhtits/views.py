@@ -32,18 +32,18 @@ from quran.serializers import (
 		],
 		tags=["general", "takhtits"],
 	),
-	retrieve=extend_schema(summary="Retrieve a specific Takhtit by UUID", tags=["general", "takhtits"]),
+	retrieve=extend_schema(summary="Retrieve a specific Takhtit by id", tags=["general", "takhtits"]),
 	create=extend_schema(
 		summary="Create a new Takhtit record",
-		description="Create a new Takhtit. Requires mushaf_uuid and account_uuid in the request body.",
+		description="Create a new Takhtit. Requires mushaf_id and account_id in the request body.",
 		request={
 			"application/json": {
 				"type": "object",
 				"properties": {
-					"mushaf_uuid": {"type": "string", "format": "uuid", "description": "UUID of the mushaf to link."},
-					"account_uuid": {"type": "string", "format": "uuid", "description": "UUID of the account to link."}
+					"mushaf_id": {"type": "string", "format": "id", "description": "id of the mushaf to link."},
+					"account_id": {"type": "string", "format": "id", "description": "id of the account to link."}
 				},
-				"required": ["mushaf_uuid", "account_uuid"]
+				"required": ["mushaf_id", "account_id"]
 			}
 		}
 	),
@@ -64,30 +64,30 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 	search_fields = []
 	ordering_fields = ['created_at', 'updated_at']
 	ordering = ['-created_at']
-	lookup_field = 'uuid'
+	lookup_field = 'id'
 
 	def perform_create(self, serializer):
-		mushaf_uuid = self.request.data.get('mushaf_uuid')
-		account_uuid = self.request.data.get('account_uuid')
+		mushaf_id = self.request.data.get('mushaf_id')
+		account_id = self.request.data.get('account_id')
 		from quran.models import Mushaf
 		from account.models import CustomUser
 		mushaf = None
 		account = None
 		errors = {}
-		if not mushaf_uuid:
-			errors['mushaf_uuid'] = 'This field is required.'
+		if not mushaf_id:
+			errors['mushaf_id'] = 'This field is required.'
 		else:
 			try:
-				mushaf = Mushaf.objects.get(uuid=mushaf_uuid)
+				mushaf = Mushaf.objects.get(id=mushaf_id)
 			except Mushaf.DoesNotExist:
-				errors['mushaf_uuid'] = 'Mushaf not found.'
-		if not account_uuid:
-			errors['account_uuid'] = 'This field is required.'
+				errors['mushaf_id'] = 'Mushaf not found.'
+		if not account_id:
+			errors['account_id'] = 'This field is required.'
 		else:
 			try:
-				account = CustomUser.objects.get(uuid=account_uuid)
+				account = CustomUser.objects.get(id=account_id)
 			except CustomUser.DoesNotExist:
-				errors['account_uuid'] = 'Account not found.'
+				errors['account_id'] = 'Account not found.'
 		if errors:
 			from rest_framework.exceptions import ValidationError
 			raise ValidationError(errors)
@@ -99,7 +99,7 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 		responses={200: AyahBreakersResponseSerializer(many=True)}
 	)
 	@action(detail=True, methods=["get"], url_path="ayahs_breakers")
-	def ayahs_breakers(self, request, uuid=None):
+	def ayahs_breakers(self, request, id=None):
 		takhtit = self.get_object()
 		ayah_ids = AyahBreaker.objects.filter(takhtit=takhtit).values_list('ayah_id', flat=True)
 		ayah_qs = Ayah.objects.select_related("surah").prefetch_related("words").order_by("surah__number", "number", "id")
@@ -127,7 +127,7 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 				if key in counters:
 					counters[key] += 1
 			data.append({
-				"uuid": str(ayah.uuid),
+				"id": str(ayah.id),
 				"surah": ayah.surah.number,
 				"ayah": ayah.number,
 				"length": ayah.length,
@@ -143,27 +143,27 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 
 	@extend_schema(
 		summary="Add an ayahs_breaker to this takhtit",
-		description="Add a new ayahs_breaker to this takhtit. Requires ayah_uuid in the request body.",
+		description="Add a new ayahs_breaker to this takhtit. Requires ayah_id in the request body.",
 		request={
 			"application/json": {
 				"type": "object",
 				"properties": {
-					"ayah_uuid": {"type": "string", "format": "uuid", "description": "UUID of the ayah to link."},
+					"ayah_id": {"type": "string", "format": "id", "description": "id of the ayah to link."},
 					"type": {"type": "string", "description": "Breaker type (see AyahBreakerType)."}
 				},
-				"required": ["ayah_uuid", "type"]
+				"required": ["ayah_id", "type"]
 			}
 		},
 		responses={201: AyahBreakerSerializer}
 	)
 	@ayahs_breakers.mapping.post
-	def add_ayahs_breaker(self, request, uuid=None):
+	def add_ayahs_breaker(self, request, id=None):
 		takhtit = self.get_object()
 		data = request.data.copy()
-		ayah_uuid = data.pop('ayah_uuid', None)
+		ayah_id = data.pop('ayah_id', None)
 		breaker_type = data.get('type')
-		if not ayah_uuid:
-			return Response({"detail": "ayah_uuid is required."}, status=status.HTTP_400_BAD_REQUEST)
+		if not ayah_id:
+			return Response({"detail": "ayah_id is required."}, status=status.HTTP_400_BAD_REQUEST)
 		if not breaker_type:
 			return Response({"detail": "type is required."}, status=status.HTTP_400_BAD_REQUEST)
 		from quran.models import Ayah, AyahBreakerType
@@ -171,7 +171,7 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 		if breaker_type not in valid_types:
 			return Response({"detail": f"Invalid type. Must be one of: {', '.join(valid_types)}."}, status=status.HTTP_400_BAD_REQUEST)
 		try:
-			ayah = Ayah.objects.get(uuid=ayah_uuid)
+			ayah = Ayah.objects.get(id=ayah_id)
 		except Ayah.DoesNotExist:
 			return Response({"detail": "Ayah not found."}, status=status.HTTP_404_NOT_FOUND)
 		data['takhtit'] = takhtit.pk
@@ -185,19 +185,19 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 		summary="Retrieve a specific ayahs_breaker for this takhtit",
 		parameters=[
 			OpenApiParameter(
-				name="breaker_uuid",
+				name="breaker_id",
 				type=OpenApiTypes.UUID,
 				location=OpenApiParameter.PATH,
 				required=True,
-				description="UUID of the ayahs_breaker."
+				description="id of the ayahs_breaker."
 			)
 		],
 		responses={200: AyahBreakerSerializer, 404: OpenApiTypes.OBJECT}
 	)
-	@action(detail=True, methods=["get"], url_path="ayahs_breakers/(?P<breaker_uuid>[^/.]+)")
-	def retrieve_ayahs_breaker(self, request, uuid=None, breaker_uuid=None):
+	@action(detail=True, methods=["get"], url_path="ayahs_breakers/(?P<breaker_id>[^/.]+)")
+	def retrieve_ayahs_breaker(self, request, id=None, breaker_id=None):
 		takhtit = self.get_object()
-		breaker = AyahBreaker.objects.filter(takhtit=takhtit, uuid=breaker_uuid).first()
+		breaker = AyahBreaker.objects.filter(takhtit=takhtit, id=breaker_id).first()
 		if not breaker:
 			return Response({"detail": "AyahBreaker not found."}, status=404)
 		serializer = AyahBreakerSerializer(breaker)
@@ -209,7 +209,7 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 		responses={200: WordBreakersResponseSerializer(many=True)}
 	)
 	@action(detail=True, methods=["get"], url_path="words_breakers")
-	def words_breakers(self, request, uuid=None):
+	def words_breakers(self, request, id=None):
 		takhtit = self.get_object()
 		from quran.models import WordBreaker, Word
 		word_breakers = (
@@ -222,62 +222,62 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 		data = []
 		for wb in word_breakers:
 			line_counter += 1
-			data.append({"word_uuid": str(wb.word.uuid), "line": line_counter})
+			data.append({"word_id": str(wb.word.id), "line": line_counter})
 		return Response(data)
 
 	@extend_schema(
 		summary="Add a words_breaker to this takhtit",
-		description="Add a new words_breaker to this takhtit. Requires word_uuid in the request body. Only type 'line' is allowed.",
+		description="Add a new words_breaker to this takhtit. Requires word_id in the request body. Only type 'line' is allowed.",
 		request={
 			"application/json": {
 				"type": "object",
-				"properties": {"word_uuid": {"type": "string", "format": "uuid", "description": "UUID of the word to link."}, "type": {"type": "string", "description": "Breaker type (must be 'line')."}},
-				"required": ["word_uuid", "type"]
+				"properties": {"word_id": {"type": "string", "format": "id", "description": "id of the word to link."}, "type": {"type": "string", "description": "Breaker type (must be 'line')."}},
+				"required": ["word_id", "type"]
 			}
 		},
 		responses={201: WordBreakerDetailResponseSerializer}
 	)
 	@words_breakers.mapping.post
-	def add_words_breaker(self, request, uuid=None):
+	def add_words_breaker(self, request, id=None):
 		takhtit = self.get_object()
 		data = request.data.copy()
-		word_uuid = data.pop('word_uuid', None)
+		word_id = data.pop('word_id', None)
 		breaker_type = data.get('type')
-		if not word_uuid:
-			return Response({"detail": "word_uuid is required."}, status=status.HTTP_400_BAD_REQUEST)
+		if not word_id:
+			return Response({"detail": "word_id is required."}, status=status.HTTP_400_BAD_REQUEST)
 		if not breaker_type:
 			return Response({"detail": "type is required."}, status=status.HTTP_400_BAD_REQUEST)
 		if breaker_type != 'line':
 			return Response({"detail": "Invalid type. Only 'line' is allowed for WordBreaker."}, status=status.HTTP_400_BAD_REQUEST)
 		from quran.models import Word, WordBreaker
 		try:
-			word = Word.objects.get(uuid=word_uuid)
+			word = Word.objects.get(id=word_id)
 		except Word.DoesNotExist:
 			return Response({"detail": "Word not found."}, status=status.HTTP_404_NOT_FOUND)
 		WordBreaker.objects.create(creator=request.user, word=word, takhtit=takhtit, type='line')
-		return Response({"word_uuid": str(word.uuid), "type": "line"}, status=status.HTTP_201_CREATED)
+		return Response({"word_id": str(word.id), "type": "line"}, status=status.HTTP_201_CREATED)
 
 	@extend_schema(
 		summary="Retrieve a specific words_breaker for this takhtit",
 		parameters=[
 			OpenApiParameter(
-				name="breaker_uuid",
+				name="breaker_id",
 				type=OpenApiTypes.UUID,
 				location=OpenApiParameter.PATH,
 				required=True,
-				description="UUID of the words_breaker."
+				description="id of the words_breaker."
 			)
 		],
 		responses={200: WordBreakerDetailResponseSerializer, 404: OpenApiTypes.OBJECT}
 	)
-	@action(detail=True, methods=["get"], url_path="words_breakers/(?P<breaker_uuid>[^/.]+)")
-	def retrieve_words_breaker(self, request, uuid=None, breaker_uuid=None):
+	@action(detail=True, methods=["get"], url_path="words_breakers/(?P<breaker_id>[^/.]+)")
+	def retrieve_words_breaker(self, request, id=None, breaker_id=None):
 		from quran.models import WordBreaker
 		takhtit = self.get_object()
-		breaker = WordBreaker.objects.filter(takhtit=takhtit, uuid=breaker_uuid).first()
+		breaker = WordBreaker.objects.filter(takhtit=takhtit, id=breaker_id).first()
 		if not breaker:
 			return Response({"detail": "WordBreaker not found."}, status=404)
-		return Response({"word_uuid": str(breaker.word.uuid), "type": breaker.type})
+		return Response({"word_id": str(breaker.word.id), "type": breaker.type})
 
 	@extend_schema(
 		summary="Import Ayah Breakers for the specified Takhtit",
@@ -294,7 +294,7 @@ class TakhtitViewSet(viewsets.ModelViewSet):
 		responses={201: OpenApiTypes.OBJECT},
 	)
 	@action(detail=True, methods=["post"], url_path="import", parser_classes=[MultiPartParser, FormParser])
-	def import_breakers(self, request, uuid=None):
+	def import_breakers(self, request, id=None):
 		import json
 		from quran.models import Ayah, AyahBreaker, Surah
 		takhtit = self.get_object()

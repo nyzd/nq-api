@@ -14,24 +14,24 @@ from quran.serializers import WordSerializer
 		summary="List all Words in Ayahs",
 		parameters=[
 			OpenApiParameter(
-				name="ayah_uuid",
+				name="ayah_id",
 				type=OpenApiTypes.UUID,
 				location=OpenApiParameter.QUERY,
 				required=False,
-				description="UUID of the Ayah to filter Words by."
+				description="id of the Ayah to filter Words by."
 			)
 		]
 	),
-	retrieve=extend_schema(summary="Retrieve a specific Word by UUID"),
+	retrieve=extend_schema(summary="Retrieve a specific Word by id"),
 	create=extend_schema(
 		summary="Create a new Word record",
 		parameters=[
 			OpenApiParameter(
-				name="ayah_uuid",
+				name="ayah_id",
 				type=OpenApiTypes.UUID,
 				location=OpenApiParameter.QUERY,
 				required=False,
-				description="UUID of the Ayah to associate the new Word with (if ayah_id is not provided in the body)."
+				description="id of the Ayah to associate the new Word with (if ayah_id is not provided in the body)."
 			)
 		]
 	),
@@ -51,28 +51,28 @@ class WordViewSet(viewsets.ModelViewSet):
 	search_fields = ["text"]
 	ordering_fields = ['created_at']
 	pagination_class = CustomLimitOffsetPagination
-	lookup_field = "uuid"
+	lookup_field = "id"
 
 	def get_parent_for_permission(self, request):
-		ayah_uuid = request.data.get('ayah_uuid', None)
-		if ayah_uuid:
-			return Ayah.objects.filter(uuid=ayah_uuid).first()
+		ayah_id = request.data.get('ayah_id', None)
+		if ayah_id:
+			return Ayah.objects.filter(id=ayah_id).first()
 		return None
 
 	def get_queryset(self):
-		word_fields = ['uuid', 'ayah', 'text', 'creator']
+		word_fields = ['id', 'ayah', 'text', 'creator']
 		queryset = Word.objects.select_related('ayah').only(*word_fields)
-		ayah_uuid = self.request.query_params.get('ayah_uuid', None)
-		if ayah_uuid is not None:
-			queryset = queryset.filter(ayah__uuid=ayah_uuid)
+		ayah_id = self.request.query_params.get('ayah_id', None)
+		if ayah_id is not None:
+			queryset = queryset.filter(ayah__id=ayah_id)
 		return queryset
 
 	def create(self, request, *args, **kwargs):
 		data = request.data.copy()
 		if not data.get('ayah_id'):
-			ayah_uuid = request.query_params.get('ayah_uuid')
-			if ayah_uuid:
-				data['ayah_id'] = ayah_uuid
+			ayah_id = request.query_params.get('ayah_id')
+			if ayah_id:
+				data['ayah_id'] = ayah_id
 		serializer = self.get_serializer(data=data)
 		serializer.is_valid(raise_exception=True)
 		self.perform_create(serializer)

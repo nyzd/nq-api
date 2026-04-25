@@ -15,7 +15,7 @@ import json
 
 @extend_schema_view(
     list=extend_schema(summary="List all Mushafs (Quranic manuscripts/editions)", tags=["general", "mushafs"]),
-    retrieve=extend_schema(summary="Retrieve a specific Mushaf by UUID", tags=["general", "mushafs"]),
+    retrieve=extend_schema(summary="Retrieve a specific Mushaf by id", tags=["general", "mushafs"]),
     create=extend_schema(summary="Create a new Mushaf record"),
     update=extend_schema(summary="Update an existing Mushaf record"),
     partial_update=extend_schema(summary="Partially update a Mushaf record"),
@@ -34,7 +34,7 @@ class MushafViewSet(viewsets.ModelViewSet):
     ordering_fields = ['created_at']
     pagination_class = CustomLimitOffsetPagination
     limited_fields = {"status": ["published"]}
-    lookup_field = "uuid"
+    lookup_field = "id"
 
     def get_queryset(self):
         query = Mushaf.objects.all().order_by('short_name')
@@ -42,7 +42,7 @@ class MushafViewSet(viewsets.ModelViewSet):
             query = query.exclude(Q(status="draft") | Q(status="pending_review"))
 
         if getattr(self, 'action', None) == 'list':
-            query = query.only('uuid', 'short_name', 'name', 'source', 'status')
+            query = query.only('id', 'short_name', 'name', 'source', 'status')
 
         return query
 

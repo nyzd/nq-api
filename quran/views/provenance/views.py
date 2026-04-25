@@ -21,7 +21,7 @@ class ProvenanceViewSet(viewsets.ModelViewSet):
     search_fields = ["role"]
     ordering_fields = ['created_at']
     pagination_class = CustomLimitOffsetPagination
-    lookup_field = "uuid"
+    lookup_field = "id"
 
     def get_serializer_class(self):
         if self.action == 'create':
@@ -30,8 +30,8 @@ class ProvenanceViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         try:
-            provenance_uuid = kwargs.get('uuid')
-            provenance = Provenance.objects.get(uuid=provenance_uuid)
+            provenance_id = kwargs.get('id')
+            provenance = Provenance.objects.get(id=provenance_id)
         except Provenance.DoesNotExist:
             return Response({"detail": "Object not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -48,7 +48,7 @@ class ProvenanceViewSet(viewsets.ModelViewSet):
         if recip:
             next = recip
             while next != None:
-                n_account = CustomUser.objects.get(uuid=next["account_uuid"])
+                n_account = CustomUser.objects.get(id=next["account_id"])
                 c_proven = Provenance.objects.create(
                     creator=request.user,
                     account=n_account,

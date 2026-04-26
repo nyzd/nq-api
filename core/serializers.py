@@ -17,8 +17,8 @@ class PhraseValuesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PhraseValues
-        fields = ["uuid", "phrase", "text", "language", "language_is_rtl"]
-        read_only_fields = ["creator", "uuid"]
+        fields = ["id", "phrase", "text", "language", "language_is_rtl"]
+        read_only_fields = ["creator", "id"]
 
     def get_language_is_rtl(self, obj):
         code = (obj.language or "").strip().lower()
@@ -33,8 +33,8 @@ class PhraseValuesSerializer(serializers.ModelSerializer):
 class PhraseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Phrase
-        fields = ["uuid", "phrase"]
-        read_only_fields = ["creator", "uuid"]
+        fields = ["id", "phrase"]
+        read_only_fields = ["creator", "id"]
 
     def create(self, validated_data):
         validated_data["creator"] = self.context["request"].user
@@ -64,10 +64,10 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = [
-            "uuid",
+            "id",
             "resource_controller",
             "resource_action",
-            "resource_uuid",
+            "resource_id",
             "status",
             "description",
             "message",

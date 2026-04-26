@@ -14,7 +14,7 @@ class UserNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserName
         fields = [
-            "uuid",
+            "id",
             "language",
             "phrase",
             "type",
@@ -33,7 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = (
-            "uuid",
+            "id",
             "username",
             "password",
             "password2",
@@ -104,7 +104,7 @@ class LoginSerializer(serializers.Serializer):
 class ProfileSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         fields = [
-            "uuid",
+            "id",
             "username",
             "email",
             "display_name",
@@ -137,22 +137,22 @@ class ProfileSerializer(UserSerializer):
 
 
 class UserNameCreateSerializer(UserNameSerializer):
-    phrase_uuid = serializers.UUIDField(write_only=True)
+    phrase_id = serializers.UUIDField(write_only=True)
 
     class Meta:
         model = UserName
         fields = [
-            "uuid",
+            "id",
             "language",
-            "phrase_uuid",
+            "phrase_id",
             "type",
             "text",
             "is_primary",
         ]
 
     def create(self, validated_data):
-        phrase_uuid = validated_data.pop("phrase_uuid")
-        phrase = Phrase.objects.get(uuid=phrase_uuid)
+        phrase_id = validated_data.pop("phrase_id")
+        phrase = Phrase.objects.get(id=phrase_id)
         validated_data["phrase"] = phrase
         validated_data["user"] = self.context["user"]
         return super().create(validated_data)

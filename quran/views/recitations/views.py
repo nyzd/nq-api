@@ -3,12 +3,30 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, FormParser
-from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter, OpenApiTypes, OpenApiExample
+from drf_spectacular.utils import (
+    extend_schema,
+    extend_schema_view,
+    OpenApiParameter,
+    OpenApiTypes,
+    OpenApiExample,
+)
 from django.db.models import Q
 from core import permissions as core_permissions
 from core.pagination import CustomLimitOffsetPagination
-from quran.models import Recitation, Surah, Ayah, AyahTranslation, RecitationSurah, RecitationSurahTimestamp, Word
-from quran.serializers import RecitationSerializer, RecitationListSerializer, TrackDetailSerializer
+from quran.models import (
+    Recitation,
+    Surah,
+    Ayah,
+    AyahTranslation,
+    RecitationSurah,
+    RecitationSurahTimestamp,
+    Word,
+)
+from quran.serializers import (
+    RecitationSerializer,
+    RecitationListSerializer,
+    TrackDetailSerializer,
+)
 from mutagen.mp3 import MP3
 from datetime import timedelta
 
@@ -23,17 +41,17 @@ from datetime import timedelta
                 location=OpenApiParameter.QUERY,
                 required=True,
                 description="Short name of the Mushaf to filter Recitations by. Common value: 'hafs'. Any string is accepted. (e.g. 'hafs', 'warsh', etc.)",
-                examples=[OpenApiExample('hafs', value='hafs', summary='Most common')]
+                examples=[OpenApiExample("hafs", value="hafs", summary="Most common")],
             ),
             OpenApiParameter(
                 name="reciter_id",
                 type=OpenApiTypes.UUID,
                 location=OpenApiParameter.QUERY,
                 required=False,
-                description="id of the Reciter to filter Recitations by."
-            )
+                description="id of the Reciter to filter Recitations by.",
+            ),
         ],
-        responses={200: RecitationListSerializer(many=True)}
+        responses={200: RecitationListSerializer(many=True)},
     ),
     retrieve=extend_schema(
         summary="Retrieve a specific Recitation by id",
@@ -43,50 +61,70 @@ from datetime import timedelta
                 type=OpenApiTypes.UUID,
                 location=OpenApiParameter.QUERY,
                 required=False,
-                description="id of the Surah to filter timestamps by. When provided, only timestamps for this surah are returned."
+                description="id of the Surah to filter timestamps by. When provided, only timestamps for this surah are returned.",
             )
         ],
     ),
     create=extend_schema(summary="Create a new Recitation record"),
     update=extend_schema(summary="Update an existing Recitation record"),
     partial_update=extend_schema(summary="Partially update a Recitation record"),
-    destroy=extend_schema(summary="Delete a Recitation record")
+    destroy=extend_schema(summary="Delete a Recitation record"),
 )
 class RecitationViewSet(viewsets.ModelViewSet):
     queryset = Recitation.objects.all()
     serializer_class = RecitationSerializer
+
     def get_serializer_class(self):
-        if self.action == 'list':
+        if self.action == "list":
             from quran.serializers import RecitationListSerializer
+
             return RecitationListSerializer
         return RecitationSerializer
+
     permission_classes = [
         core_permissions.IsCreatorOrReadOnly,
         permissions.IsAuthenticatedOrReadOnly | permissions.DjangoModelPermissions,
-        core_permissions.LimitedFieldEditPermission
+        core_permissions.LimitedFieldEditPermission,
     ]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
     search_fields = ["recitation_date", "recitation_location", "recitation_type"]
-    ordering_fields = ['created_at', 'recitation_date']
+    ordering_fields = ["created_at", "recitation_date"]
     pagination_class = CustomLimitOffsetPagination
     limited_fields = {"status": ["published"]}
     lookup_field = "id"
 
     def get_queryset(self):
-        recitation_fields = ['id', 'mushaf', 'reciter_account', 'recitation_date', 'recitation_location', 'recitation_type', 'status', 'creator']
-        queryset = Recitation.objects.select_related('mushaf', 'reciter_account').only(*recitation_fields)
-        mushaf_short_name = self.request.query_params.get('mushaf')
-        if self.action == 'list' and not mushaf_short_name:
-            raise serializers.ValidationError({'mushaf': 'This query parameter is required.'})
+        recitation_fields = [
+            "id",
+            "mushaf",
+            "reciter_account",
+            "recitation_date",
+            "recitation_location",
+            "recitation_type",
+            "status",
+            "creator",
+        ]
+        queryset = Recitation.objects.select_related("mushaf", "reciter_account").only(
+            *recitation_fields
+        )
+        mushaf_short_name = self.request.query_params.get("mushaf")
+        if self.action == "list" and not mushaf_short_name:
+            raise serializers.ValidationError(
+                {"mushaf": "This query parameter is required."}
+            )
         if not self.request.user.is_authenticated:
             queryset = queryset.exclude(Q(status="draft") | Q(status="pending_review"))
         if mushaf_short_name:
             queryset = queryset.filter(mushaf__short_name=mushaf_short_name)
-        reciter_id = self.request.query_params.get('reciter_id', None)
+        reciter_id = self.request.query_params.get("reciter_id", None)
         if reciter_id is not None:
             queryset = queryset.filter(reciter_account__id=reciter_id)
-        if self.action == 'retrieve':
-            queryset = queryset.prefetch_related('recitation_surahs__timestamps')
+        if self.action == "retrieve":
+            queryset = queryset.prefetch_related("recitation_surahs__timestamps")
         return queryset
 
     def create(self, request, *args, **kwargs):
@@ -96,16 +134,26 @@ class RecitationViewSet(viewsets.ModelViewSet):
         return super().retrieve(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
+        partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        if instance.status == 'published' and not request.user.is_staff:
-            return Response({'detail': 'Published Recitation cannot be edited.'}, status=status.HTTP_403_FORBIDDEN)
-        status_value = request.data.get('status')
-        if status_value == 'pending_review':
+        if instance.status == "published" and not request.user.is_staff:
+            return Response(
+                {"detail": "Published Recitation cannot be edited."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        status_value = request.data.get("status")
+        if status_value == "pending_review":
             ayah_count = Ayah.objects.filter(surah__mushaf=instance.mushaf).count()
-            ayah_translation_count = AyahTranslation.objects.filter(translation__mushaf=instance.mushaf).count()
+            ayah_translation_count = AyahTranslation.objects.filter(
+                translation__mushaf=instance.mushaf
+            ).count()
             if ayah_translation_count != ayah_count:
-                return Response({'detail': f'Recitation is incomplete: {ayah_translation_count} of {ayah_count} ayahs translated.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {
+                        "detail": f"Recitation is incomplete: {ayah_translation_count} of {ayah_count} ayahs translated."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
         return super().update(request, *args, partial=partial, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):
@@ -133,7 +181,12 @@ class RecitationViewSet(viewsets.ModelViewSet):
             },
         },
     )
-    @action(detail=True, methods=["get", "post"], url_path="track", parser_classes=[MultiPartParser, FormParser])
+    @action(
+        detail=True,
+        methods=["get", "post"],
+        url_path="track",
+        parser_classes=[MultiPartParser, FormParser],
+    )
     def track(self, request, *args, **kwargs):
         from core.utils import upload_mp3_to_s3
         from django.db import transaction
@@ -143,12 +196,17 @@ class RecitationViewSet(viewsets.ModelViewSet):
 
         # LIST TRACKS FOR THIS RECITATION (lightweight: id + surah_id + file_url)
         if request.method.lower() == "get":
-            queryset = RecitationSurah.objects.filter(recitation=recitation).select_related("surah", "file")
+            queryset = RecitationSurah.objects.filter(
+                recitation=recitation
+            ).select_related("surah", "file")
             surah_id = request.query_params.get("surah_id")
             if surah_id:
                 queryset = queryset.filter(surah__id=surah_id)
             from quran.serializers import RecitationSurahSerializer
-            serializer = RecitationSurahSerializer(queryset, many=True, context=self.get_serializer_context())
+
+            serializer = RecitationSurahSerializer(
+                queryset, many=True, context=self.get_serializer_context()
+            )
             return Response(serializer.data)
 
         # CREATE A NEW TRACK (UPLOAD)
@@ -169,11 +227,15 @@ class RecitationViewSet(viewsets.ModelViewSet):
         try:
             surah = Surah.objects.get(id=surah_id)
         except Surah.DoesNotExist:
-            return Response({"surah_id": "Surah not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"surah_id": "Surah not found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         if surah.mushaf_id != recitation.mushaf_id:
             return Response(
-                {"detail": "Surah does not belong to the same Mushaf as the recitation."},
+                {
+                    "detail": "Surah does not belong to the same Mushaf as the recitation."
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -196,8 +258,10 @@ class RecitationViewSet(viewsets.ModelViewSet):
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({"error": f"Upload failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            return Response(
+                {"error": f"Upload failed: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
         with transaction.atomic():
             recitation_surah, _ = RecitationSurah.objects.get_or_create(
@@ -217,7 +281,9 @@ class RecitationViewSet(viewsets.ModelViewSet):
                     try:
                         start_time = datetime.strptime(ts["start"], "%H:%M:%S.%f")
                         end_time = (
-                            datetime.strptime(ts["end"], "%H:%M:%S.%f") if ts.get("end") else None
+                            datetime.strptime(ts["end"], "%H:%M:%S.%f")
+                            if ts.get("end")
+                            else None
                         )
                         word = None
                         if ts.get("word_id"):
@@ -242,7 +308,11 @@ class RecitationViewSet(viewsets.ModelViewSet):
                 audio_url = new_file.get_absolute_url()
 
                 # Get all words in the surah, ordered by ayah number and id (creation order)
-                words = list(Word.objects.filter(ayah__surah=surah).order_by("ayah__number", "id"))
+                words = list(
+                    Word.objects.filter(ayah__surah=surah).order_by(
+                        "ayah__number", "id"
+                    )
+                )
                 text = " ".join([w.text for w in words])
 
                 # Prepare additional data to pass through forced_alignment to forced_alignment_result
@@ -254,9 +324,13 @@ class RecitationViewSet(viewsets.ModelViewSet):
                     "user_id": request.user.id,
                 }
 
-                transaction.on_commit(lambda: forced_alignment.delay(audio_url, text, additional))
+                transaction.on_commit(
+                    lambda: forced_alignment.delay(audio_url, text, additional)
+                )
 
-        serializer = TrackDetailSerializer(recitation_surah, context=self.get_serializer_context())
+        serializer = TrackDetailSerializer(
+            recitation_surah, context=self.get_serializer_context()
+        )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @extend_schema(
@@ -282,14 +356,20 @@ class RecitationViewSet(viewsets.ModelViewSet):
         track_id = kwargs.get("track_id")
 
         try:
-            recitation_surah = RecitationSurah.objects.get(id=track_id, recitation=recitation)
+            recitation_surah = RecitationSurah.objects.get(
+                id=track_id, recitation=recitation
+            )
         except RecitationSurah.DoesNotExist:
-            return Response({"detail": "Track not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"detail": "Track not found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         method = request.method.lower()
 
         if method == "get":
-            serializer = TrackDetailSerializer(recitation_surah, context=self.get_serializer_context())
+            serializer = TrackDetailSerializer(
+                recitation_surah, context=self.get_serializer_context()
+            )
             return Response(serializer.data)
 
         if method == "delete":
@@ -320,9 +400,13 @@ class RecitationViewSet(viewsets.ModelViewSet):
         with transaction.atomic():
             if file_obj:
                 try:
-                    new_file = upload_mp3_to_s3(file_obj, request.user, folder="recitations")
+                    new_file = upload_mp3_to_s3(
+                        file_obj, request.user, folder="recitations"
+                    )
                 except ValueError as e:
-                    return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response(
+                        {"error": str(e)}, status=status.HTTP_400_BAD_REQUEST
+                    )
                 except Exception as e:
                     return Response(
                         {"error": f"Upload failed: {str(e)}"},
@@ -341,7 +425,9 @@ class RecitationViewSet(viewsets.ModelViewSet):
                     try:
                         start_time = datetime.strptime(ts["start"], "%H:%M:%S.%f")
                         end_time = (
-                            datetime.strptime(ts["end"], "%H:%M:%S.%f") if ts.get("end") else None
+                            datetime.strptime(ts["end"], "%H:%M:%S.%f")
+                            if ts.get("end")
+                            else None
                         )
                         word = None
                         if ts.get("word_id"):
@@ -359,5 +445,7 @@ class RecitationViewSet(viewsets.ModelViewSet):
                 if ts_objs:
                     RecitationSurahTimestamp.objects.bulk_create(ts_objs)
 
-        serializer = TrackDetailSerializer(recitation_surah, context=self.get_serializer_context())
+        serializer = TrackDetailSerializer(
+            recitation_surah, context=self.get_serializer_context()
+        )
         return Response(serializer.data)

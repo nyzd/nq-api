@@ -5,62 +5,72 @@ from core.rtl_languages import RTL_LANGUAGE_CODES
 
 from core.models import ErrorLog, PhraseValues, Phrase, Notification
 
+
 class ErrorLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = ErrorLog
-        fields = '__all__'
+        fields = "__all__"
+
 
 class PhraseValuesSerializer(serializers.ModelSerializer):
     language_is_rtl = serializers.SerializerMethodField()
+
     class Meta:
         model = PhraseValues
-        fields = ['uuid', 'phrase', 'text', 'language', 'language_is_rtl']
-        read_only_fields = ['creator', 'uuid']
+        fields = ["uuid", "phrase", "text", "language", "language_is_rtl"]
+        read_only_fields = ["creator", "uuid"]
+
     def get_language_is_rtl(self, obj):
-        code = (obj.language or '').strip().lower()
-        base = code.split('-')[0]
+        code = (obj.language or "").strip().lower()
+        base = code.split("-")[0]
         return code in RTL_LANGUAGE_CODES or base in RTL_LANGUAGE_CODES
+
     def create(self, validated_data):
-        validated_data['creator'] = self.context['request'].user
+        validated_data["creator"] = self.context["request"].user
         return super().create(validated_data)
+
 
 class PhraseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Phrase
-        fields = ['uuid', 'phrase']
-        read_only_fields = ['creator', 'uuid']
+        fields = ["uuid", "phrase"]
+        read_only_fields = ["creator", "uuid"]
 
     def create(self, validated_data):
-        validated_data['creator'] = self.context['request'].user
+        validated_data["creator"] = self.context["request"].user
         return super().create(validated_data)
+
 
 class PhraseModifySerializer(serializers.Serializer):
     phrases = serializers.DictField(child=serializers.CharField(), required=True)
 
     def validate(self, attrs):
-        request = self.context.get('request')
+        request = self.context.get("request")
         language = None
         if request:
-            language = request.query_params.get('language')
+            language = request.query_params.get("language")
         if not language:
-            raise serializers.ValidationError({"language": "This query parameter is required."})
+            raise serializers.ValidationError(
+                {"language": "This query parameter is required."}
+            )
         return attrs
 
     def create(self, validated_data):
-        validated_data['creator'] = self.context['request'].user
+        validated_data["creator"] = self.context["request"].user
         return super().create(validated_data)
+
 
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = [
-            'uuid',
-            'resource_controller',
-            'resource_action',
-            'resource_uuid',
-            'status',
-            'description',
-            'message',
-            'message_type',
-            'created_at',
+            "uuid",
+            "resource_controller",
+            "resource_action",
+            "resource_uuid",
+            "status",
+            "description",
+            "message",
+            "message_type",
+            "created_at",
         ]

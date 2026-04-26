@@ -1,5 +1,14 @@
 from django.contrib import admin
-from .models import Mushaf, Surah, Ayah, AyahTranslation, Translation, Word, WordBreaker, AyahBreaker
+from .models import (
+    Mushaf,
+    Surah,
+    Ayah,
+    AyahTranslation,
+    Translation,
+    Word,
+    WordBreaker,
+    AyahBreaker,
+)
 
 # Register your models here.
 admin.site.register(Mushaf)

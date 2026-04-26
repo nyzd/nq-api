@@ -9,38 +9,48 @@ from quran.serializers import ProvenanceSerializer, ProvenanceAddSerializer
 from django.db.models import Q
 from account.models import CustomUser
 
+
 class ProvenanceViewSet(viewsets.ModelViewSet):
-    queryset = Provenance.objects.filter(~Q(child_provenance=None) & Q(parent_provenance=None))
+    queryset = Provenance.objects.filter(
+        ~Q(child_provenance=None) & Q(parent_provenance=None)
+    )
     serializer_class = ProvenanceSerializer
     permission_classes = [
         core_permissions.IsCreatorOrReadOnly,
         # core_permissions.IsCreatorOfParentOrReadOnly,
-        permissions.IsAuthenticatedOrReadOnly | permissions.DjangoModelPermissions
+        permissions.IsAuthenticatedOrReadOnly | permissions.DjangoModelPermissions,
     ]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
     search_fields = ["role"]
-    ordering_fields = ['created_at']
+    ordering_fields = ["created_at"]
     pagination_class = CustomLimitOffsetPagination
     lookup_field = "id"
 
     def get_serializer_class(self):
-        if self.action == 'create':
+        if self.action == "create":
             return ProvenanceAddSerializer
         return ProvenanceSerializer
 
     def update(self, request, *args, **kwargs):
         try:
-            provenance_id = kwargs.get('id')
+            provenance_id = kwargs.get("id")
             provenance = Provenance.objects.get(id=provenance_id)
         except Provenance.DoesNotExist:
-            return Response({"detail": "Object not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"detail": "Object not found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         if provenance.child_provenance:
             provenance.child_provenance.delete()
 
-
         request_data = request.data
-        serializer = ProvenanceAddSerializer(provenance, data=request_data, partial=False)
+        serializer = ProvenanceAddSerializer(
+            provenance, data=request_data, partial=False
+        )
         recip = request_data["recipient"]
         serializer.is_valid(raise_exception=True)
 
@@ -50,9 +60,7 @@ class ProvenanceViewSet(viewsets.ModelViewSet):
             while next != None:
                 n_account = CustomUser.objects.get(id=next["account_id"])
                 c_proven = Provenance.objects.create(
-                    creator=request.user,
-                    account=n_account,
-                    role=next["role"]
+                    creator=request.user, account=n_account, role=next["role"]
                 )
                 provenance.child_provenance = c_proven
                 provenance.save()

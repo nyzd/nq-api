@@ -1,12 +1,21 @@
 from rest_framework import permissions, viewsets, status, filters, serializers
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter, OpenApiExample
+from drf_spectacular.utils import (
+    extend_schema,
+    extend_schema_view,
+    OpenApiParameter,
+    OpenApiExample,
+)
 from rest_framework.decorators import action
 from core import permissions as core_permissions
 from core.pagination import CustomLimitOffsetPagination
 from quran.models import Mushaf, Surah, SurahName
-from quran.serializers import SurahSerializer, SurahDetailSerializer, SurahNameSerializer
+from quran.serializers import (
+    SurahSerializer,
+    SurahDetailSerializer,
+    SurahNameSerializer,
+)
 
 
 @extend_schema_view(
@@ -19,58 +28,69 @@ from quran.serializers import SurahSerializer, SurahDetailSerializer, SurahNameS
                 location=OpenApiParameter.QUERY,
                 required=True,
                 description="Short name of the Mushaf to filter Surahs by. Common value: 'hafs'. Any string is accepted. (e.g. 'hafs', 'warsh', etc.)",
-                examples=[OpenApiExample('hafs', value='hafs', summary='Most common')]
+                examples=[OpenApiExample("hafs", value="hafs", summary="Most common")],
             )
         ],
         tags=["general", "surahs"],
     ),
-    retrieve=extend_schema(summary="Retrieve a specific Surah by id", tags=["general", "surahs"]),
+    retrieve=extend_schema(
+        summary="Retrieve a specific Surah by id", tags=["general", "surahs"]
+    ),
     create=extend_schema(summary="Create a new Surah record"),
     update=extend_schema(summary="Update an existing Surah record"),
     partial_update=extend_schema(summary="Partially update a Surah record"),
-    destroy=extend_schema(summary="Delete a Surah record")
+    destroy=extend_schema(summary="Delete a Surah record"),
 )
 class SurahViewSet(viewsets.ModelViewSet):
-    queryset = Surah.objects.all().order_by('number')
+    queryset = Surah.objects.all().order_by("number")
     permission_classes = [
         core_permissions.IsCreatorOrReadOnly,
         core_permissions.IsCreatorOfParentOrReadOnly,
-        permissions.IsAuthenticatedOrReadOnly | permissions.DjangoModelPermissions
+        permissions.IsAuthenticatedOrReadOnly | permissions.DjangoModelPermissions,
     ]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
     search_fields = ["name"]
-    ordering_fields = ['created_at']
+    ordering_fields = ["created_at"]
     pagination_class = CustomLimitOffsetPagination
     lookup_field = "id"
 
     def get_parent_for_permission(self, request):
-        mushaf_id = request.data.get('mushaf_id', None)
+        mushaf_id = request.data.get("mushaf_id", None)
         if mushaf_id:
             return Mushaf.objects.filter(id=mushaf_id).first()
         return None
 
     def get_serializer_class(self):
-        if self.action == 'retrieve':
+        if self.action == "retrieve":
             return SurahDetailSerializer
         return SurahSerializer
+
     def get_queryset(self):
-        surah_fields = [
-            'id', 'mushaf', 'number', 'period', 'search_terms', 'creator'
-        ]
+        surah_fields = ["id", "mushaf", "number", "period", "search_terms", "creator"]
         queryset = Surah.objects.all()
-        if self.action == 'retrieve':
-            queryset = queryset.select_related('mushaf').prefetch_related('ayahs__words').only(*surah_fields)
+        if self.action == "retrieve":
+            queryset = (
+                queryset.select_related("mushaf")
+                .prefetch_related("ayahs__words")
+                .only(*surah_fields)
+            )
         else:
-            queryset = queryset.select_related('mushaf').only(*surah_fields)
-        mushaf_short_name = self.request.query_params.get('mushaf')
-        if self.action == 'list' and not mushaf_short_name:
-            raise serializers.ValidationError({'mushaf': 'This query parameter is required.'})
+            queryset = queryset.select_related("mushaf").only(*surah_fields)
+        mushaf_short_name = self.request.query_params.get("mushaf")
+        if self.action == "list" and not mushaf_short_name:
+            raise serializers.ValidationError(
+                {"mushaf": "This query parameter is required."}
+            )
         if mushaf_short_name:
             queryset = queryset.filter(mushaf__short_name=mushaf_short_name)
-        return queryset.order_by('number')
+        return queryset.order_by("number")
 
     def perform_create(self, serializer):
-        last_surah = Surah.objects.order_by('-number').first()
+        last_surah = Surah.objects.order_by("-number").first()
         next_number = 1 if last_surah is None else last_surah.number + 1
         serializer.save(creator=self.request.user, number=next_number)
 
@@ -95,12 +115,14 @@ class SurahViewSet(viewsets.ModelViewSet):
             pronunciation=pron,
             transliteration=translit,
             translation=translation,
-            surah=surah
+            surah=surah,
         )
 
         return Response({"status": "created"})
 
-    @action(detail=True, methods=["post", "delete"], url_path="names/(?P<name_id>[^/.]+)")
+    @action(
+        detail=True, methods=["post", "delete"], url_path="names/(?P<name_id>[^/.]+)"
+    )
     def edit_name(self, request, *args, **kwargs):
         surah: Surah = self.get_object()
         name_id = kwargs.get("name_id")
@@ -121,13 +143,12 @@ class SurahViewSet(viewsets.ModelViewSet):
         surah_name, created = SurahName.objects.update_or_create(
             id=name_id,
             defaults={
-                'name': name,
-                'pronunciation': pron,
-                'transliteration': translit,
-                'translation': translation,
-                'surah': surah,
-            }
+                "name": name,
+                "pronunciation": pron,
+                "transliteration": translit,
+                "translation": translation,
+                "surah": surah,
+            },
         )
 
         return Response({"status": "updated"})
-

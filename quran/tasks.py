@@ -263,7 +263,7 @@ def import_mushaf_task(quran_data, user_id):
         user=user,
         resource_controller="mushafs",
         resource_action="import",
-        resource_uuid=mushaf.uuid,
+        resource_uuid=mushaf.id,
         status=Notification.STATUS_NOTHING,
         description=f"Mushaf import complete",
         message=f'Mushaf "{mushaf.name}" imported successfully.',

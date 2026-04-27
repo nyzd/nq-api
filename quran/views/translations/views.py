@@ -18,6 +18,8 @@ from quran.models import Translation, Ayah, AyahTranslation
 from quran.serializers import (
     TranslationSerializer,
     TranslationListSerializer,
+    TranslationCreateSerializer,
+    TranslationUpdateSerializer,
     AyahTranslationSerializer,
     AyahTranslationNestedSerializer,
 )
@@ -73,7 +75,7 @@ class TranslationViewSet(viewsets.ModelViewSet):
     search_fields = ["text"]
     ordering_fields = ["created_at"]
     pagination_class = CustomLimitOffsetPagination
-    limited_fields = {"status": ["published"]}
+    limited_fields = {"status": ["published"], "is_primary": [True, False]}
     lookup_field = "id"
 
     def get_queryset(self):
@@ -107,9 +109,13 @@ class TranslationViewSet(viewsets.ModelViewSet):
         return queryset
 
     def get_serializer_class(self):
-        if self.action == "retrieve":
-            return TranslationSerializer
-        return TranslationListSerializer
+        if self.action == "list":
+            return TranslationListSerializer
+        if self.action == "create":
+            return TranslationCreateSerializer
+        if self.action == "update":
+            return TranslationUpdateSerializer
+        return TranslationSerializer
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
@@ -135,6 +141,14 @@ class TranslationViewSet(viewsets.ModelViewSet):
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+        is_primary_value = request.data.get("is_primary")
+        language = request.data.get("language")
+
+        if is_primary_value == True:
+            prev_primary = Translation.objects.get(is_primary=True, language=language)
+            prev_primary.is_primary = False
+            prev_primary.save()
+
         return super().update(request, *args, partial=partial, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):

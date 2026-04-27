@@ -161,6 +161,7 @@ class Translation(models.Model):
     status = models.CharField(
         max_length=50, choices=Status.choices, default=Status.DRAFT
     )
+    is_primary = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

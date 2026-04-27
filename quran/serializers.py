@@ -326,6 +326,43 @@ class LangCodeField(serializers.ChoiceField):
         super().__init__(choices=language_codes, **kwargs)
 
 
+class TranslationCreateSerializer(serializers.ModelSerializer):
+    mushaf_id = serializers.PrimaryKeyRelatedField(
+        source="mushaf", queryset=Mushaf.objects.all()
+    )
+
+    translator_id = serializers.PrimaryKeyRelatedField(
+        source="translator", queryset=CustomUser.objects.all()
+    )
+
+    class Meta:
+        model = Translation
+        fields = [
+            "id",
+            "mushaf_id",
+            "translator_id",
+            "language",
+            "release_date",
+            "source",
+            "status",
+        ]
+        read_only_fields = ["creator", "id"]
+
+
+class TranslationUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Translation
+        fields = [
+            "id",
+            "language",
+            "release_date",
+            "source",
+            "status",
+            "is_primary",
+        ]
+        read_only_fields = ["creator", "id"]
+
+
 class TranslationSerializer(serializers.ModelSerializer):
     mushaf_id = serializers.SerializerMethodField()
     translator_id = serializers.SerializerMethodField()
@@ -343,6 +380,7 @@ class TranslationSerializer(serializers.ModelSerializer):
             "release_date",
             "source",
             "status",
+            "is_primary",
         ]
         read_only_fields = ["creator"]
 
@@ -623,6 +661,7 @@ class TranslationListSerializer(serializers.ModelSerializer):
             "release_date",
             "source",
             "status",
+            "is_primary",
         ]
         read_only_fields = ["creator"]
 

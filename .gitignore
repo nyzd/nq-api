@@ -4,3 +4,4 @@ env
 __pycache__
 dist
 node_modules
+rest-client-tests

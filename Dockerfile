@@ -1,4 +1,4 @@
-FROM python:3.13-slim AS builder
+FROM python:3.14-slim AS builder
 
 # Create the app directory
 RUN mkdir /app
@@ -23,7 +23,7 @@ RUN apt update \
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Stage 2: Production stage
-FROM python:3.13-slim
+FROM python:3.14-slim
 
 RUN useradd -m -r appuser && \
     mkdir /app && \

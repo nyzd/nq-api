@@ -27,7 +27,7 @@ import json
     destroy=extend_schema(summary="Delete a Mushaf record"),
 )
 class MushafViewSet(viewsets.ModelViewSet):
-    queryset = Mushaf.objects.all().order_by("short_name")
+    queryset = Mushaf.objects.all().order_by("slug")
     serializer_class = MushafSerializer
     permission_classes = [
         core_permissions.IsCreatorOrReadOnly,
@@ -39,19 +39,19 @@ class MushafViewSet(viewsets.ModelViewSet):
         filters.SearchFilter,
         filters.OrderingFilter,
     ]
-    search_fields = ["short_name", "name", "source"]
+    search_fields = ["slug", "name", "source"]
     ordering_fields = ["created_at"]
     pagination_class = CustomLimitOffsetPagination
     limited_fields = {"status": ["published"]}
     lookup_field = "id"
 
     def get_queryset(self):
-        query = Mushaf.objects.all().order_by("short_name")
+        query = Mushaf.objects.all().order_by("slug")
         if not self.request.user.is_authenticated:
             query = query.exclude(Q(status="draft") | Q(status="pending_review"))
 
         if getattr(self, "action", None) == "list":
-            query = query.only("id", "short_name", "name", "source", "status")
+            query = query.only("id", "slug", "name", "source", "status")
 
         return query
 

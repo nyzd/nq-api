@@ -92,8 +92,8 @@ class TranslationViewSet(viewsets.ModelViewSet):
         queryset = Translation.objects.select_related("mushaf", "translator").only(
             *translation_fields
         )
-        mushaf_short_name = self.request.query_params.get("mushaf")
-        if self.action == "list" and not mushaf_short_name:
+        mushaf_slug = self.request.query_params.get("mushaf")
+        if self.action == "list" and not mushaf_slug:
             raise serializers.ValidationError(
                 {"mushaf": "This query parameter is required."}
             )
@@ -101,8 +101,8 @@ class TranslationViewSet(viewsets.ModelViewSet):
         if not self.request.user.is_authenticated:
             queryset = queryset.exclude(Q(status="draft") | Q(status="pending_review"))
 
-        if mushaf_short_name:
-            queryset = queryset.filter(mushaf__short_name=mushaf_short_name)
+        if mushaf_slug:
+            queryset = queryset.filter(mushaf__slug=mushaf_slug)
         language = self.request.query_params.get("language", None)
         if language is not None:
             queryset = queryset.filter(language=language)

@@ -3254,7 +3254,7 @@ components:
           type: string
           format: uuid
           readOnly: true
-        short_name:
+        slug:
           type: string
           maxLength: 100
         name:
@@ -3274,7 +3274,7 @@ components:
           x-spec-enum-id: 115b2e47abe9bd4d
       required:
       - name
-      - short_name
+      - slug
       - uuid
     Notification:
       type: object
@@ -3422,7 +3422,7 @@ components:
           type: string
           format: uuid
           readOnly: true
-        short_name:
+        slug:
           type: string
           maxLength: 100
         name:

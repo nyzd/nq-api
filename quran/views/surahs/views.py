@@ -80,13 +80,13 @@ class SurahViewSet(viewsets.ModelViewSet):
             )
         else:
             queryset = queryset.select_related("mushaf").only(*surah_fields)
-        mushaf_short_name = self.request.query_params.get("mushaf")
-        if self.action == "list" and not mushaf_short_name:
+        mushaf_slug = self.request.query_params.get("mushaf")
+        if self.action == "list" and not mushaf_slug:
             raise serializers.ValidationError(
                 {"mushaf": "This query parameter is required."}
             )
-        if mushaf_short_name:
-            queryset = queryset.filter(mushaf__short_name=mushaf_short_name)
+        if mushaf_slug:
+            queryset = queryset.filter(mushaf__slug=mushaf_slug)
         return queryset.order_by("number")
 
     def perform_create(self, serializer):

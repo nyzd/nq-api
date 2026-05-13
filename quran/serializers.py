@@ -42,7 +42,7 @@ class RecursiveField(serializers.Serializer):
 class MushafSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mushaf
-        fields = ["id", "short_name", "name", "source", "status"]
+        fields = ["id", "slug", "name", "source", "status"]
         read_only_fields = ["creator"]
 
     def create(self, validated_data):
@@ -125,6 +125,7 @@ class AyahSerializer(serializers.ModelSerializer):
     breakers = serializers.SerializerMethodField()
     bismillah = serializers.SerializerMethodField()
     surah = serializers.SerializerMethodField()
+    surah_number = serializers.SerializerMethodField()
 
     class Meta:
         model = Ayah
@@ -136,6 +137,7 @@ class AyahSerializer(serializers.ModelSerializer):
             "breakers",
             "bismillah",
             "surah",
+            "surah_number",
             "length",
         ]
         read_only_fields = ["creator"]
@@ -145,6 +147,9 @@ class AyahSerializer(serializers.ModelSerializer):
         if instance.number == 1:
             return SurahSerializer(instance.surah).data
         return None
+
+    def get_surah_number(self, instance):
+        return instance.surah.number
 
     def get_text(self, instance):
         words = list(instance.words.all().order_by("id"))

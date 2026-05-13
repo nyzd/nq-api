@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                         unique=True,
                     ),
                 ),
-                ("short_name", models.CharField(max_length=100, unique=True)),
+                ("slug", models.CharField(max_length=100, unique=True)),
                 ("name", models.TextField()),
                 ("source", models.TextField(default="")),
                 (

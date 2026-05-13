@@ -42,6 +42,7 @@ class AyahViewSet(viewsets.ModelViewSet):
         filters.SearchFilter,
         filters.OrderingFilter,
     ]
+    filterset_fields = ["number"]
     search_fields = ["number", "text"]
     ordering_fields = ["created_at"]
     pagination_class = CustomLimitOffsetPagination
@@ -77,24 +78,32 @@ class AyahViewSet(viewsets.ModelViewSet):
                 .prefetch_related("words")
                 .only(*ayah_fields)
             )
+
         surah_id = self.request.query_params.get("surah_id", None)
         if surah_id is not None:
             queryset = queryset.filter(surah__id=surah_id)
+
+        surah_number = self.request.query_params.get("surah_number", None)
+        if surah_number is not None:
+            queryset = queryset.filter(surah__number=surah_number)
+
         return queryset
 
     @action(detail=False, methods=["get"], url_path="random")
     def random(self, request, *args, **kwargs):
-        id_range = Ayah.objects.aggregate(min_id=Min("id"), max_id=Max("id"))
+        total = Ayah.objects.count()
+        if total == 0:
+            return Response(
+                {"detail": "No Ayah available."}, status=status.HTTP_404_NOT_FOUND
+            )
 
-        if id_range["min_id"] is None or id_range["max_id"] is None:
-            return None
+        # Pick a random offset (an integer)
+        random_offset = random.randint(0, total - 1)
 
-        while True:
-            pk = random.randint(id_range["min_id"], id_range["max_id"])
-            obj = Ayah.objects.filter(pk=pk).first()
-            if obj:
-                ayah_serializer = AyahSerializerView(obj)
-                return Response(ayah_serializer.data)
+        # Get the row at that offset using the primary key index
+        random_ayah = Ayah.objects.order_by("id")[random_offset]
+        ayah_serializer = AyahSerializerView(random_ayah)
+        return Response(ayah_serializer.data)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()

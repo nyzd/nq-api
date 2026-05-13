@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from rest_framework import viewsets, permissions
-from .models import ErrorLog, Phrase, PhraseValues, Notification
+from .models import Request, Phrase, PhraseValues, Notification
 from .serializers import (
-    ErrorLogSerializer,
+    RequestSerializer,
     PhraseModifySerializer,
     PhraseSerializer,
     PhraseValuesSerializer,
@@ -44,17 +44,14 @@ from rest_framework import serializers
 
 
 @extend_schema_view(
-    list=extend_schema(summary="List all error logs"),
-    retrieve=extend_schema(summary="Retrieve a specific error log by ID"),
-    create=extend_schema(summary="Create a new error log entry"),
-    update=extend_schema(summary="Update an existing error log entry"),
-    partial_update=extend_schema(summary="Partially update an error log entry"),
-    destroy=extend_schema(summary="Delete an error log entry"),
+    list=extend_schema(summary="List all requests"),
+    retrieve=extend_schema(summary="Retrieve a specific request by ID"),
 )
-class ErrorLogViewSet(viewsets.ModelViewSet):
-    queryset = ErrorLog.objects.all()
-    serializer_class = ErrorLogSerializer
+class RequestViewSet(viewsets.ModelViewSet):
+    queryset = Request.objects.all()
+    serializer_class = RequestSerializer
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    http_method_names = ["get", "head", "options"]
 
 
 @extend_schema_view(

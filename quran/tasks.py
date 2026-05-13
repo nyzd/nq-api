@@ -205,7 +205,7 @@ def import_mushaf_task(quran_data, user_id):
         mushaf = Mushaf.objects.create(
             creator_id=user.id,
             name=mushaf_data["name"],
-            short_name=mushaf_data["short_name"],
+            slug=mushaf_data["slug"],
             source=mushaf_data["source"],
         )
         surah_objs = []
@@ -280,7 +280,7 @@ def import_translation_task(translation_data, user_id):
         translator, _ = User.objects.get_or_create(
             username=translation_data["translator_username"]
         )
-        mushaf = Mushaf.objects.get(short_name=translation_data["mushaf"])
+        mushaf = Mushaf.objects.get(slug=translation_data["mushaf"])
         translation = Translation.objects.create(
             creator_id=user.id,
             mushaf_id=mushaf.id,

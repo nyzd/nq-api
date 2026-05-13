@@ -73,6 +73,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "core.middleware.RequestLoggingMiddleware",
 ]
 
 INTERNAL_IPS = [
@@ -303,3 +304,52 @@ CELERY_BROKER_URL = os.environ.get(
 )
 CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "rpc://")
 CELERY_ACCEPT_CONTENT = ["pickle", "application/json"]
+
+LOGS_DIR = BASE_DIR / "logs"
+LOGS_DIR.mkdir(exist_ok=True)
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "json": {
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+            "format": "%(asctime)s %(levelname)s %(name)s %(message)s",
+        },
+    },
+    "handlers": {
+        "request_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/requests.json",  # Only requests
+            "maxBytes": 10485760,  # 10MB
+            "backupCount": 10,
+            "formatter": "json",
+        },
+        "response_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/responses.json",  # Only responses
+            "maxBytes": 10485760,  # 10MB
+            "backupCount": 10,
+            "formatter": "json",
+        },
+        "combined_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/combined.json",  # Both together
+            "maxBytes": 10485760,
+            "backupCount": 10,
+            "formatter": "json",
+        },
+    },
+    "loggers": {
+        "django.request_log": {
+            "handlers": ["request_file", "combined_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.response_log": {
+            "handlers": ["response_file", "combined_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}

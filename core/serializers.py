@@ -3,12 +3,12 @@ from django.core.validators import RegexValidator
 from django.db import models
 from core.rtl_languages import RTL_LANGUAGE_CODES
 
-from core.models import ErrorLog, PhraseValues, Phrase, Notification
+from core.models import Request, PhraseValues, Phrase, Notification
 
 
-class ErrorLogSerializer(serializers.ModelSerializer):
+class RequestSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ErrorLog
+        model = Request
         fields = "__all__"
 
 

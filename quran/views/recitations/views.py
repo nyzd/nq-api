@@ -111,15 +111,15 @@ class RecitationViewSet(viewsets.ModelViewSet):
         queryset = Recitation.objects.select_related("mushaf", "reciter_account").only(
             *recitation_fields
         )
-        mushaf_short_name = self.request.query_params.get("mushaf")
-        if self.action == "list" and not mushaf_short_name:
+        mushaf_slug = self.request.query_params.get("mushaf")
+        if self.action == "list" and not mushaf_slug:
             raise serializers.ValidationError(
                 {"mushaf": "This query parameter is required."}
             )
         if not self.request.user.is_authenticated:
             queryset = queryset.exclude(Q(status="draft") | Q(status="pending_review"))
-        if mushaf_short_name:
-            queryset = queryset.filter(mushaf__short_name=mushaf_short_name)
+        if mushaf_slug:
+            queryset = queryset.filter(mushaf__slug=mushaf_slug)
         reciter_id = self.request.query_params.get("reciter_id", None)
         if reciter_id is not None:
             queryset = queryset.filter(reciter_account__id=reciter_id)

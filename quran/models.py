@@ -19,7 +19,7 @@ class Mushaf(models.Model):
     creator = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="mushafs"
     )
-    short_name = models.CharField(max_length=100, unique=True)
+    slug = models.CharField(max_length=50, unique=True)
     name = models.TextField()
     source = models.TextField(default="")
     status = models.CharField(

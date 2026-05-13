@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from .models import ErrorLog, PhraseValues, Phrase
+from .models import Request, PhraseValues, Phrase
 
 # Register your models here.
-admin.site.register(ErrorLog)
+admin.site.register(Request)
 admin.site.register(PhraseValues)
 admin.site.register(Phrase)

@@ -5,6 +5,7 @@ from core.models import File as CoreFile
 from core.views import Storage
 import uuid
 
+
 # TODO: maybe change this into multi file type upload in the future
 def upload_mp3_to_s3(file_obj, uploader, folder="recitations"):
     """
@@ -20,7 +21,7 @@ def upload_mp3_to_s3(file_obj, uploader, folder="recitations"):
             f"Current value: '{endpoint_url}'. "
             f"Please set AWS_S3_ENDPOINT_URL in your environment variables or .env file and restart the server."
         )
-    
+
     # Calculate file hash
     sha256_hash = hashlib.sha256()
     for chunk in file_obj.chunks():
@@ -66,4 +67,3 @@ def upload_mp3_to_s3(file_obj, uploader, folder="recitations"):
         uploader=uploader,
     )
     return new_file
- 

@@ -28,7 +28,9 @@ class Command(BaseCommand):
 
         user = User.objects.filter(username=username).first()
         if user is None:
-            User.objects.create_superuser(username=username, email=email, password=password)
+            User.objects.create_superuser(
+                username=username, email=email, password=password
+            )
             self.stdout.write(self.style.SUCCESS(f"Created superuser: {username}"))
             return
 
@@ -50,6 +52,6 @@ class Command(BaseCommand):
             user.save()
             self.stdout.write(self.style.SUCCESS(f"Updated superuser: {username}"))
         else:
-            self.stdout.write(self.style.SUCCESS(f"Superuser already up-to-date: {username}"))
-
-
+            self.stdout.write(
+                self.style.SUCCESS(f"Superuser already up-to-date: {username}")
+            )

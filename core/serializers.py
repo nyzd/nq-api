@@ -67,7 +67,7 @@ class NotificationSerializer(serializers.ModelSerializer):
             "id",
             "resource_controller",
             "resource_action",
-            "resource_id",
+            "resource_uuid",
             "status",
             "description",
             "message",

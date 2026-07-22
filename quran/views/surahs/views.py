@@ -10,7 +10,7 @@ from drf_spectacular.utils import (
 from rest_framework.decorators import action
 from core import permissions as core_permissions
 from core.pagination import CustomLimitOffsetPagination
-from quran.models import Mushaf, Surah, SurahName
+from quran.models import RasmOlMushaf, Surah, SurahName
 from quran.serializers import (
     SurahSerializer,
     SurahDetailSerializer,
@@ -23,11 +23,11 @@ from quran.serializers import (
         summary="List all Surahs (Quran chapters)",
         parameters=[
             OpenApiParameter(
-                name="mushaf",
+                name="rasm_ol_mushaf",
                 type={"type": "string", "enum": ["hafs"]},
                 location=OpenApiParameter.QUERY,
                 required=True,
-                description="Short name of the Mushaf to filter Surahs by. Common value: 'hafs'. Any string is accepted. (e.g. 'hafs', 'warsh', etc.)",
+                description="Slug of the Rasm Ol Mushaf to filter Surahs by. Common value: 'hafs'. Any string is accepted. (e.g. 'hafs', 'warsh', etc.)",
                 examples=[OpenApiExample("hafs", value="hafs", summary="Most common")],
             )
         ],
@@ -59,9 +59,9 @@ class SurahViewSet(viewsets.ModelViewSet):
     lookup_field = "id"
 
     def get_parent_for_permission(self, request):
-        mushaf_id = request.data.get("mushaf_id", None)
-        if mushaf_id:
-            return Mushaf.objects.filter(id=mushaf_id).first()
+        rasm_ol_mushaf_id = request.data.get("rasm_ol_mushaf_id", None)
+        if rasm_ol_mushaf_id:
+            return RasmOlMushaf.objects.filter(id=rasm_ol_mushaf_id).first()
         return None
 
     def get_serializer_class(self):
@@ -70,23 +70,30 @@ class SurahViewSet(viewsets.ModelViewSet):
         return SurahSerializer
 
     def get_queryset(self):
-        surah_fields = ["id", "mushaf", "number", "period", "search_terms", "creator"]
+        surah_fields = [
+            "id",
+            "rasm_ol_mushaf",
+            "number",
+            "period",
+            "search_terms",
+            "creator",
+        ]
         queryset = Surah.objects.all()
         if self.action == "retrieve":
             queryset = (
-                queryset.select_related("mushaf")
+                queryset.select_related("rasm_ol_mushaf")
                 .prefetch_related("ayahs__words")
                 .only(*surah_fields)
             )
         else:
-            queryset = queryset.select_related("mushaf").only(*surah_fields)
-        mushaf_slug = self.request.query_params.get("mushaf")
+            queryset = queryset.select_related("rasm_ol_mushaf").only(*surah_fields)
+        mushaf_slug = self.request.query_params.get("rasm_ol_mushaf")
         if self.action == "list" and not mushaf_slug:
             raise serializers.ValidationError(
-                {"mushaf": "This query parameter is required."}
+                {"rasm_ol_mushaf": "This query parameter is required."}
             )
         if mushaf_slug:
-            queryset = queryset.filter(mushaf__slug=mushaf_slug)
+            queryset = queryset.filter(rasm_ol_mushaf__slug=mushaf_slug)
         return queryset.order_by("number")
 
     def perform_create(self, serializer):

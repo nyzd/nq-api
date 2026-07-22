@@ -67,7 +67,7 @@ class AyahViewSet(viewsets.ModelViewSet):
         queryset = super().get_queryset()
         if self.action == "retrieve":
             queryset = (
-                queryset.select_related("surah", "surah__mushaf")
+                queryset.select_related("surah", "surah__rasm_ol_mushaf")
                 .prefetch_related("words")
                 .only(*ayah_fields)
             )
@@ -88,20 +88,58 @@ class AyahViewSet(viewsets.ModelViewSet):
 
         return queryset
 
+    @extend_schema(
+        summary="Get random Ayah(s)",
+        parameters=[
+            OpenApiParameter(
+                name="count",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description="Number of random ayahs to return. Defaults to 1.",
+            )
+        ],
+        responses={200: AyahSerializerView(many=True)},
+    )
     @action(detail=False, methods=["get"], url_path="random")
     def random(self, request, *args, **kwargs):
-        total = Ayah.objects.count()
+        ayah_ids = list(Ayah.objects.order_by("id").values_list("id", flat=True))
+        total = len(ayah_ids)
         if total == 0:
             return Response(
                 {"detail": "No Ayah available."}, status=status.HTTP_404_NOT_FOUND
             )
 
-        # Pick a random offset (an integer)
-        random_offset = random.randint(0, total - 1)
+        count_param = request.query_params.get("count")
+        if count_param is None:
+            count = 1
+        else:
+            try:
+                count = int(count_param)
+            except (TypeError, ValueError):
+                return Response(
+                    {"detail": "count must be a positive integer."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if count < 1:
+                return Response(
+                    {"detail": "count must be a positive integer."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
-        # Get the row at that offset using the primary key index
-        random_ayah = Ayah.objects.order_by("id")[random_offset]
-        ayah_serializer = AyahSerializerView(random_ayah)
+        count = min(count, total)
+        selected_ids = random.sample(ayah_ids, count)
+        ayahs_by_id = {
+            ayah.id: ayah
+            for ayah in Ayah.objects.filter(id__in=selected_ids)
+            .select_related("surah", "surah__rasm_ol_mushaf")
+            .prefetch_related("words")
+        }
+        random_ayahs = [ayahs_by_id[ayah_id] for ayah_id in selected_ids]
+
+        ayah_serializer = AyahSerializerView(
+            random_ayahs, many=True, context=self.get_serializer_context()
+        )
         return Response(ayah_serializer.data)
 
     def get_serializer_context(self):

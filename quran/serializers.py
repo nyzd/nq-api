@@ -8,7 +8,7 @@ from core.rtl_languages import RTL_LANGUAGE_CODES
 from datetime import timedelta
 
 from quran.models import (
-    Mushaf,
+    RasmOlMushaf,
     Surah,
     SurahName,
     Ayah,
@@ -20,6 +20,7 @@ from quran.models import (
     WordBreaker,
     Provenance,
     Recitation,
+    Transmission,
     File,
     RecitationSurah,
     RecitationSurahTimestamp,
@@ -39,14 +40,33 @@ class RecursiveField(serializers.Serializer):
         return serializer.validated_data
 
 
-class MushafSerializer(serializers.ModelSerializer):
+class TransmissionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Mushaf
-        fields = ["id", "slug", "name", "source", "status"]
+        model = Transmission
+        fields = ["id", "slug", "name", "provenances"]
+
+
+class MushafSerializer(serializers.ModelSerializer):
+    transmissions = TransmissionSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = RasmOlMushaf
+        fields = [
+            "id",
+            "slug",
+            "name",
+            "status",
+            "collector",
+            "compiler",
+            "transmissions",
+        ]
         read_only_fields = ["creator"]
 
+    def get_transmissions(self, instance):
+        return instance.transmissions.all()
+
     def create(self, validated_data):
-        return Mushaf.objects.create(**validated_data)
+        return RasmOlMushaf.objects.create(**validated_data)
 
 
 class SurahNameSerializer(serializers.ModelSerializer):
@@ -62,7 +82,6 @@ class SurahBismillahSerializer(serializers.Serializer):
 
 
 class SurahSerializer(serializers.ModelSerializer):
-    mushaf = MushafSerializer(read_only=True)
     mushaf_id = serializers.UUIDField(write_only=True, required=True)
     number_of_ayahs = serializers.SerializerMethodField(read_only=True)
     bismillah = serializers.SerializerMethodField(read_only=True)
@@ -72,7 +91,7 @@ class SurahSerializer(serializers.ModelSerializer):
         model = Surah
         fields = [
             "id",
-            "mushaf",
+            "rasm_ol_mushaf",
             "mushaf_id",
             "names",
             "number",
@@ -273,14 +292,14 @@ class WordSerializer(serializers.ModelSerializer):
 
 class AyahSerializerView(AyahSerializer):
     surah = SurahInAyahSerializer(read_only=True)
-    mushaf = serializers.SerializerMethodField()
+    rasm_ol_mushaf = serializers.SerializerMethodField()
     words = WordSerializer(many=True, read_only=True, no_ayah_id=True)
 
     class Meta(AyahSerializer.Meta):
-        fields = AyahSerializer.Meta.fields + ["surah", "mushaf", "words"]
+        fields = AyahSerializer.Meta.fields + ["surah", "rasm_ol_mushaf", "words"]
 
-    def get_mushaf(self, instance):
-        return MushafSerializer(instance.surah.mushaf).data
+    def get_rasm_ol_mushaf(self, instance):
+        return MushafSerializer(instance.surah.rasm_ol_mushaf).data
 
 
 # Separate serializer for ayahs in surah
@@ -323,7 +342,7 @@ class LangCodeField(serializers.ChoiceField):
 
 class TranslationCreateSerializer(serializers.ModelSerializer):
     mushaf_id = serializers.PrimaryKeyRelatedField(
-        source="mushaf", queryset=Mushaf.objects.all()
+        source="mushaf", queryset=RasmOlMushaf.objects.all()
     )
 
     translator_id = serializers.PrimaryKeyRelatedField(
@@ -359,7 +378,7 @@ class TranslationUpdateSerializer(serializers.ModelSerializer):
 
 
 class TranslationSerializer(serializers.ModelSerializer):
-    mushaf_id = serializers.SerializerMethodField()
+    transmission_id = serializers.SerializerMethodField()
     translator_id = serializers.SerializerMethodField()
     language = LangCodeField()
     language_is_rtl = serializers.SerializerMethodField()
@@ -368,7 +387,7 @@ class TranslationSerializer(serializers.ModelSerializer):
         model = Translation
         fields = [
             "id",
-            "mushaf_id",
+            "transmission_id",
             "translator_id",
             "language",
             "language_is_rtl",
@@ -379,8 +398,8 @@ class TranslationSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["creator"]
 
-    def get_mushaf_id(self, obj):
-        return str(obj.mushaf.id) if obj.mushaf else None
+    def get_transmission_id(self, obj):
+        return str(obj.transmission.id) if obj.transmission else None
 
     def get_translator_id(self, obj):
         return str(obj.translator.id) if obj.translator else None
@@ -414,7 +433,7 @@ class TranslationSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        rep["mushaf_id"] = str(instance.mushaf.id)
+        # rep["mushaf_id"] = str(instance.mushaf.id)
         rep["translator_id"] = str(instance.translator.id)
         return rep
 
@@ -638,7 +657,7 @@ class ReciterDetailSerializer(serializers.Serializer):
 
 
 class TranslationListSerializer(serializers.ModelSerializer):
-    mushaf_id = serializers.SerializerMethodField()
+    transmission_id = serializers.SerializerMethodField()
     translator = serializers.SerializerMethodField()
     language_is_rtl = serializers.SerializerMethodField()
 
@@ -646,7 +665,7 @@ class TranslationListSerializer(serializers.ModelSerializer):
         model = Translation
         fields = [
             "id",
-            "mushaf_id",
+            "transmission_id",
             "translator",
             "language",
             "language_is_rtl",
@@ -657,8 +676,8 @@ class TranslationListSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["creator"]
 
-    def get_mushaf_id(self, obj):
-        return str(obj.mushaf.id) if obj.mushaf else None
+    def get_transmission_id(self, obj):
+        return str(obj.transmission.id) if obj.transmission else None
 
     @extend_schema_field(TranslatorDetailSerializer(allow_null=True))
     def get_translator(self, obj):

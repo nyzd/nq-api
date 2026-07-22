@@ -2,8 +2,8 @@ from django.db import models
 from account.models import CustomUser
 from core.models import File
 from django.conf.global_settings import LANGUAGES
-import uuid
 from core.expressions import UUIDv7
+from django.contrib.postgres.fields import ArrayField
 
 
 class Status(models.TextChoices):
@@ -12,7 +12,7 @@ class Status(models.TextChoices):
     PUBLISHED = "published", "Published"
 
 
-class Mushaf(models.Model):
+class RasmOlMushaf(models.Model):
     id = models.UUIDField(
         db_default=UUIDv7(), primary_key=True, editable=False, unique=True
     )
@@ -21,15 +21,64 @@ class Mushaf(models.Model):
     )
     slug = models.CharField(max_length=50, unique=True)
     name = models.TextField()
-    source = models.TextField(default="")
     status = models.CharField(
         max_length=50, choices=Status.choices, default=Status.DRAFT
+    )
+    # preservers = ArrayField(models.ForeignKey(
+    #    CustomUser, on_delete=models.CASCADE, related_name="preservers_rasmOlMushaf"
+    # ))
+    collector = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="collector_rasmOlMushaf"
+    )
+    compiler = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="compiler_rasmOlMushaf"
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
+
+
+class Provenance(models.Model):
+    id = models.UUIDField(
+        db_default=UUIDv7(), primary_key=True, editable=False, unique=True
+    )
+    creator = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="provenances_creator"
+    )
+    account = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="provenances_acc"
+    )
+    child_provenance = models.OneToOneField(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="parent_provenance",
+    )
+    role = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class Transmission(models.Model):
+    id = models.UUIDField(
+        db_default=UUIDv7(), primary_key=True, editable=False, unique=True
+    )
+    creator = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="transmission_creator"
+    )
+    rasm_ol_mushaf = models.ForeignKey(
+        RasmOlMushaf, on_delete=models.CASCADE, related_name="transmission"
+    )
+    slug = models.CharField(max_length=50, unique=True)
+    name = models.TextField()
+    provenances = models.ForeignKey(
+        Provenance, on_delete=models.CASCADE, related_name="transmission", null=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 class Surah(models.Model):
@@ -44,7 +93,9 @@ class Surah(models.Model):
     creator = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="surahs"
     )
-    mushaf = models.ForeignKey(Mushaf, on_delete=models.CASCADE, related_name="surahs")
+    rasm_ol_mushaf = models.ForeignKey(
+        RasmOlMushaf, on_delete=models.CASCADE, related_name="surahs"
+    )
     number = models.IntegerField()
     period = models.CharField(
         max_length=50, choices=PERIOD_CHOICES, blank=True, null=True
@@ -57,7 +108,7 @@ class Surah(models.Model):
 
     class Meta:
         ordering = ["number"]
-        unique_together = ["mushaf", "number"]
+        unique_together = ["rasm_ol_mushaf", "number"]
 
     def __str__(self):
         return f"{self.number}"
@@ -147,8 +198,8 @@ class Translation(models.Model):
     creator = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="translations"
     )
-    mushaf = models.ForeignKey(
-        Mushaf, on_delete=models.CASCADE, related_name="translations"
+    transmission = models.ForeignKey(
+        Transmission, on_delete=models.CASCADE, related_name="translations"
     )
     translator = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="translated_works"
@@ -167,7 +218,7 @@ class Translation(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ["mushaf", "translator", "language"]
+        unique_together = ["translator", "language"]
 
     def __str__(self):
         return f"{self.mushaf.name} - {self.language} by {self.translator.username}"
@@ -214,8 +265,8 @@ class Takhtit(models.Model):
     creator = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="takhtits"
     )
-    mushaf = models.ForeignKey(
-        Mushaf, on_delete=models.CASCADE, related_name="takhtits"
+    rasm_ol_mushaf = models.ForeignKey(
+        RasmOlMushaf, on_delete=models.CASCADE, related_name="takhtits"
     )
     account = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="takhtit_accounts"
@@ -297,8 +348,8 @@ class Recitation(models.Model):
     creator = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="recitations"
     )
-    mushaf = models.ForeignKey(
-        Mushaf, on_delete=models.CASCADE, related_name="recitations"
+    transmission = models.ForeignKey(
+        Transmission, on_delete=models.CASCADE, related_name="recitations"
     )
     reciter_account = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="recited_works"
@@ -379,27 +430,5 @@ class SurahName(models.Model):
     pronunciation = models.TextField(blank=True, null=True)
     translation = models.TextField(blank=True, null=True)
     transliteration = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-
-class Provenance(models.Model):
-    id = models.UUIDField(
-        db_default=UUIDv7(), primary_key=True, editable=False, unique=True
-    )
-    creator = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name="provenances_creator"
-    )
-    account = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name="provenances_acc"
-    )
-    child_provenance = models.OneToOneField(
-        "self",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="parent_provenance",
-    )
-    role = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

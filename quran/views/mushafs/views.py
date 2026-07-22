@@ -4,11 +4,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.exceptions import NotFound
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from core import permissions as core_permissions
 from core.pagination import CustomLimitOffsetPagination
-from quran.models import Mushaf, Ayah, AyahTranslation
-from quran.serializers import MushafSerializer
+from core.utils import validate_uuid
+from quran.models import RasmOlMushaf, Ayah, AyahTranslation, Transmission
+from quran.serializers import MushafSerializer, TransmissionSerializer
 
 import json
 
@@ -27,7 +29,7 @@ import json
     destroy=extend_schema(summary="Delete a Mushaf record"),
 )
 class MushafViewSet(viewsets.ModelViewSet):
-    queryset = Mushaf.objects.all().order_by("slug")
+    queryset = RasmOlMushaf.objects.all().order_by("slug")
     serializer_class = MushafSerializer
     permission_classes = [
         core_permissions.IsCreatorOrReadOnly,
@@ -46,12 +48,12 @@ class MushafViewSet(viewsets.ModelViewSet):
     lookup_field = "id"
 
     def get_queryset(self):
-        query = Mushaf.objects.all().order_by("slug")
+        query = RasmOlMushaf.objects.all().order_by("slug")
         if not self.request.user.is_authenticated:
             query = query.exclude(Q(status="draft") | Q(status="pending_review"))
 
         if getattr(self, "action", None) == "list":
-            query = query.only("id", "slug", "name", "source", "status")
+            query = query.only("id", "slug", "name", "status")
 
         return query
 
@@ -141,3 +143,47 @@ class MushafViewSet(viewsets.ModelViewSet):
             )
         except Exception as e:
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(
+        detail=True,
+        methods=["get", "post"],
+        url_path="transmissions",
+    )
+    def get_transmissions(self, request, *args, **kwargs):
+        mushaf: RasmOlMushaf = self.get_object()
+
+        if request.method.lower() == "get":
+            transmissions = TransmissionSerializer(mushaf.transmission.all(), many=True)
+            return Response(transmissions.data)
+
+        new_transmission = request.data
+
+        serializer = TransmissionSerializer(data=new_transmission)
+        serializer.is_valid(raise_exception=True)
+        name = serializer.validated_data.get("name")
+        slug = serializer.validated_data.get("slug")
+
+        trans, created = Transmission.objects.update_or_create(
+            rasm_ol_mushaf=mushaf,
+            name=name,
+            slug=slug,
+            creator=request.user,
+        )
+
+        return Response(TransmissionSerializer(trans).data)
+
+    @action(
+        detail=True,
+        methods=["delete"],
+        url_path="transmissions/(?P<transmission_id>[^/.]+)",
+    )
+    def delete_transmission(self, request, *args, **kwargs):
+        transmission_id = kwargs.get("transmission_id")
+        validate_uuid(transmission_id)
+
+        transmission = Transmission.objects.filter(id=transmission_id).first()
+        if transmission is None:
+            raise NotFound("Transmission with this id not found!")
+        transmission.delete()
+
+        return Response({"status": "Removed"})

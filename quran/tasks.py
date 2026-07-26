@@ -1,6 +1,6 @@
 from celery import shared_task
 from quran.models import (
-    Mushaf,
+    RasmOlMushaf,
     Recitation,
     RecitationSurah,
     RecitationSurahTimestamp,
@@ -9,6 +9,7 @@ from quran.models import (
     Word,
     Translation,
     AyahTranslation,
+    Transmission,
 )
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -201,19 +202,26 @@ def import_mushaf_task(quran_data, user_id):
     User = get_user_model()
     user = User.objects.get(id=user_id)
     mushaf_data = quran_data["mushaf"]
+    collector, created = User.objects.get_or_create(
+        username=mushaf_data["collector_name"]
+    )
+    compiler, created = User.objects.get_or_create(
+        username=mushaf_data["compiler_name"]
+    )
     with transaction.atomic():
-        mushaf = Mushaf.objects.create(
+        mushaf = RasmOlMushaf.objects.create(
             creator_id=user.id,
             name=mushaf_data["name"],
             slug=mushaf_data["slug"],
-            source=mushaf_data["source"],
+            collector=collector,
+            compiler=compiler,
         )
         surah_objs = []
         for surah_data in quran_data["surahs"]:
             surah_objs.append(
                 Surah(
                     creator_id=user.id,
-                    mushaf=mushaf,
+                    rasm_ol_mushaf=mushaf,
                     number=surah_data["number"],
                     # name=surah_data["name"],
                     has_bismillah=surah_data["has_bismillah"],
@@ -246,7 +254,7 @@ def import_mushaf_task(quran_data, user_id):
         Ayah.objects.bulk_create(ayah_objs)
         ayahs_by_surah_and_number = {
             (a.surah.number, a.number): a
-            for a in Ayah.objects.filter(surah__mushaf=mushaf)
+            for a in Ayah.objects.filter(surah__rasm_ol_mushaf=mushaf)
         }
         word_objs = []
         for surah_data in quran_data["surahs"]:
@@ -281,10 +289,15 @@ def import_translation_task(translation_data, user_id):
         translator, _ = User.objects.get_or_create(
             username=translation_data["translator_username"]
         )
-        mushaf = Mushaf.objects.get(slug=translation_data["mushaf"])
+        rom = RasmOlMushaf.objects.get(slug=translation_data["rasm_ol_mushaf"])
+        # Create new transmission for translation
+        transmission = Transmission.objects.create(
+            rasm_ol_mushaf=rom,
+            slug=f"translation-{translation_data["translator_username"]}-{translation_data["language"]}",
+        )
         translation = Translation.objects.create(
             creator_id=user.id,
-            mushaf_id=mushaf.id,
+            transmission=transmission,
             translator_id=translator.id,
             source=translation_data["source"],
             status="published",
@@ -293,7 +306,7 @@ def import_translation_task(translation_data, user_id):
         # Build a lookup for Ayah objects of this mushaf keyed by (surah_number, ayah_number)
         ayah_lookup = {
             (a.surah.number, a.number): a.id
-            for a in Ayah.objects.filter(surah__mushaf=mushaf)
+            for a in Ayah.objects.filter(surah__rasm_ol_mushaf=rom)
             .only("id", "number", "surah__number")
             .select_related("surah")
         }

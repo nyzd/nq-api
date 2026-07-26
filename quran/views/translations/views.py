@@ -32,11 +32,11 @@ import json
         summary="List all Quran Translations",
         parameters=[
             OpenApiParameter(
-                name="mushaf",
+                name="rasm_ol_mushaf",
                 type={"type": "string", "enum": ["hafs"]},
                 location=OpenApiParameter.QUERY,
                 required=True,
-                description="Short name of the Mushaf to filter Translations by. Common value: 'hafs'. Any string is accepted. (e.g. 'hafs', 'warsh', etc.)",
+                description="Slug of the Rasm Ol Mushaf to filter Translations by. Common value: 'hafs'. Any string is accepted. (e.g. 'hafs', 'warsh', etc.)",
                 examples=[OpenApiExample("hafs", value="hafs", summary="Most common")],
             ),
             OpenApiParameter(
@@ -81,7 +81,7 @@ class TranslationViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         translation_fields = [
             "id",
-            "mushaf",
+            "transmission",
             "translator",
             "language",
             "release_date",
@@ -89,20 +89,22 @@ class TranslationViewSet(viewsets.ModelViewSet):
             "status",
             "creator",
         ]
-        queryset = Translation.objects.select_related("mushaf", "translator").only(
-            *translation_fields
-        )
-        mushaf_slug = self.request.query_params.get("mushaf")
-        if self.action == "list" and not mushaf_slug:
+        queryset = Translation.objects.select_related(
+            "transmission", "transmission__rasm_ol_mushaf", "translator"
+        ).only(*translation_fields)
+        rasm_ol_mushaf_slug = self.request.query_params.get("rasm_ol_mushaf")
+        if self.action == "list" and not rasm_ol_mushaf_slug:
             raise serializers.ValidationError(
-                {"mushaf": "This query parameter is required."}
+                {"rasm_ol_mushaf": "This query parameter is required."}
             )
 
         if not self.request.user.is_authenticated:
             queryset = queryset.exclude(Q(status="draft") | Q(status="pending_review"))
 
-        if mushaf_slug:
-            queryset = queryset.filter(mushaf__slug=mushaf_slug)
+        if rasm_ol_mushaf_slug:
+            queryset = queryset.filter(
+                transmission__rasm_ol_mushaf__slug=rasm_ol_mushaf_slug
+            )
         language = self.request.query_params.get("language", None)
         if language is not None:
             queryset = queryset.filter(language=language)
@@ -130,7 +132,9 @@ class TranslationViewSet(viewsets.ModelViewSet):
             )
         status_value = request.data.get("status")
         if status_value == "pending_review":
-            ayah_count = Ayah.objects.filter(surah__mushaf=instance.mushaf).count()
+            ayah_count = Ayah.objects.filter(
+                surah__rasm_ol_mushaf=instance.transmission.rasm_ol_mushaf
+            ).count()
             ayah_translation_count = AyahTranslation.objects.filter(
                 translation=instance
             ).count()
@@ -235,10 +239,10 @@ class TranslationViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["get"], url_path="ayahs")
     def ayahs(self, request, *args, **kwargs):
         translation = self.get_object()
-        # Ensure ayahs are aligned with canonical ayah ordering within the same mushaf
+        # Ensure ayahs are aligned with canonical ayah ordering within the same rasm ol mushaf
         ayah_translations = (
             translation.ayah_translations.select_related("ayah", "ayah__surah")
-            .filter(ayah__surah__mushaf=translation.mushaf)
+            .filter(ayah__surah__rasm_ol_mushaf=translation.transmission.rasm_ol_mushaf)
             .order_by("ayah__surah__number", "ayah__number", "ayah__id")
         )
         surah_id = request.query_params.get("surah_id")

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Mushaf,
+    RasmOlMushaf,
     Surah,
     Ayah,
     AyahTranslation,
@@ -8,10 +8,12 @@ from .models import (
     Word,
     WordBreaker,
     AyahBreaker,
+    Transmission,
 )
 
 # Register your models here.
-admin.site.register(Mushaf)
+admin.site.register(RasmOlMushaf)
+admin.site.register(Transmission)
 admin.site.register(Surah)
 admin.site.register(Ayah)
 admin.site.register(AyahTranslation)

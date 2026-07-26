@@ -4,11 +4,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.exceptions import NotFound
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from core import permissions as core_permissions
 from core.pagination import CustomLimitOffsetPagination
-from quran.models import Mushaf, Ayah, AyahTranslation
-from quran.serializers import MushafSerializer
+from core.utils import validate_uuid
+from quran.models import RasmOlMushaf, Ayah, AyahTranslation, Transmission
+from quran.serializers import MushafSerializer, TransmissionSerializer
 
 import json
 
@@ -27,7 +29,7 @@ import json
     destroy=extend_schema(summary="Delete a Mushaf record"),
 )
 class MushafViewSet(viewsets.ModelViewSet):
-    queryset = Mushaf.objects.all().order_by("slug")
+    queryset = RasmOlMushaf.objects.all().order_by("slug")
     serializer_class = MushafSerializer
     permission_classes = [
         core_permissions.IsCreatorOrReadOnly,
@@ -46,12 +48,12 @@ class MushafViewSet(viewsets.ModelViewSet):
     lookup_field = "id"
 
     def get_queryset(self):
-        query = Mushaf.objects.all().order_by("slug")
+        query = RasmOlMushaf.objects.all().order_by("slug")
         if not self.request.user.is_authenticated:
             query = query.exclude(Q(status="draft") | Q(status="pending_review"))
 
         if getattr(self, "action", None) == "list":
-            query = query.only("id", "slug", "name", "source", "status")
+            query = query.only("id", "slug", "name", "status")
 
         return query
 
@@ -107,8 +109,6 @@ class MushafViewSet(viewsets.ModelViewSet):
         parser_classes=[MultiPartParser, FormParser],
     )
     def import_mushaf(self, request):
-        from django.db import transaction
-
         MUSHAF_UPLOAD_MAX_SIZE = 30 * 1024 * 1024
         file = request.FILES.get("file")
         if not file:
@@ -141,3 +141,69 @@ class MushafViewSet(viewsets.ModelViewSet):
             )
         except Exception as e:
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(
+        detail=True,
+        methods=["get", "post"],
+        url_path="transmissions",
+    )
+    def get_transmissions(self, request, *args, **kwargs):
+        mushaf: RasmOlMushaf = self.get_object()
+
+        if request.method.lower() == "get":
+            transmissions = TransmissionSerializer(mushaf.transmission.all(), many=True)
+            return Response(transmissions.data)
+
+        new_transmission = request.data
+
+        serializer = TransmissionSerializer(data=new_transmission)
+        serializer.is_valid(raise_exception=True)
+        name = serializer.validated_data.get("name")
+        slug = serializer.validated_data.get("slug")
+
+        trans, created = Transmission.objects.update_or_create(
+            rasm_ol_mushaf=mushaf,
+            name=name,
+            slug=slug,
+            creator=request.user,
+        )
+
+        return Response(TransmissionSerializer(trans).data)
+
+    @action(
+        detail=True,
+        methods=["get", "post", "delete"],
+        url_path="transmissions/(?P<transmission_id>[^/.]+)",
+    )
+    def get_or_edit_or_delete_transmission(self, request, *args, **kwargs):
+        mushaf: RasmOlMushaf = self.get_object()
+        transmission_id = kwargs.get("transmission_id")
+        validate_uuid(transmission_id)
+
+        transmission = Transmission.objects.filter(id=transmission_id).first()
+        if transmission is None:
+            raise NotFound("Transmission with this id doesn't exists!")
+
+        if request.method.lower() == "get":
+            serializer = TransmissionSerializer(transmission)
+            return Response(serializer.data)
+
+        if request.method.lower() == "delete":
+            transmission.delete()
+            return Response({"status": "Deleted"})
+
+        new_transmission = request.data
+
+        serializer = TransmissionSerializer(data=new_transmission)
+        serializer.is_valid(raise_exception=True)
+        name = serializer.validated_data.get("name")
+        slug = serializer.validated_data.get("slug")
+
+        trans = Transmission.objects.create(
+            rasm_ol_mushaf=mushaf,
+            name=name,
+            slug=slug,
+            creator=request.user,
+        )
+
+        return Response(TransmissionSerializer(trans).data)

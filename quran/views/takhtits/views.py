@@ -79,7 +79,7 @@ class TakhtitViewSet(viewsets.ModelViewSet):
         filters.OrderingFilter,
     ]
     pagination_class = CustomLimitOffsetPagination
-    filterset_fields = ["mushaf", "account", "creator"]
+    filterset_fields = ["rasm_ol_mushaf", "account", "creator"]
     search_fields = []
     ordering_fields = ["created_at", "updated_at"]
     ordering = ["-created_at"]

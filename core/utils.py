@@ -4,6 +4,7 @@ from django.conf import settings
 from core.models import File as CoreFile
 from core.views import Storage
 import uuid
+from rest_framework.exceptions import ValidationError
 
 
 # TODO: maybe change this into multi file type upload in the future
@@ -67,3 +68,10 @@ def upload_mp3_to_s3(file_obj, uploader, folder="recitations"):
         uploader=uploader,
     )
     return new_file
+
+
+def validate_uuid(input):
+    try:
+        uuid.UUID(input)
+    except ValueError:
+        raise ValidationError({"error": "Invalid UUID."})

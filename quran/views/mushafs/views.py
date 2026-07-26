@@ -109,8 +109,6 @@ class MushafViewSet(viewsets.ModelViewSet):
         parser_classes=[MultiPartParser, FormParser],
     )
     def import_mushaf(self, request):
-        from django.db import transaction
-
         MUSHAF_UPLOAD_MAX_SIZE = 30 * 1024 * 1024
         file = request.FILES.get("file")
         if not file:
@@ -174,16 +172,38 @@ class MushafViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=True,
-        methods=["delete"],
+        methods=["get", "post", "delete"],
         url_path="transmissions/(?P<transmission_id>[^/.]+)",
     )
-    def delete_transmission(self, request, *args, **kwargs):
+    def get_or_edit_or_delete_transmission(self, request, *args, **kwargs):
+        mushaf: RasmOlMushaf = self.get_object()
         transmission_id = kwargs.get("transmission_id")
         validate_uuid(transmission_id)
 
         transmission = Transmission.objects.filter(id=transmission_id).first()
         if transmission is None:
-            raise NotFound("Transmission with this id not found!")
-        transmission.delete()
+            raise NotFound("Transmission with this id doesn't exists!")
 
-        return Response({"status": "Removed"})
+        if request.method.lower() == "get":
+            serializer = TransmissionSerializer(transmission)
+            return Response(serializer.data)
+
+        if request.method.lower() == "delete":
+            transmission.delete()
+            return Response({"status": "Deleted"})
+
+        new_transmission = request.data
+
+        serializer = TransmissionSerializer(data=new_transmission)
+        serializer.is_valid(raise_exception=True)
+        name = serializer.validated_data.get("name")
+        slug = serializer.validated_data.get("slug")
+
+        trans = Transmission.objects.create(
+            rasm_ol_mushaf=mushaf,
+            name=name,
+            slug=slug,
+            creator=request.user,
+        )
+
+        return Response(TransmissionSerializer(trans).data)

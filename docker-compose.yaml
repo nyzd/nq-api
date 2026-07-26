@@ -1,5 +1,6 @@
 services:
   postgres-db:
+    restart: unless-stopped
     image: ${POSTGRES_IMAGE:-public.ecr.aws/docker/library/postgres:18}
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-postgres}
@@ -16,6 +17,7 @@ services:
       - "${POSTGRES_PORT:-5432}:${POSTGRES_TARGET_PORT:-5432}"
 
   natiq-api:
+    restart: unless-stopped
     image: ${API_IMAGE:-natiqquran/nq-api:latest}
     container_name: ${API_CONTAINER_NAME:-natiq-api}
     ports:
@@ -49,6 +51,7 @@ services:
       DJANGO_SUPERUSER_PASSWORD_RESET: "${DJANGO_SUPERUSER_PASSWORD_RESET:-0}"
 
   nginx:
+    restart: unless-stopped
     image: ${NGINX_IMAGE:-nginx:latest}
     ports:
       - "${NGINX_PORT:-80}:${NGINX_TARGET_PORT:-80}"
@@ -78,6 +81,7 @@ services:
       - rabbitmq
   
   rabbitmq:
+    restart: unless-stopped
     image: ${RABBITMQ_IMAGE:-rabbitmq:3-management}
     container_name: ${RABBITMQ_CONTAINER_NAME:-nq-rabbitmq}
     ports:
@@ -91,7 +95,7 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-guest}
 
   celery:
-    restart: always
+    restart: unless-stopped
     image: ${CELERY_IMAGE:-natiqquran/nq-api:latest}
     entrypoint: ${CELERY_ENTRYPOINT:-celery}
     command: -A ${CELERY_APP_NAME:-api} worker -Q default,celery,high_priority,forced_alignment_result -l ${CELERY_LOGLEVEL:-info}

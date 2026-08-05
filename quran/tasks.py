@@ -10,6 +10,7 @@ from quran.models import (
     Translation,
     AyahTranslation,
     Transmission,
+    WordText,
 )
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -17,6 +18,8 @@ from django.conf import settings
 from datetime import datetime, timedelta, timezone
 import requests
 
+from core.expressions import UUIDv7
+from uuid import uuid7
 from core.models import Notification
 
 
@@ -202,19 +205,23 @@ def import_mushaf_task(quran_data, user_id):
     User = get_user_model()
     user = User.objects.get(id=user_id)
     mushaf_data = quran_data["mushaf"]
-    collector, created = User.objects.get_or_create(
-        username=mushaf_data["collector_name"]
-    )
-    compiler, created = User.objects.get_or_create(
-        username=mushaf_data["compiler_name"]
-    )
+    compiler = None
+    if mushaf_data["compiler_name"]:
+        compiler, created = User.objects.get_or_create(
+            username=mushaf_data["compiler_name"]
+        )
     with transaction.atomic():
         mushaf = RasmOlMushaf.objects.create(
             creator_id=user.id,
             name=mushaf_data["name"],
             slug=mushaf_data["slug"],
-            collector=collector,
             compiler=compiler,
+        )
+        transmission = Transmission.objects.create(
+            creator_id=user.id,
+            rasm_ol_mushaf=mushaf,
+            slug=mushaf_data["transmission"]["slug"],
+            name=mushaf_data["transmission"]["name"],
         )
         surah_objs = []
         for surah_data in quran_data["surahs"]:
@@ -257,16 +264,29 @@ def import_mushaf_task(quran_data, user_id):
             for a in Ayah.objects.filter(surah__rasm_ol_mushaf=mushaf)
         }
         word_objs = []
+        word_texts = []
         for surah_data in quran_data["surahs"]:
             for ayah in surah_data["ayahs"]:
                 ayah_obj = ayahs_by_surah_and_number[
                     (surah_data["number"], ayah["number"])
                 ]
                 for word in ayah["words"]:
-                    word_objs.append(
-                        Word(ayah=ayah_obj, text=word["text"], creator_id=user.id)
+                    # Generating the id in the runtime of the api
+                    # We need the ID in memory.
+                    w = Word(id=uuid7(), ayah=ayah_obj, creator_id=user.id)
+                    word_objs.append(w)
+                    word_texts.append(
+                        WordText(
+                            text=word["text"],
+                            # Need it here
+                            word_id=w.id,
+                            creator_id=user.id,
+                            transmission=transmission,
+                        )
                     )
+        # Then here we insert to DB with no problem :)
         Word.objects.bulk_create(word_objs)
+        WordText.objects.bulk_create(word_texts)
     # Send notification to user
     Notification.objects.create(
         user=user,

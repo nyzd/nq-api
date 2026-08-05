@@ -100,7 +100,7 @@ class RecitationViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         recitation_fields = [
             "id",
-            "mushaf",
+            "transmission",
             "reciter_account",
             "recitation_date",
             "recitation_location",
@@ -108,9 +108,9 @@ class RecitationViewSet(viewsets.ModelViewSet):
             "status",
             "creator",
         ]
-        queryset = Recitation.objects.select_related("mushaf", "reciter_account").only(
-            *recitation_fields
-        )
+        queryset = Recitation.objects.select_related(
+            "transmission", "reciter_account"
+        ).only(*recitation_fields)
         mushaf_slug = self.request.query_params.get("mushaf")
         if self.action == "list" and not mushaf_slug:
             raise serializers.ValidationError(
@@ -119,7 +119,8 @@ class RecitationViewSet(viewsets.ModelViewSet):
         if not self.request.user.is_authenticated:
             queryset = queryset.exclude(Q(status="draft") | Q(status="pending_review"))
         if mushaf_slug:
-            queryset = queryset.filter(mushaf__slug=mushaf_slug)
+            # Using relations transmission -> rasm ol mushaf -> slug
+            queryset = queryset.filter(transmission__rasm_ol_mushaf__slug=mushaf_slug)
         reciter_id = self.request.query_params.get("reciter_id", None)
         if reciter_id is not None:
             queryset = queryset.filter(reciter_account__id=reciter_id)

@@ -337,7 +337,45 @@ paths:
           description: No response body
   /ayahs/random/:
     get:
-      operationId: ayahs_random_retrieve
+      operationId: ayahs_random_list
+      summary: Get random Ayah(s)
+      parameters:
+      - in: query
+        name: count
+        schema:
+          type: integer
+        description: Number of random ayahs to return. Defaults to 1.
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: number
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       tags:
       - ayahs
       security:
@@ -347,7 +385,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Ayah'
+                $ref: '#/components/schemas/PaginatedAyahSerializerViewList'
           description: ''
   /groups/:
     get:
@@ -640,7 +678,7 @@ paths:
         schema:
           type: string
           format: uuid
-        description: A UUID string identifying this mushaf.
+        description: A UUID string identifying this rasm ol mushaf.
         required: true
       tags:
       - general
@@ -663,7 +701,7 @@ paths:
         schema:
           type: string
           format: uuid
-        description: A UUID string identifying this mushaf.
+        description: A UUID string identifying this rasm ol mushaf.
         required: true
       tags:
       - mushafs
@@ -697,7 +735,7 @@ paths:
         schema:
           type: string
           format: uuid
-        description: A UUID string identifying this mushaf.
+        description: A UUID string identifying this rasm ol mushaf.
         required: true
       tags:
       - mushafs
@@ -730,7 +768,149 @@ paths:
         schema:
           type: string
           format: uuid
-        description: A UUID string identifying this mushaf.
+        description: A UUID string identifying this rasm ol mushaf.
+        required: true
+      tags:
+      - mushafs
+      security:
+      - knoxApiToken: []
+      responses:
+        '204':
+          description: No response body
+  /mushafs/{id}/transmissions/:
+    get:
+      operationId: mushafs_transmissions_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this rasm ol mushaf.
+        required: true
+      tags:
+      - mushafs
+      security:
+      - knoxApiToken: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mushaf'
+          description: ''
+    post:
+      operationId: mushafs_transmissions_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this rasm ol mushaf.
+        required: true
+      tags:
+      - mushafs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Mushaf'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Mushaf'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Mushaf'
+        required: true
+      security:
+      - knoxApiToken: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mushaf'
+          description: ''
+  /mushafs/{id}/transmissions/{transmission_id}/:
+    get:
+      operationId: mushafs_transmissions_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this rasm ol mushaf.
+        required: true
+      - in: path
+        name: transmission_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - mushafs
+      security:
+      - knoxApiToken: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mushaf'
+          description: ''
+    post:
+      operationId: mushafs_transmissions_create_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this rasm ol mushaf.
+        required: true
+      - in: path
+        name: transmission_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - mushafs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Mushaf'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Mushaf'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Mushaf'
+        required: true
+      security:
+      - knoxApiToken: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mushaf'
+          description: ''
+    delete:
+      operationId: mushafs_transmissions_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this rasm ol mushaf.
+        required: true
+      - in: path
+        name: transmission_id
+        schema:
+          type: string
         required: true
       tags:
       - mushafs
@@ -1819,19 +1999,6 @@ paths:
         description: Number of results to return per page.
         schema:
           type: integer
-      - in: query
-        name: mushaf
-        schema:
-          type: string
-          enum:
-          - hafs
-        description: 'Short name of the Mushaf to filter Surahs by. Common value:
-          ''hafs''. Any string is accepted. (e.g. ''hafs'', ''warsh'', etc.)'
-        required: true
-        examples:
-          Hafs:
-            value: hafs
-            summary: Most common
       - name: offset
         required: false
         in: query
@@ -1847,6 +2014,19 @@ paths:
           enum:
           - asc
           - desc
+      - in: query
+        name: rasm_ol_mushaf
+        schema:
+          type: string
+          enum:
+          - hafs
+        description: 'Slug of the Rasm Ol Mushaf to filter Surahs by. Common value:
+          ''hafs''. Any string is accepted. (e.g. ''hafs'', ''warsh'', etc.)'
+        required: true
+        examples:
+          Hafs:
+            value: hafs
+            summary: Most common
       - name: search
         required: false
         in: query
@@ -2160,6 +2340,11 @@ paths:
           enum:
           - asc
           - desc
+      - in: query
+        name: rasm_ol_mushaf
+        schema:
+          type: string
+          format: uuid
       - name: search
         required: false
         in: query
@@ -2350,11 +2535,6 @@ paths:
         description: Number of results to return per page.
         schema:
           type: integer
-      - in: query
-        name: mushaf
-        schema:
-          type: string
-          format: uuid
       - name: offset
         required: false
         in: query
@@ -2370,6 +2550,11 @@ paths:
           enum:
           - asc
           - desc
+      - in: query
+        name: rasm_ol_mushaf
+        schema:
+          type: string
+          format: uuid
       - name: search
         required: false
         in: query
@@ -2540,11 +2725,6 @@ paths:
         description: Number of results to return per page.
         schema:
           type: integer
-      - in: query
-        name: mushaf
-        schema:
-          type: string
-          format: uuid
       - name: offset
         required: false
         in: query
@@ -2560,6 +2740,11 @@ paths:
           enum:
           - asc
           - desc
+      - in: query
+        name: rasm_ol_mushaf
+        schema:
+          type: string
+          format: uuid
       - name: search
         required: false
         in: query
@@ -2771,19 +2956,6 @@ paths:
         description: Number of results to return per page.
         schema:
           type: integer
-      - in: query
-        name: mushaf
-        schema:
-          type: string
-          enum:
-          - hafs
-        description: 'Short name of the Mushaf to filter Translations by. Common value:
-          ''hafs''. Any string is accepted. (e.g. ''hafs'', ''warsh'', etc.)'
-        required: true
-        examples:
-          Hafs:
-            value: hafs
-            summary: Most common
       - name: offset
         required: false
         in: query
@@ -2799,6 +2971,19 @@ paths:
           enum:
           - asc
           - desc
+      - in: query
+        name: rasm_ol_mushaf
+        schema:
+          type: string
+          enum:
+          - hafs
+        description: 'Slug of the Rasm Ol Mushaf to filter Translations by. Common
+          value: ''hafs''. Any string is accepted. (e.g. ''hafs'', ''warsh'', etc.)'
+        required: true
+        examples:
+          Hafs:
+            value: hafs
+            summary: Most common
       - name: search
         required: false
         in: query
@@ -3687,7 +3872,7 @@ components:
           maximum: 2147483647
           minimum: -2147483648
           description: Character count of the ayah text (joined words)
-        mushaf:
+        rasm_ol_mushaf:
           type: string
           readOnly: true
         words:
@@ -3698,8 +3883,8 @@ components:
       required:
       - breakers
       - id
-      - mushaf
       - number
+      - rasm_ol_mushaf
       - surah
       - surah_number
       - text
@@ -3814,8 +3999,6 @@ components:
           maxLength: 50
         name:
           type: string
-        source:
-          type: string
         status:
           enum:
           - draft
@@ -3827,10 +4010,24 @@ components:
             * `pending_review` - Pending review
             * `published` - Published
           x-spec-enum-id: 115b2e47abe9bd4d
+        collector:
+          type: string
+          format: uuid
+        compiler:
+          type: string
+          format: uuid
+        transmissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transmission'
+          readOnly: true
       required:
+      - collector
+      - compiler
       - id
       - name
       - slug
+      - transmissions
     Notification:
       type: object
       properties:
@@ -3898,6 +4095,10 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Ayah'
+    PaginatedAyahSerializerViewList:
+      type: array
+      items:
+        $ref: '#/components/schemas/AyahSerializerView'
     PaginatedAyahTranslationList:
       type: array
       items:
@@ -3996,8 +4197,6 @@ components:
           maxLength: 50
         name:
           type: string
-        source:
-          type: string
         status:
           enum:
           - draft
@@ -4009,6 +4208,17 @@ components:
             * `pending_review` - Pending review
             * `published` - Published
           x-spec-enum-id: 115b2e47abe9bd4d
+        collector:
+          type: string
+          format: uuid
+        compiler:
+          type: string
+          format: uuid
+        transmissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transmission'
+          readOnly: true
     PatchedNotification:
       type: object
       properties:
@@ -4147,10 +4357,9 @@ components:
           type: string
           format: uuid
           readOnly: true
-        mushaf:
-          allOf:
-          - $ref: '#/components/schemas/Mushaf'
-          readOnly: true
+        rasm_ol_mushaf:
+          type: string
+          format: uuid
         mushaf_id:
           type: string
           format: uuid
@@ -4216,7 +4425,7 @@ components:
           type: string
           format: uuid
           readOnly: true
-        mushaf_id:
+        transmission_id:
           type: string
           readOnly: true
         translator_id:
@@ -4727,10 +4936,9 @@ components:
           type: string
           format: uuid
           readOnly: true
-        mushaf:
-          allOf:
-          - $ref: '#/components/schemas/Mushaf'
-          readOnly: true
+        rasm_ol_mushaf:
+          type: string
+          format: uuid
         mushaf_id:
           type: string
           format: uuid
@@ -4769,11 +4977,11 @@ components:
       required:
       - bismillah
       - id
-      - mushaf
       - mushaf_id
       - names
       - number
       - number_of_ayahs
+      - rasm_ol_mushaf
     SurahBismillah:
       type: object
       properties:
@@ -4791,10 +4999,9 @@ components:
           type: string
           format: uuid
           readOnly: true
-        mushaf:
-          allOf:
-          - $ref: '#/components/schemas/Mushaf'
-          readOnly: true
+        rasm_ol_mushaf:
+          type: string
+          format: uuid
         mushaf_id:
           type: string
           format: uuid
@@ -4839,11 +5046,11 @@ components:
       - ayahs
       - bismillah
       - id
-      - mushaf
       - mushaf_id
       - names
       - number
       - number_of_ayahs
+      - rasm_ol_mushaf
     SurahInAyah:
       type: object
       properties:
@@ -4917,7 +5124,7 @@ components:
           type: string
           format: uuid
           readOnly: true
-        mushaf_id:
+        transmission_id:
           type: string
           readOnly: true
         translator_id:
@@ -5156,8 +5363,8 @@ components:
       - id
       - language
       - language_is_rtl
-      - mushaf_id
       - translator_id
+      - transmission_id
     TranslationCreate:
       type: object
       properties:
@@ -5407,7 +5614,7 @@ components:
           type: string
           format: uuid
           readOnly: true
-        mushaf_id:
+        transmission_id:
           type: string
           readOnly: true
         translator:
@@ -5648,8 +5855,8 @@ components:
       - id
       - language
       - language_is_rtl
-      - mushaf_id
       - translator
+      - transmission_id
     TranslationUpdate:
       type: object
       properties:
@@ -5897,6 +6104,26 @@ components:
       required:
       - id
       - name
+    Transmission:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        slug:
+          type: string
+          maxLength: 50
+        name:
+          type: string
+        provenances:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - id
+      - name
+      - slug
     User:
       type: object
       properties:

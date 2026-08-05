@@ -155,12 +155,12 @@ class Ayah(models.Model):
         if not words.exists():
             return 0
 
-        # text = ""
-        # for word in words:
-        #     if word.word_texts.exists():
-        #         # text = text.join(word.word_texts.first().text)
+        text = ""
+        for word in words:
+            if word.word_texts.exists():
+                text = text.join(word.word_texts.first().text)
 
-        return len("")
+        return len(text)
 
     def save(self, *args, **kwargs):
         """Override save to automatically calculate and update length."""

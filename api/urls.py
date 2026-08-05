@@ -4,7 +4,6 @@ from account import views as account_views
 from quran import views as quran_views
 from core import views as core_views
 from django.urls import path, include
-from knox import views as knox_views
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
@@ -24,7 +23,6 @@ router.register(r"provenances", quran_views.ProvenanceViewSet)
 # router.register(r'ayah-translations', quran_views.AyahTranslationViewSet)  # Removed: handled via TranslationViewSet.
 router.register(r"auth", account_views.AuthViewSet, basename="auth")
 router.register(r"profile", account_views.ProfileViewSet, basename="profile")
-router.register(r"phrases", core_views.PhraseViewSet)
 router.register(r"recitations", quran_views.RecitationViewSet)
 router.register(
     r"notifications", core_views.NotificationViewSet, basename="notification"

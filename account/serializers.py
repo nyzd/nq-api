@@ -3,20 +3,16 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 from account.models import CustomUser, UserName
-from core.serializers import PhraseSerializer
-from core.models import Phrase
 from django.utils.crypto import get_random_string
 
 
 class UserNameSerializer(serializers.ModelSerializer):
-    phrase = PhraseSerializer(read_only=True)
 
     class Meta:
         model = UserName
         fields = [
             "id",
             "language",
-            "phrase",
             "type",
             "text",
             "is_primary",

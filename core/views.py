@@ -1,11 +1,8 @@
 from django.http import HttpResponse
 from rest_framework import viewsets, permissions
-from .models import Request, Phrase, PhraseValues, Notification
+from .models import Request, Notification
 from .serializers import (
     RequestSerializer,
-    PhraseModifySerializer,
-    PhraseSerializer,
-    PhraseValuesSerializer,
     NotificationSerializer,
 )
 from rest_framework.decorators import action
@@ -33,10 +30,8 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Phrase, PhraseValues, Notification
+from .models import Notification
 from .serializers import (
-    PhraseSerializer,
-    PhraseValuesSerializer,
     NotificationSerializer,
 )
 from .pagination import CustomLimitOffsetPagination
@@ -52,79 +47,6 @@ class RequestViewSet(viewsets.ModelViewSet):
     serializer_class = RequestSerializer
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
     http_method_names = ["get", "head", "options"]
-
-
-@extend_schema_view(
-    list=extend_schema(summary="List all phrases"),
-    retrieve=extend_schema(summary="Retrieve a specific phrase by id"),
-    create=extend_schema(summary="Create a new phrase"),
-    update=extend_schema(summary="Update an existing phrase"),
-    partial_update=extend_schema(summary="Partially update a phrase"),
-    destroy=extend_schema(summary="Delete a phrase"),
-)
-class PhraseViewSet(viewsets.ModelViewSet):
-    queryset = Phrase.objects.all()
-    serializer_class = PhraseSerializer
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly or permissions.DjangoModelPermissions
-    ]
-    lookup_field = "id"
-    # filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    # search_fields = ["recitation_date", "recitation_location", "recitation_type"]
-    # ordering_fields = ['created_at', 'duration', 'recitation_date']
-    # pegination_class = None
-
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
-                name="language",
-                location=OpenApiParameter.QUERY,
-                type=str,
-                required=True,
-                description="Language code for the translation (required).",
-            ),
-        ],
-        summary="Modify phrase values",
-        description="Modify phrase values for a given language. The 'language' query parameter is required.",
-    )
-    @action(detail=False, methods=["post"], serializer_class=PhraseModifySerializer)
-    def modify(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        language = self.request.query_params.get("language")
-        phrases = serializer.data["phrases"]
-
-        for p in phrases:
-            val = phrases[p]
-            phrase = Phrase.objects.filter(phrase=p).first()
-            if phrase is None:
-                return HttpResponse(content=f"Phrase '{p}' not found!", status=404)
-
-            phrase.values.update_or_create(
-                language=language,
-                defaults={
-                    "text": val,
-                    "creator_id": self.request.user.id,
-                },
-            )
-        return HttpResponse(content="Done", status=200)
-
-    def perform_create(self, serializer):
-        serializer.save(creator=self.request.user)
-
-
-@extend_schema_view(
-    list=extend_schema(summary="List all phrase values (translations)"),
-    retrieve=extend_schema(summary="Retrieve a specific phrase value by ID"),
-    create=extend_schema(summary="Create a new phrase value"),
-    update=extend_schema(summary="Update an existing phrase value"),
-    partial_update=extend_schema(summary="Partially update a phrase value"),
-    destroy=extend_schema(summary="Delete a phrase value"),
-)
-class PhraseValuesViewSet(viewsets.ModelViewSet):
-    queryset = PhraseValues.objects.all()
-    serializer_class = PhraseValuesSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
 
 class Storage(S3Boto3Storage):

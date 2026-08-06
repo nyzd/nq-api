@@ -24,14 +24,19 @@ class RasmOlMushaf(models.Model):
     status = models.CharField(
         max_length=50, choices=Status.choices, default=Status.DRAFT
     )
+    is_primary = models.BooleanField(default=False)
     # preservers = ArrayField(models.ForeignKey(
     #    CustomUser, on_delete=models.CASCADE, related_name="preservers_rasmOlMushaf"
     # ))
-    collector = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name="collector_rasmOlMushaf"
-    )
+    # collector = models.ForeignKey(
+    #    CustomUser, on_delete=models.CASCADE, related_name="collector_rasmOlMushaf"
+    # )
     compiler = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name="compiler_rasmOlMushaf"
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="compiler_rasmOlMushaf",
+        null=True,
+        blank=True,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -149,7 +154,12 @@ class Ayah(models.Model):
         words = self.words.all().order_by("id")
         if not words.exists():
             return 0
-        text = " ".join(word.text for word in words)
+
+        text = ""
+        for word in words:
+            if word.word_texts.exists():
+                text = text.join(word.word_texts.first().text)
+
         return len(text)
 
     def save(self, *args, **kwargs):
@@ -168,12 +178,9 @@ class Word(models.Model):
         CustomUser, on_delete=models.CASCADE, related_name="words"
     )
     ayah = models.ForeignKey(Ayah, on_delete=models.CASCADE, related_name="words")
-    text = models.TextField()
+    # text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.text
 
     def save(self, *args, **kwargs):
         """Override save to update the parent ayah's length."""
@@ -189,6 +196,25 @@ class Word(models.Model):
         # Update the parent ayah's length
         ayah.length = ayah.calculate_length()
         ayah.save(update_fields=["length"])
+
+
+class WordText(models.Model):
+    id = models.UUIDField(
+        db_default=UUIDv7(), primary_key=True, editable=False, unique=True
+    )
+    creator = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="words_texts"
+    )
+    word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name="word_texts")
+    transmission = models.ForeignKey(
+        Transmission, on_delete=models.CASCADE, related_name="word_texts"
+    )
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.text
 
 
 class Translation(models.Model):
@@ -354,6 +380,7 @@ class Recitation(models.Model):
     reciter_account = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="recited_works"
     )
+    is_primary = models.BooleanField(default=False)
     recitation_date = models.DateField(blank=True, null=True)
     recitation_location = models.TextField(blank=True, null=True)
     recitation_type = models.TextField()

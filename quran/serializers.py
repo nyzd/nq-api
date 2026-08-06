@@ -1,7 +1,5 @@
 from rest_framework import serializers
 from django.db import models
-from datetime import datetime
-from django.conf import settings
 from django.conf.global_settings import LANGUAGES
 from drf_spectacular.utils import extend_schema_field
 from core.rtl_languages import RTL_LANGUAGE_CODES
@@ -21,10 +19,7 @@ from quran.models import (
     Provenance,
     Recitation,
     Transmission,
-    File,
     RecitationSurah,
-    RecitationSurahTimestamp,
-    Status,
 )
 from account.models import CustomUser
 
@@ -56,8 +51,9 @@ class MushafSerializer(serializers.ModelSerializer):
             "slug",
             "name",
             "status",
-            "collector",
+            # "collector",
             "compiler",
+            "is_primary",
             "transmissions",
         ]
         read_only_fields = ["creator"]
@@ -565,6 +561,7 @@ class RecitationSerializer(serializers.ModelSerializer):
             "track_count",
             "total_duration",
             "recitation_type",
+            "is_primary",
             "created_at",
             "updated_at",
         ]

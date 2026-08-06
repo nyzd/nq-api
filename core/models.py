@@ -32,44 +32,6 @@ class Request(models.Model):
         return f"Request: {self.error_name} - Status: {self.status_code} - Created at: {self.created_at} - Detail: {self.detail} - Account ID: {self.account_id} - Request token: {self.request_token} - Request user agent: {self.request_user_agent} - Request IPv4: {self.request_ipv4} - Request URL: {self.request_url} - Request controller: {self.request_controller} - Request action: {self.request_action} - Request ID: {self.request_id} - Request body: {self.request_body} - Request body content type: {self.request_body_content_type}"
 
 
-class Phrase(models.Model):
-    id = models.UUIDField(
-        db_default=UUIDv7(), primary_key=True, editable=False, unique=True
-    )
-    creator = models.ForeignKey(
-        "account.CustomUser", on_delete=models.CASCADE, related_name="phrases"
-    )
-    phrase = models.TextField(unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ["created_at"]
-
-    def __str__(self):
-        return self.phrase
-
-
-class PhraseValues(models.Model):
-    id = models.UUIDField(
-        db_default=UUIDv7(), primary_key=True, editable=False, unique=True
-    )
-    creator = models.ForeignKey(
-        "account.CustomUser", on_delete=models.CASCADE, related_name="phrase_value"
-    )
-    phrase = models.ForeignKey(Phrase, models.DO_NOTHING, related_name="values")
-    text = models.TextField()
-    language = models.CharField(max_length=7, choices=LANGUAGES)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ["created_at"]
-
-    def __str__(self):
-        return self.text
-
-
 def _get_random_filename(instance, filename):
     model_name = instance.__class__.__name__.lower()
     ext = filename.split(".")[-1]

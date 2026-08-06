@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-import uuid
 
 # from core.models import Phrase
 from core.expressions import UUIDv7
@@ -24,9 +23,6 @@ class UserName(models.Model):
     )
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="names")
     language = models.CharField(max_length=3)
-    phrase = models.ForeignKey(
-        "core.Phrase", on_delete=models.CASCADE, related_name="names"
-    )
 
     GIVEN_NAME = "given_name"
     FAMILY_NAME = "family_name"

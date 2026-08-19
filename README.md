@@ -12,7 +12,7 @@ TBD
 
 ## Project Charter
 
-Project Charter is availbe on [charters](https://github.com/natiq-foundation/charters/blob/main/charters/api.md).
+Project Charter is availbe on [charters/api.md](https://github.com/natiq-foundation/charters/blob/main/charters/api.md).
 
 ---
 

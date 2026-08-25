@@ -72,7 +72,7 @@ class SurahViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         surah_fields = [
             "id",
-            "rasm_ol_mushafs",
+            "rom_surah_ayahs_surah",
             "number",
             "period",
             "search_terms",
@@ -82,18 +82,22 @@ class SurahViewSet(viewsets.ModelViewSet):
         queryset = Surah.objects.all()
         if self.action == "retrieve":
             queryset = queryset.prefetch_related(
-                "rasm_ol_mushafs",
+                "rom_surah_ayahs_surah",
                 "ayahs__words",
             ).only(*surah_fields)
         else:
-            queryset = queryset.prefetch_related("rasm_ol_mushafs").only(*surah_fields)
+            queryset = queryset.prefetch_related("rom_surah_ayahs_surah").only(
+                *surah_fields
+            )
         mushaf_slug = self.request.query_params.get("rasm_ol_mushaf")
         if self.action == "list" and not mushaf_slug:
             raise serializers.ValidationError(
                 {"rasm_ol_mushaf": "This query parameter is required."}
             )
         if mushaf_slug:
-            queryset = queryset.filter(rasm_ol_mushafs__slug=mushaf_slug)
+            queryset = queryset.filter(
+                rom_surah_ayahs_surah__rasm_ol_mushaf__slug=mushaf_slug
+            )
         return queryset.order_by("number")
 
     def perform_create(self, serializer):

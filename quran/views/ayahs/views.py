@@ -57,7 +57,7 @@ class AyahViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         ayah_fields = [
             "id",
-            "surah",
+            "rsas",
             "number",
             "sajdah",
             "is_bismillah",

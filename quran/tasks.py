@@ -237,7 +237,7 @@ def import_mushaf_task(quran_data, user_id):
             surah_objs.append(s)
         Surah.objects.bulk_create(surah_objs)
         # TODO FIX
-        surahs_by_number = {s.number: s for s in mushaf.rom_surah_ayahs_rom}
+        surahs_by_number = {s.number: s for s in surah_objs}
         ayah_objs = []
         for surah_data in quran_data["surahs"]:
             surah = surahs_by_number[surah_data["number"]]
@@ -266,10 +266,7 @@ def import_mushaf_task(quran_data, user_id):
                 )
 
         Ayah.objects.bulk_create(ayah_objs)
-        ayahs_by_surah_and_number = {
-            (a.surah.number, a.number): a
-            for a in Ayah.objects.filter(surah__rasm_ol_mushafs=mushaf)
-        }
+        ayahs_by_surah_and_number = {(a.surah.number, a.number): a for a in ayah_objs}
         word_objs = []
         word_texts = []
         for surah_data in quran_data["surahs"]:

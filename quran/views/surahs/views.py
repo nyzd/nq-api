@@ -96,9 +96,9 @@ class SurahViewSet(viewsets.ModelViewSet):
             )
         if mushaf_slug:
             queryset = queryset.filter(
-                rom_surah_ayahs_surah__rasm_ol_mushaf__slug=mushaf_slug
+                rom_surah_ayahs_surah__rasm_ol_mushaf__slug=mushaf_slug,
             )
-        return queryset.order_by("number")
+        return queryset.order_by("number").distinct()
 
     def perform_create(self, serializer):
         last_surah = Surah.objects.order_by("-number").first()

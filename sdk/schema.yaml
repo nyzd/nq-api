@@ -4205,14 +4205,12 @@ components:
           type: string
           format: uuid
           readOnly: true
-        mushaf_id:
+        rasm_ol_mushaf:
           type: string
           format: uuid
-          writeOnly: true
-        account_id:
+        account:
           type: string
           format: uuid
-          writeOnly: true
         created_at:
           type: string
           format: date-time
@@ -4871,24 +4869,22 @@ components:
           type: string
           format: uuid
           readOnly: true
-        mushaf_id:
+        rasm_ol_mushaf:
           type: string
           format: uuid
-          writeOnly: true
-        account_id:
+        account:
           type: string
           format: uuid
-          writeOnly: true
         created_at:
           type: string
           format: date-time
           readOnly: true
       required:
-      - account_id
+      - account
       - created_at
       - creator
       - id
-      - mushaf_id
+      - rasm_ol_mushaf
     Translation:
       type: object
       properties:

@@ -835,24 +835,24 @@ class RecitationListSerializer(serializers.ModelSerializer):
 
 
 class TakhtitSerializer(serializers.ModelSerializer):
-    mushaf_id = serializers.UUIDField(write_only=True, required=True)
-    account_id = serializers.UUIDField(write_only=True, required=True)
+    # mushaf_id = serializers.UUIDField(write_only=True, required=True)
+    # account_id = serializers.UUIDField(write_only=True, required=True)
 
     class Meta:
         model = Takhtit
         fields = [
             "id",
             "creator",
-            "mushaf_id",
-            "account_id",
+            "rasm_ol_mushaf",
+            "account",
             "created_at",
         ]
         read_only_fields = ["id", "creator", "created_at", "updated_at"]
 
     def create(self, validated_data):
         # Remove the id fields before creating the model instance
-        validated_data.pop("mushaf_id", None)
-        validated_data.pop("account_id", None)
+        # validated_data.pop("mushaf_id", None)
+        # validated_data.pop("account_id", None)
         return super().create(validated_data)
 
 

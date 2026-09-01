@@ -156,7 +156,9 @@ class AyahSerializer(serializers.ModelSerializer):
 
     @extend_schema_field(SurahSerializer(allow_null=True))
     def get_surah(self, instance):
-        if instance.number == 1:
+        request = self.context.get("request")
+        include_surah = request.query_params.get("include_surah", None)
+        if instance.number == 1 or include_surah:
             return SurahSerializer(instance.surah).data
         return None
 

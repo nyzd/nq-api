@@ -157,8 +157,9 @@ class TakhtitViewSet(viewsets.ModelViewSet):
             data.append(
                 {
                     "id": str(ayah.id),
-                    "surah": ayah.surah.number,
-                    "ayah": ayah.number,
+                    "surah_id": ayah.surah.id,
+                    "surah_number": ayah.surah.number,
+                    "ayah_number": ayah.number,
                     "length": ayah.length,
                     "juz": breaker_or_none(counters["juz"]),
                     "hizb": breaker_or_none(counters["hizb"]),

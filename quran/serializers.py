@@ -157,7 +157,6 @@ class AyahSerializer(serializers.ModelSerializer):
 
     @extend_schema_field(SurahSerializer(allow_null=True))
     def get_surah(self, instance):
-        print("Hello World")
         include_surah = self.context.get("include_surah")
 
         if include_surah == "every_ayah":

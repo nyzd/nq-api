@@ -5992,13 +5992,18 @@ components:
           type: string
           format: uuid
           readOnly: true
-        ayah_id:
+        ayah:
           type: string
           format: uuid
-          writeOnly: true
+        texts:
+          type: array
+          items:
+            $ref: '#/components/schemas/WordText'
+          readOnly: true
       required:
-      - ayah_id
+      - ayah
       - id
+      - texts
     WordBreakerDetailResponse:
       type: object
       description: Serializer for individual word breaker responses
@@ -6027,6 +6032,18 @@ components:
       required:
       - line
       - word_id
+    WordText:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        text:
+          type: string
+      required:
+      - id
+      - text
   securitySchemes:
     knoxApiToken:
       type: apiKey
